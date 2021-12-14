@@ -1958,6 +1958,11 @@ header .header-logo a {
 	background-color: #000000;
 }
 
+#achieve h2{
+	color: #950101;
+	font-weight: bold;
+}
+
 #achieve .gradient-overlay {
 	position: absolute;
 	top: 0;
