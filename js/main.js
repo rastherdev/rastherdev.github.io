@@ -68,6 +68,14 @@
 		});
 	};
 
+	var ssLightGallery2 = function() {
+
+		$('#folio-wrap-2').lightGallery({  
+			showThumbByDefault: false,
+			hash: false,
+			selector: ".item-wrap"		
+		});
+	};
 
   	/* Menu on Scrolldown
 	 * ------------------------------------------------------ */
@@ -344,6 +352,7 @@
 		ssFitVids();
 		ssMasonryFolio();
 		ssLightGallery();
+		ssLightGallery2();
 		ssMenuOnScrolldown();
 		ssOffCanvas();
 		ssSmoothScroll();
