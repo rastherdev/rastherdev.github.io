@@ -1,426 +1,410 @@
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js oldie ie8" lang="en"> <![endif]-->
-<!--[if IE 9]><html class="no-js oldie ie9" lang="en"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!-->
 <html class="no-js" lang="en">
-  <!--<![endif]-->
 
-  <head>
-    <!--- basic page needs
+<head>
+  <!--- basic page needs
    ================================================== -->
-    <meta charset="utf-8" />
-    <title>Rasther</title>
-    <meta name="description" content="Rasther's Dev Portfolio" />
-    <meta name="author" content="Rasther DEV" />
+  <meta charset="utf-8" />
+  <title>Rasther</title>
+  <meta name="description" content="Rasther's Dev Portfolio" />
+  <meta name="author" content="Rasther DEV" />
 
-    <!-- mobile specific metas
+  <!-- mobile specific metas
    ================================================== -->
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1"
-    />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-    <!-- CSS
+  <!-- CSS
    ================================================== -->
-    <link rel="stylesheet" href="css/base.css" />
-    <link rel="stylesheet" href="css/vendor.css" />
-    <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/vendor.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/customs.css" />
 
-    <!-- script
+  <!-- script
    ================================================== -->
-    <script src="js/modernizr.js"></script>
-    <script src="js/pace.min.js"></script>
+  <script src="js/modernizr.js"></script>
+  <script src="js/pace.min.js"></script>
 
-    <!-- favicons
+  <!-- favicons
 	================================================== -->
-    <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
-    <link rel="icon" href="favicon.png" type="image/x-icon" />
-  </head>
+  <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
+  <link rel="icon" href="favicon.png" type="image/x-icon" />
 
-  <body id="top">
-    <!-- header 
+  <!-- GlideJS
+  ================================================= -->
+  <link rel="stylesheet" href="css/glide.core.css">
+  <link rel="stylesheet" href="css/glide.theme.css">
+
+  <!-- Lightbox 2
+  ================================================= -->
+  <link rel="stylesheet" href="css/lightbox.css">
+
+</head>
+
+<body id="top">
+  <!-- header 
    ================================================== -->
-    <header>
-      <a id="header-menu-trigger" href="#0">
-        <span class="header-menu-text">Menu</span>
-        <span class="header-menu-icon"></span>
-      </a>
+  <header>
+    <a id="header-menu-trigger" href="#0">
+      <span class="header-menu-text">Menu</span>
+      <span class="header-menu-icon"></span>
+    </a>
 
-      <nav id="menu-nav-wrap">
-        <a href="#0" class="close-button" title="close"><span>Close</span></a>
+    <nav id="menu-nav-wrap">
+      <a href="#0" class="close-button" title="close"><span>Close</span></a>
+      <h3>Rasther DEV.</h3>
+      <ul class="nav-list">
+        <li class="current">
+          <a class="smoothscroll" href="#home" title="">Home</a>
+        </li>
+        <li><a class="smoothscroll" href="#about" title="">About</a></li>
+        <li><a class="smoothscroll" href="#skills" title="">Skills</a></li>
+        <li>
+          <a class="smoothscroll" href="#credentials" title="">Experience and Education</a>
+        </li>
+        <li>
+          <a class="smoothscroll" href="#achieve" tittle="">Achievements</a>
+        </li>
+        <li><a class="smoothscroll" href="#portfolio" title="">Portfolio</a></li>
+        <li><a class="smoothscroll" href="#footer" title="">Contact</a></li>
+      </ul>
+      <ul class="header-social-list">
+        <li>
+          <a href="https://www.linkedin.com/in/rastherdev/" target="_blank"><i class="fa fa-linkedin"></i></a>
+        </li>
+        <li>
+          <a href="https://github.com/rastherdev/" target="_blank"><i class="fa fa-github"></i></a>
+        </li>
+      </ul>
+    </nav>
+    <!-- end #menu-nav-wrap -->
+  </header>
+  <!-- end header -->
 
-        <h3>Rasther DEV.</h3>
-
-        <ul class="nav-list">
-          <li class="current">
-            <a class="smoothscroll" href="#home" title="">Home</a>
-          </li>
-          <li><a class="smoothscroll" href="#about" title="">About</a></li>
-          <li><a class="smoothscroll" href="#skills" title="">Skills</a></li>
-          <li>
-            <a class="smoothscroll" href="#credentials" title=""
-              >Experience and Education</a
-            >
-          </li>
-          <li>
-            <a class="smoothscroll" href="#achieve" tittle="">Achievements</a>
-          </li>
-          <li><a class="smoothscroll" href="#portfolio" title="">Works</a></li>
-          <li><a class="smoothscroll" href="#footer" title="">Contact</a></li>
-        </ul>
-
-        <ul class="header-social-list">
-          <li>
-            <a href="https://web.facebook.com/giovany.dp.3/" target="_blank"
-              ><i class="fa fa-facebook-square"></i
-            ></a>
-          </li>
-
-          <li>
-            <a href="https://www.instagram.com/giovany.dp/" target="_blank"
-              ><i class="fa fa-instagram"></i
-            ></a>
-          </li>
-          <li>
-            <a href="www.linkedin.com/in/rastherdev" target="_blank"
-              ><i class="fa fa-linkedin"></i
-            ></a>
-          </li>
-          <li>
-            <a href="https://github.com/rastherdev" target="_blank"
-              ><i class="fa fa-github"></i
-            ></a>
-          </li>
-          <li>
-            <a href="#" target="_blank"><i class="fa fa-twitter"></i></a>
-          </li>
-        </ul>
-      </nav>
-      <!-- end #menu-nav-wrap -->
-    </header>
-    <!-- end header -->
-
-    <div id="scroll-progress"></div>
-    <!-- home
+  <div id="scroll-progress"></div>
+  <!-- home
    ================================================== -->
-    <section id="home">
-      <div class="overlay"></div>
-      <div class="gradient-overlay"></div>
+  <section id="home">
+    <div class="overlay"></div>
+    <div class="gradient-overlay"></div>
 
-      <div class="home-content-table">
-        <div class="home-content-tablecell">
-          <div class="row">
-            <div class="col-twelve">
-              <div class="home-bottom-text">
-                <h3 class="animate-intro">Hello World</h3>
-                <h1 class="animate-intro">
-                  I'm Giovany Domínguez <br />
-                  <span class="text-slider-items" style="display: none"
-                    >Web Developer, IT Engineer</span
-                  ><span class="text-slider"></span>
-                </h1>
-                <h1 class="animate-intro"></h1>
-
-                <ul class="home-section-links">
-                  <li class="animate-intro">
-                    More <a href="#about" class="smoothscroll">About Me</a>
-                  </li>
-                  <li class="animate-intro">
-                    View <a href="#portfolio" class="smoothscroll">My Works</a>
-                  </li>
-                  <li class="animate-intro">
-                    Contact <a href="#footer" class="smoothscroll">By Email</a>
-                  </li>
-                </ul>
-              </div>
-              <!-- end home-bottom-text -->
+    <div class="home-content-table">
+      <div class="home-content-tablecell">
+        <div class="row">
+          <div class="col-twelve">
+            <div class="home-bottom-text">
+              <h3 class="animate-intro">Hello World</h3>
+              <h1 class="animate-intro">
+                I'm Giovany                
+              </h1>
+              <h3 class="animate-intro" style="margin-top: -40px; font-size: 3rem!important;">
+                <span class="text-slider-items" style="display: none">Full Stack Developer, IT Engineer, Backend Developer</span>
+                <span class="text-slider"></span>
+              </h3>
+              <ul class="home-section-links">
+                <li class="animate-intro">
+                  More <a href="#about" class="smoothscroll">About Me</a>
+                </li>
+                <li class="animate-intro">
+                  View <a href="#portfolio" class="smoothscroll">My Projects</a>
+                </li>
+                <li class="animate-intro">
+                  Contact <a href="#footer" class="smoothscroll">By Email</a>
+                </li>
+              </ul>
             </div>
-            <!-- end col-twelve -->
+            <!-- end home-bottom-text -->
           </div>
-          <!-- end row -->
+          <!-- end col-twelve -->
         </div>
-        <!-- end home-content-tablecell -->
+        <!-- end row -->
       </div>
-      <!-- end home-content-table -->
+      <!-- end home-content-tablecell -->
+    </div>
+    <!-- end home-content-table -->
 
-      <a href="#about" class="scroll-icon smoothscroll">
-        <span class="icon-DownArrow"></span>
-      </a>
-    </section>
-    <!-- end home -->
+    <a href="#about" class="scroll-icon smoothscroll">
+      <span class="icon-DownArrow"></span>
+    </a>
+  </section>
+  <!-- end home -->
 
-    <!-- about
+  <!-- about
    ================================================== -->
-    <section id="about">
-      <div class="about-profile-bg"></div>
+  <section id="about">
+    <div class="about-profile-bg"></div>
+    <div class="about-wrap">
+      <div class="about-profile">
+        <div class="about-profile-bg"></div>
 
-      <div class="about-wrap">
-        <div class="about-profile">
-          <div class="about-profile-bg"></div>
+        <div class="intro">
+          <h3 class="animate-this" data-animate="fadeInLeft">About</h3>
+          <h1 class="animate-this" data-animate="fadeInLeft">Get to Know Me Better</h1>
 
-          <div class="intro">
-            <h3 class="animate-this">About</h3>
-            <h1 class="animate-this">More About Me</h1>
-
-            <p class="lead animate-this">
-              My background as a web developer has been an exciting one, where I
-              have learned multiple technological skills and delivered creative
-              solutions to diverse challenges.
-            </p>
-          </div>
-          <br />
-
-          <p class="animate-this">
-            Moreover, I am involved in the area of domotics and the internet of
-            things, I discovered them in my student life and defined it as a
-            hobby.
-          </p>
-          <br />
-          <p class="animate-this lead">
-            My goal is to become a web developer that implements best practices
-            and to be in constant learning.
-          </p>
-          <br /><br />
-          <p>
-            <a
-              href="cv-giovany-dp.pdf"
-              target="_blank"
-              class="button button-primary full-width animate-this"
-              id="cv"
-              download
-              >Download CV</a
-            >
+          <p class="lead animate-this" data-animate="fadeInLeft">
+            Experienced IT professional currently leading the Systems Department at the H. Ayuntamiento of Lagunillas,
+            Michoacán.
+            Responsible for developing and managing the digital platform utilized across multiple municipal areas.
           </p>
         </div>
-        <!-- end about-profile  -->
+        <br />
 
-        <div class="about-services">
-          <div class="intro">
-            <h3 class="animate-this">Services</h3>
-            <h1 class="animate-this">What I Do</h1>
+        <p class="animate-this" data-animate="fadeInLeft">
+          With over three years of experience, I have successfully contributed to one IT infrastructure project and two
+          software development projects for medium-sized companies.
+        </p>
+        <br />
 
-            <p class="lead animate-this">
-              I have developed strong skills during my work experience that have
-              helped me to be a constant learner.
-            </p>
-          </div>
+        <p class="animate-this lead" data-animate="fadeInLeft">
+          My expertise lies in WebApp development and specialized technical support, consistently driving efficiency and
+          innovation in the organizations I serve.
+        </p>
+        <br /><br />
 
-          <ul class="services">
-            <li class="animate-this">
-              <div class="icon-wrap">
-                <i class="fa fa-code"></i>
-              </div>
-              <div class="service-item">
-                <h4>Web development based on best practices</h4>
-                <p>
-                  High performance web applications using Frameworks like
-                  Codeigniter, Laravel, YII.
-                </p>
-              </div>
-            </li>
-            <!-- <li class="animate-this">
-              <div class="icon-wrap">
-                <i class="fa fa-sitemap"></i>
-              </div>
-              <div class="service-item">
-                <h4>Architectural patterns and tools</h4>
-                <p>
-                  Use and implementation of MVC, Web Services like SOAP, REST
-                  and RESTful, Maven and Gradle repositories, JSON, XML, APIs,
-                  using version managers like Git.
-                </p>
-              </div>
-            </li> -->
-            <br />
-            <li class="animate-this">
-              <div class="icon-wrap">
-                <i class="fa fa-database"></i>
-              </div>
-              <div class="service-item">
-                <h4>Databases</h4>
-                <p>
-                  Use, creation and maintenance of databases in SQL Server,
-                  MySQL, Postgres.
-                </p>
-              </div>
-            </li>
-            <br />
-            <li class="animate-this">
-              <div class="icon-wrap">
-                <i class="fa fa-bug"></i>
-              </div>
-              <div class="service-item">
-                <h4>Specialized technical assistance</h4>
-                <p>
-                  Manual testing, technical support, documentation, data
-                  analysis, monitoring, reporting.
-                </p>
-              </div>
-            </li>
-            <li class="animate-this">
-              <div class="icon-wrap">
-                <i class="fa fa-"></i>
-              </div>
-              <!-- <div class="service-item">
+        <p>
+          <a href="resume.pdf" target="_blank" class="button button-primary full-width animate-this" id="cv" download>Download CV</a>
+        </p>
+      </div>
+      <!-- end about-profile  -->
+
+      <div class="about-services">
+        <div class="intro">
+          <h3 class="animate-this" data-animate="fadeInRight">Expertise</h3>
+          <h1 class="animate-this" data-animate="fadeInRight">Skills & Solutions</h1>
+
+          <p class="lead animate-this" data-animate="fadeInRight">
+            Over the course of my career, I have honed a diverse set of technical skills.
+          </p>
+
+        </div>
+
+        <ul class="services">
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="icon-wrap">
+              <i class="fa fa-code"></i>
+            </div>
+            <div class="service-item">
+              <h4>Backend Development</h4>
+              <p>
+                CodeIgniter, Laravel and Flask as core Frameworks. API design and use, OWASP Top 10 security, software
+                architecture, unit testing, cloud computing, version control systems, and modern design patterns.
+              </p>
+            </div>
+          </li>
+          <br />
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="icon-wrap">
+              <i class="fa fa-database"></i>
+            </div>
+            <div class="service-item">
+              <h4>Databases</h4>
+              <p>
+                Skilled in PostgreSQL, Redis, and MariaDB, with expertise in optimization, data modeling, secure and
+                scalable solutions.
+              </p>
+            </div>
+          </li>
+          <br />
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="icon-wrap">
+              <i class="fa fa-bug"></i>
+            </div>
+            <div class="service-item">
+              <h4>Specialized Technical Assistance</h4>
+              <p>
+                Expertise in manual testing, technical support, documentation, and data analysis with monitoring and
+                reporting.
+              </p>
+            </div>
+
+          </li>
+          <li class="animate-this">
+            <div class="icon-wrap">
+              <i class="fa fa-"></i>
+            </div>
+            <!-- <div class="service-item">
                 <h4>IT Services</h4>
                 <p></p>
               </div> -->
-            </li>
-          </ul>
-        </div>
-        <!-- end about-services  -->
+          </li>
+        </ul>
       </div>
-      <!-- end about-wrap  -->
-    </section>
-    <!-- end about -->
+      <!-- end about-services  -->
+    </div>
+    <!-- end about-wrap  -->
+  </section>
+  <!-- end about -->
 
-    <!-- skills
+  <!-- skills
    ================================================== -->
-    <section id="skills">
-      <div class="overlay"></div>
-      <div class="gradient-overlay"></div>
+  <section id="skills">
+    <div class="overlay"></div>
+    <div class="gradient-overlay"></div>
 
-      <div class="row wide">
-        <div class="col-skills">
-          <div class="section-intro">
-            <h3 class="animate-this">Skillset</h3>
-            <h1 class="animate-this">Hard skills</h1>
-
-            <p class="animate-this"></p>
-          </div>
-
-          <ul class="skill-bars">
-            <li class="animate-this" data-animate="fadeInRight">
-              <div class="progress percent80"><span>80%</span></div>
-              <strong>PHP (Codeigniter)</strong>
-            </li>
-            <li class="animate-this" data-animate="fadeInRight">
-              <div class="progress percent75"><span>75%</span></div>
-              <strong>SQL (Oracle, MySQL, PostgreSQL)</strong>
-            </li>
-            <li class="animate-this" data-animate="fadeInRight">
-              <div class="progress percent70"><span>70%</span></div>
-              <strong>Python</strong>
-            </li>
-            <li class="animate-this" data-animate="fadeInRight">
-              <div class="progress percent80"><span>80%</span></div>
-              <strong>Git (Github, Bitbucket)</strong>
-            </li>
-            <li class="animate-this" data-animate="fadeInRight">
-              <div class="progress percent85"><span>85%</span></div>
-              <strong>HTML, CSS, Javascript</strong>
-            </li>
-            <li class="animate-this" data-animate="fadeInRight">
-              <div class="progress percent70"><span>70%</span></div>
-              <strong>Database Management</strong>
-            </li>
-            <li class="animate-this" data-animate="fadeInRight">
-              <div class="progress percent60"><span>60%</span></div>
-              <strong>PowerBI</strong>
-            </li>
-            <li class="animate-this" data-animate="fadeInRight">
-              <div class="progress percent70"><span>70%</span></div>
-              <strong>Bootstrap</strong>
-            </li>
-            <!-- 
-            <li class="animate-this" data-animate="fadeInRight">
-              <div class="progress percent80"><span>80%</span></div>
-              <strong>Git, Mercurial</strong>
-            </li>
-            <li class="animate-this" data-animate="fadeInRight">
-              <div class="progress percent80"><span>80%</span></div>
-              <strong>JQuery + Ajax</strong>
-            </li> -->
-          </ul>
+    <div class="row wide">
+      <div class="col-skills">
+        <div class="section-intro">
+          <h3 class="animate-this">Skillset</h3>
+          <h1 class="animate-this">Hard Skills</h1>
+          <p class="animate-this"></p>
         </div>
-        <!-- end col-six -->
-      </div>
-      <!-- end row wide -->
-    </section>
-    <!-- end skills -->
 
-    <!-- credentials
-   ================================================== -->
-    <section id="credentials">
-      <div class="row narrow section-intro with-bottom-sep">
-        <div class="col-twelve">
-          <h3 class="animate-this">Career and Education</h3>
-          <h1 class="animate-this">More of My Credentials</h1>
-        </div>
+        <ul class="skill-bars">
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="progress percent85"><span>85%</span></div>
+            <strong>Codeigniter & Laravel</strong>
+          </li>
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="progress percent65"><span>65%</span></div>
+            <strong>Flask | Django</strong>
+          </li>
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="progress percent75"><span>75%</span></div>
+            <strong>Vue | React</strong>
+          </li>
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="progress percent80"><span>80%</span></div>
+            <strong>Tailwind | Bootstrap</strong>
+          </li>
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="progress percent85"><span>85%</span></div>
+            <strong>PostgreSQL | Redis | MySQL</strong>
+          </li>
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="progress percent80"><span>80%</span></div>
+            <strong>Git (GitHub | Bitbucket)</strong>
+          </li>
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="progress percent75"><span>75%</span></div>
+            <strong>API Design | Integration</strong>
+          </li>
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="progress percent70"><span>70%</span></div>
+            <strong>OAuth2 | JWT | OWASP Top 10</strong>
+          </li>
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="progress percent65"><span>65%</span></div>
+            <strong>Docker | Docker Compose</strong>
+          </li>
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="progress percent65"><span>65%</span></div>
+            <strong>Cloud Computing (Google Cloud)</strong>
+          </li>
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="progress percent70"><span>70%</span></div>
+            <strong>Design Patterns (Backend)</strong>
+          </li>
+          <li class="animate-this" data-animate="fadeInRight">
+            <div class="progress percent65"><span>65%</span></div>
+            <strong>Agile methodologies</strong>
+          </li>
+        </ul>
       </div>
-      <!-- end section-intro -->
-      <div class="row narrow credentials-content with-bottom-sep">
-        <h2 class="animate-this">Education</h2>
-        <div class="timeline-block animate-this">
-          <div class="timeline-ico">
-            <i class="fa fa-graduation-cap"></i>
-          </div>
-          <div class="timeline-header">
-            <p class="timeframe">August 2015 - January 2021</p>
-            <h3>TecNM Campus Pátzcuaro</h3>
-            <h4>Bachelor Degree</h4>
-          </div>
-          <div class="timeline-desc">
-            <p>
-              <strong>Ing. Tecnolgías de la información.</strong>
-              Specializing in full stack web development and mobile
-              applications.
-            </p>
-          </div>
-        </div>
-      </div>
+      <!-- end col-six -->
+    </div>
+    <!-- end row wide -->
+  </section>
+  <!-- end skills -->
 
-      <!-- end education row -->
-      <div class="row wide credentials-content">
-        <div class="col-twelve">
-          <h2 class="animate-this">Experience</h2>
-        </div>
+  <!-- credentials
+  ================================================== -->
+  <section id="credentials">
+    <div class="row narrow section-intro with-bottom-sep">
+      <div class="col-twelve">
+        <h3 class="animate-this">Professional Experience and Education</h3>
+        <h1 class="animate-this">Explore My Qualifications</h1>
       </div>
-      <div class="row wide credentials-content">
-        <div class="col-six tab-full left">
-          <div class="timeline-wrap">
-            <div class="timeline-block animate-this">
-              <div class="timeline-ico">
-                <i class="fa fa-bug"></i>
-              </div>
-              <div class="timeline-header">
-                <p class="timeframe">06/2022 - 07/2023</p>
-                <h3>IT Engineer and Technical Support Specialist</h3>
-                <h4>Medical Minds S.C.</h4>
-              </div>
-              <div class="timeline-content">
-                <p>
-                  Technical support and specialized assistance 24/7, testing and
-                  incident reporting, database management and ecryption, remote
-                  server administration, network management, data analysis.
-                </p>
-              </div>
+    </div>
+    <!-- end section-intro -->
+    <div class="row narrow credentials-content with-bottom-sep">
+      <h2 class="animate-this" data-animate="fadeInLeft">Education</h2>
+      <div class="timeline-block animate-this">
+        <div class="timeline-ico">
+          <i class="fa fa-graduation-cap"></i>
+        </div>
+        <div class="timeline-header">
+          <p class="timeframe">August 2015 - January 2021</p>
+          <h3>TecNM Campus Pátzcuaro</h3>
+          <h4>Bachelor Degree</h4>
+        </div>
+        <div class="timeline-desc">
+          <p>
+            <strong>Information Technology Engineer</strong>, specializing in full-stack web development and mobile
+            application design and implementation.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- end education row -->
+    <div class="row wide credentials-content">
+      <div class="col-twelve">
+        <h2 class="animate-this" data-animate="fadeInLeft">Experience</h2>
+      </div>
+    </div>
+    <div class="row wide credentials-content">
+      <div class="col-six tab-full left">
+        <div class="timeline-wrap">
+          <div class="timeline-block animate-this">
+            <div class="timeline-ico">
+              <i class="fa fa-bug"></i>
             </div>
-            <!-- end timeline-block -->
-            <div class="timeline-block animate-this">
-              <div class="timeline-ico">
-                <i class="fa fa-code"></i>
-              </div>
-              <div class="timeline-header">
-                <p class="timeframe">12/2021 - 05/2022</p>
-                <h3>Web Developer</h3>
-                <h4>Never Too Much Money</h4>
-              </div>
-              <div class="timeline-content">
-                <p>
-                  Web platform development, hosting server management, update
-                  and publish on the advertising website, provide remote support
-                  of the platform.
-                </p>
-              </div>
+            <div class="timeline-header">
+              <p class="timeframe">08/2023 - Present</p>
+              <h3>Full Stack Developer & IT Engineer</h3>
+              <h4>H. Ayuntamiento de Lagunillas, Michoacán</h4>
             </div>
-            <!-- end timeline-block -->
+            <div class="timeline-content">
+              <p>
+                Development the Presidencia Digital WebApp, management hosting and email services, supervised network
+                administration, provided specialized technical support.
+              </p>
+            </div>
           </div>
-          <!-- end timeline-wrap -->
-        </div>
-        <!-- end col-six -->
 
-        <div class="col-six tab-full right">
+          <!-- end timeline-block -->
+          <div class="timeline-block animate-this">
+            <div class="timeline-ico">
+              <i class="fa fa-bug"></i>
+            </div>
+            <div class="timeline-header">
+              <p class="timeframe">06/2022 - 07/2023</p>
+              <h3>IT Engineer and Technical Support Specialist</h3>
+              <h4>Medical Minds S.C.</h4>
+            </div>
+            <div class="timeline-content">
+              <p>
+                24/7 technical support, testing and incident reporting, database management, servers and networks administration, data analysis performing.
+              </p>
+            </div>
+          </div>
+          <!-- end timeline-block -->
+        </div>
+        <!-- end timeline-wrap -->
+      </div>
+      <!-- end col-six -->
+
+      <div class="col-six tab-full right">
+        <div class="timeline-wrap">
+          <!-- end timeline-block -->
+          <div class="timeline-block animate-this">
+            <div class="timeline-ico">
+              <i class="fa fa-code"></i>
+            </div>
+            <div class="timeline-header">
+              <p class="timeframe">12/2021 - 05/2022</p>
+              <h3>Full Stack Developer</h3>
+              <h4>Never Too Much Money</h4>
+            </div>
+            <div class="timeline-content">
+              <p>
+                Development a web platform for insurance management, managed hosting servers and corporate email,
+                maintained and updated the advertising platform, provided remote technical support.
+              </p>
+            </div>
+          </div>
+          <!-- end timeline-block -->
           <div class="timeline-wrap">
             <div class="timeline-block animate-this">
               <div class="timeline-ico">
@@ -428,615 +412,582 @@
               </div>
               <div class="timeline-header">
                 <p class="timeframe">03/2021 - 08/2021</p>
-                <h3>Web Developer</h3>
+                <h3>Full Stack Developer</h3>
                 <h4>CEMA Mexico S.C.</h4>
               </div>
               <div class="timeline-desc">
                 <p>
-                  Develop the electronic logbook module, provide support and
-                  maintenance to computer equipment, design content for digital
-                  marketing, develop laboratory specimen processing algorithms.
+                  Electronic logbook module developement, IT support and maintenance, design digital
+                  marketing content, laboratory specimen processing algorithms implementation.
                 </p>
               </div>
             </div>
             <!-- end timeline-block -->
-
-            <div class="timeline-wrap">
-              <div class="timeline-block animate-this">
-                <div class="timeline-ico">
-                  <i class="fa fa-code"></i>
-                </div>
-                <div class="timeline-header">
-                  <p class="timeframe">08/2020 - 12/2020 <span style="font-weight: bold;">(Social service)</span></p>
-                  <h3>Python Developer</h3>
-                  <h4>TecNM Campus Pátzcuaro</h4>
-                </div>
-                <div class="timeline-desc">
-                  <p>
-                    Development of the RFID platform using raspberry pi and arduino for library check-in and check-out, electronic token card for the copy and print kiosk. 
-                  </p>
-                </div>
-              </div>
-              <!-- end timeline-block -->
+            <!-- end timeline-wrap -->
           </div>
-          <!-- end timeline-wrap -->
+          <!-- end col-six -->
         </div>
-        <!-- end col-six -->
-      </div>
-      <!-- end row wide -->
-    </section>
-    <!-- end credentials -->
+        <!-- end row wide -->
+  </section>
+  <!-- end credentials -->
 
-    <!--achievements
+  <!--achievements
 	===========================================-->
-    <section id="achieve">
-      <div class="overlay"></div>
-      <div class="gradient-overlay"></div>
-      <div class="row narrow section-intro with-bottom-sep">
-        <div class="col-twelve">
-          <h3 class="animate-this titulo">Achievements</h3>
-          <p class="lead">
-            I've taken courses and certifications on platforms such HackerRank,
-            Udemy and Coursera.
-          </p>
-        </div>
+  <section id="achieve">
+    <div class="overlay"></div>
+    <div class="gradient-overlay"></div>
+    <div class="row narrow section-intro with-bottom-sep">
+      <div class="col-twelve">
+        <h3 class="animate-this titulo">Professional Achievements</h3>
+        <p class="lead animate-this">
+          Completed courses and earned certifications on platforms like HackerRank, Udemy, and Coursera, further
+          enhancing my skills.
+        </p>
       </div>
-      <!-- end section-intro -->
-      <div class="row wide achieve-content">
-        <div class="col-six tab-full left">
-          <h2 class="animate-this">Certifications</h2>
-          <div class="timeline-wrap">
+    </div>
 
-            <div class="timeline-block animate-this">
-              <div class="timeline-ico">
-                <i class="fa fa-database"></i>
-              </div>
-              <div class="timeline-header">
-                <p class="timeframe fechas">march 2024</p>
-                <h3 class="curso">SQL Intermediate Skills Certification <a href="https://www.hackerrank.com/certificates/70208e4a4c23" target="_blank" style="font-size: .6em!important; color:#950101;">view credential</a></h3>
-                <h4 class="descripcion">HackerRank.</h4>
-              </div>
+    <!-- end section-intro -->
+    <div class="row wide achieve-content">
+      <div class="col-six tab-full left">
+        <h2 class="animate-this" data-animate="fadeInLeft">Certifications</h2>
+        <div class="timeline-wrap">
+          <div class="timeline-block animate-this">
+            <div class="timeline-ico">
+              <i class="fa fa-cloud"></i>
             </div>
-            <!-- end timeline-block -->
-            <div class="timeline-block animate-this">
-              <div class="timeline-ico">
-                <i class="fa fa-code"></i>
-              </div>
-              <div class="timeline-header">
-                <p class="timeframe fechas">march 2024</p>
-                <h3 class="curso">Python Basic Skills Certification <a href="https://www.hackerrank.com/certificates/a259e64512a5" target="_blank" style="font-size: .6em!important; color:#950101;">view credential</a></h3>
-                <h4 class="descripcion">HackerRank.</h4>
-              </div>
+            <div class="timeline-header">
+              <p class="timeframe fechas">july 2024</p>
+              <h3 class="curso">Google Cloud Computing Foundations Certificate <a
+                  href="https://www.credly.com/badges/d20347d1-7a44-48f9-a780-cd1bef4ccb75" target="_blank"
+                  style="font-size: .6em!important; color:#950101;">view credential</a></h3>
+              <h4 class="descripcion">Google Cloud.</h4>
             </div>
-            <!-- end timeline-block -->
-            <div class="timeline-block animate-this">
-              <div class="timeline-ico">
-                <i class="fa fa-database"></i>
-              </div>
-              <div class="timeline-header">
-                <p class="timeframe fechas">december 2021</p>
-                <h3 class="curso">SQL Basic Skills Certification <a href="https://www.hackerrank.com/certificates/2da823527e7c" target="_blank" style="font-size: .6em!important; color:#950101;">view credential</a></h3>
-                <h4 class="descripcion">HackerRank.</h4>
-              </div>
-            </div>
-            <!-- end timeline-block -->
           </div>
-          <!-- end timeline-wrap -->
-        </div>
-        <!-- end col-six -->
-
-        <div class="col-six tab-full right">
-          <div class="timeline-wrap">
-            <h2 class="animate-this">Courses</h2>
-            <div class="timeline-block animate-this">
-              <div class="timeline-ico">
-                <i class="fa fa-code"></i>
-              </div>
-              <div class="timeline-header">
-                <p class="timeframe fechas">Udemy</p>
-                <h3 class="curso">
-                  GIT & Github: Version control system from scratch
-                </h3>
-                <h4 class="descripcion">Solid Git foundations, project management, collective work.</h4>
-              </div>
+          <div class="timeline-block animate-this">
+            <div class="timeline-ico">
+              <i class="fa fa-database"></i>
             </div>
-            <!-- end timeline-block -->
-
-            <div class="timeline-block animate-this">
-              <div class="timeline-ico">
-                <i class="fa fa-database"></i>
-              </div>
-              <div class="timeline-header">
-                <p class="timeframe fechas">Udemy</p>
-                <h3 class="curso">
-                  SQL from scratch: Your practical guide to PostgreSQL
-                </h3>
-                <h4 class="descripcion">CRUD basics, PLpgSQL using procedures, functions and triggers, Docker, PGAdmin and TablePlus.</h4>
-              </div>
+            <div class="timeline-header">
+              <p class="timeframe fechas">march 2024</p>
+              <h3 class="curso">SQL Intermediate Skills Certification <a
+                  href="https://www.hackerrank.com/certificates/70208e4a4c23" target="_blank"
+                  style="font-size: .6em!important; color:#950101;">view credential</a></h3>
+              <h4 class="descripcion">HackerRank.</h4>
             </div>
-            <!-- end timeline-block -->
-            <div class="timeline-block animate-this">
-              <div class="timeline-ico">
-                <i class="fa fa-database"></i>
-              </div>
-              <div class="timeline-header">
-                <p class="timeframe fechas">Udemy</p>
-                <h3 class="curso">Python University - From Zero to Expert, Complete Course</h3>
-                <h4 class="descripcion">Object oriented programming, graphical interfaces, Django and Flask basics, database connections..</h4>
-              </div>
-            </div>
-            <!-- end timeline-block -->
           </div>
-          <!-- end timeline-wrap -->
+          <!-- end timeline-block -->
+          <div class="timeline-block animate-this">
+            <div class="timeline-ico">
+              <i class="fa fa-code"></i>
+            </div>
+            <div class="timeline-header">
+              <p class="timeframe fechas">march 2024</p>
+              <h3 class="curso">Python Basic Skills Certification <a
+                  href="https://www.hackerrank.com/certificates/a259e64512a5" target="_blank"
+                  style="font-size: .6em!important; color:#950101;">view credential</a></h3>
+              <h4 class="descripcion">HackerRank.</h4>
+            </div>
+          </div>
+          <!-- end timeline-block -->
+          <div class="timeline-block animate-this">
+            <div class="timeline-ico">
+              <i class="fa fa-database"></i>
+            </div>
+            <div class="timeline-header">
+              <p class="timeframe fechas">december 2021</p>
+              <h3 class="curso">SQL Basic Skills Certification <a
+                  href="https://www.hackerrank.com/certificates/2da823527e7c" target="_blank"
+                  style="font-size: .6em!important; color:#950101;">view credential</a></h3>
+              <h4 class="descripcion">HackerRank.</h4>
+            </div>
+          </div>
+          <!-- end timeline-block -->
         </div>
-        <!-- end col-six -->
+        <!-- end timeline-wrap -->
       </div>
-      <!-- end row wide -->
-    </section>
-    <!--end achievements-->
+      <!-- end col-six -->
 
-    <!-- portfolio
+      <div class="col-six tab-full right">
+        <div class="timeline-wrap">
+          <h2 class="animate-this" data-animate="fadeInLeft">Courses</h2>
+          <div class="timeline-block animate-this">
+            <div class="timeline-ico">
+              <i class="fa fa-database"></i>
+            </div>
+            <div class="timeline-header">
+              <p class="timeframe fechas">Udemy</p>
+              <h3 class="curso">Laravel 11 from scratch + Tailwind & Vue 3
+              </h3>
+              <h4 class="descripcion">WebApps using Laravel, Tailwind.CSS, Node, Vue, RestApi, Sanctum, Livewire,
+                Inertia, PayPal, Stripe</h4>
+            </div>
+          </div>
+          <!-- end timeline-block -->
+          <div class="timeline-block animate-this">
+            <div class="timeline-ico">
+              <i class="fa fa-code"></i>
+            </div>
+            <div class="timeline-header">
+              <p class="timeframe fechas">Udemy</p>
+              <h3 class="curso">
+                GIT & Github: Version control system from scratch
+              </h3>
+              <h4 class="descripcion">Solid Git foundations, project management, collective work.</h4>
+            </div>
+          </div>
+          <!-- end timeline-block -->
+
+          <div class="timeline-block animate-this">
+            <div class="timeline-ico">
+              <i class="fa fa-database"></i>
+            </div>
+            <div class="timeline-header">
+              <p class="timeframe fechas">Udemy</p>
+              <h3 class="curso">
+                React: Zero to Expert (Hooks and MERN)
+              </h3>
+              <h4 class="descripcion">Context API, MERN, Hooks, Firestore, JWT, Testing, Autentications,CRUD, Logs,
+                MUI, Multiple Routers.</h4>
+            </div>
+          </div>
+          <!-- end timeline-block -->
+        </div>
+        <!-- end timeline-wrap -->
+      </div>
+      <!-- end col-six -->
+    </div>
+    <!-- end row wide -->
+  </section>
+  <!--end achievements-->
+
+  <!-- portfolio
    ================================================== -->
-    <section id="portfolio">
-      <div class="row narrow section-intro with-bottom-sep">
-        <div class="col-twelve">
-          <h3 class="animate-this">Portfolio</h3>
-          <h1 class="animate-this">See My Latest Projects</h1>
-        </div>
+  <section id="portfolio">
+    <div class="row narrow section-intro with-bottom-sep">
+      <div class="col-twelve">
+        <h3 class="animate-this">Portfolio</h3>
+        <h1 class="animate-this">Explore My Recent Projects</h1>
       </div>
-      <!-- end row section-intro -->
-
-      <div class="row portfolio-content">
-        <div class="col-twelve">
-          <div id="folio-wrap-2" class="bricks-wrapper">
-            <div class="brick folio-item">
-              <div
-                class="item-wrap animate-this"
-                data-src="images/portfolio/g-n2mm0.png"
-                data-sub-html="#11"
-              >
-                <a href="#" class="overlay">
-                  <img src="images/portfolio/n2mm0.png" alt="n2mm0" />
-                  <div class="item-text">
-                    <span class="folio-types"> Freelance web development </span>
-                    <h3 class="folio-title">Never too much money</h3>
-                  </div>
+    </div>
+    <!-- end row section-intro -->
+    <div class="row">
+      <h3 class="subtitle-portfolio animate-this" style="text-align: center; text-transform: uppercase;">Plataforma Digital Lagunillas</h3 style="color: black!important;">
+      <div class="animate-this col-six" style="align-items: center;" data-animate="fadeInLeft">
+        <div class="glide3 animate-this">
+          <div class="glide__track" data-glide-el="track">
+            <ul class="glide__slides">
+              <li class="glide__slide">
+                <a href="images/portfolio/pd.png" data-lightbox="project3" data-title="Never Too Much Money Project">
+                  <img src="images/portfolio/pd.png" alt="cema">
                 </a>
-                <a href="#" class="details-link" title="details">
-                  <i class="icon-UpRightArrow"></i>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/pd0.png" data-lightbox="project3" data-title="Main Panel">
+                  <img src="images/portfolio/pd0.png" alt="cema">
                 </a>
-              </div>
-              <!-- end item-wrap -->
-              <div id="11" class="hide">
-                <h4></h4>
-                <p></p>
-              </div>
-            </div>
-            <!-- end folio-item -->
-
-            <div class="brick folio-item">
-              <div
-                class="item-wrap animate-this"
-                data-src="images/portfolio/n2mm1.png"
-                data-sub-html="#12"
-              >
-                <a href="#" class="overlay">
-                  <img src="images/portfolio/n2mm1.png" alt="n2mm1" />
-                  <div class="item-text">
-                    <span class="folio-types"> ERP & CRM plarform </span>
-                    <h3 class="folio-title">Main panels</h3>
-                  </div>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/pd1.png" data-lightbox="project3" data-title="Main Panel">
+                  <img src="images/portfolio/pd1.png" alt="cema">
                 </a>
-                <a href="#" class="details-link" title="details">
-                  <i class="icon-UpRightArrow"></i>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/pd2.png" data-lightbox="project3" data-title="Main Panel">
+                  <img src="images/portfolio/pd2.png" alt="cema">
                 </a>
-              </div>
-              <!-- end item-wrap -->
-
-              <div id="12" class="hide">
-                <h4>Main panel</h4>
-                <p>
-                  Main panel with client entries. Each entry contains different
-                  options such as data capture, and CRUD operations powered by
-                  DataTables.
-                </p>
-              </div>
-            </div>
-            <!-- end folio-item -->
-
-            <div class="brick folio-item">
-              <div
-                class="item-wrap animate-this"
-                data-src="images/portfolio/n2mm2.png"
-                data-sub-html="#13"
-              >
-                <a href="#" class="overlay">
-                  <img src="images/portfolio/n2mm2.png" alt="n2mm2" />
-                  <div class="item-text">
-                    <span class="folio-types"> ERP & CRM platform </span>
-                    <h3 class="folio-title">Login forms</h3>
-                  </div>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/pd3.png" data-lightbox="project3" data-title="Main Panel">
+                  <img src="images/portfolio/pd3.png" alt="cema">
                 </a>
-                <a href="#" class="details-link" title="details">
-                  <i class="icon-UpRightArrow"></i>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/pd4.png" data-lightbox="project3" data-title="Main Panel">
+                  <img src="images/portfolio/pd4.png" alt="cema">
                 </a>
-              </div>
-              <!-- end item-wrap -->
-
-              <div id="13" class="hide">
-                <h4>Login forms</h4>
-                <p>
-                  Each logbook in the module contains the option to export PDF
-                  information in formats established by the company.
-                </p>
-              </div>
-            </div>
-            <!-- end folio-item -->
-
-            <div class="brick folio-item">
-              <div
-                class="item-wrap animate-this"
-                data-src="images/portfolio/n2mm3.png"
-                data-sub-html="#14"
-              >
-                <a href="#" class="overlay">
-                  <img src="images/portfolio/n2mm3.png" alt="n2mm3" />
-                  <div class="item-text">
-                    <span class="folio-types"> ERP & CRM platform </span>
-                    <h3 class="folio-title">Perform actions</h3>
-                  </div>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/pd5.png" data-lightbox="project3" data-title="Main Panel">
+                  <img src="images/portfolio/pd5.png" alt="cema">
                 </a>
-                <a href="#" class="details-link" title="details">
-                  <i class="icon-UpRightArrow"></i>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/pd6.png" data-lightbox="project3" data-title="Main Panel">
+                  <img src="images/portfolio/pd6.png" alt="cema">
                 </a>
-              </div>
-              <!-- end item-wrap -->
-
-              <div id="14" class="hide">
-                <h4>Perform actions</h4>
-                <p>Detail panel and interface to perform actions.</p>
-              </div>
-            </div>
-            <!-- end folio-item -->
-
-            <div class="brick folio-item">
-              <div
-                class="item-wrap animate-this"
-                data-src="images/portfolio/n2mm4.png"
-                data-sub-html="#15"
-              >
-                <a href="#" class="overlay">
-                  <img src="images/portfolio/n2mm4.png" alt="n2mm4" />
-                  <div class="item-text">
-                    <span class="folio-types"> ERP & CRM platform </span>
-                    <h3 class="folio-title">Full responsive design</h3>
-                  </div>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/pd7.png" data-lightbox="project3" data-title="Main Panel">
+                  <img src="images/portfolio/pd7.png" alt="cema">
                 </a>
-                <a href="#" class="details-link" title="details">
-                  <i class="icon-UpRightArrow"></i>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/pd8.png" data-lightbox="project3" data-title="Main Panel">
+                  <img src="images/portfolio/pd8.png" alt="cema">
                 </a>
-              </div>
-              <!-- end item-wrap -->
-
-              <div id="15" class="hide">
-                <h4>Full responsive design</h4>
-                <p>
-                  Using the bootstrap 5 tool a 100% responsive design site is
-                  designed.
-                </p>
-              </div>
-            </div>
-            <!-- end folio-item -->
-
-            <div class="brick folio-item">
-              <div
-                class="item-wrap animate-this"
-                data-src="images/portfolio/n2mm5.png"
-                data-sub-html="#15"
-              >
-                <a href="#" class="overlay">
-                  <img src="images/portfolio/n2mm5.png" alt="n2mm5" />
-                  <div class="item-text">
-                    <span class="folio-types"> ERP & CRM platform </span>
-                    <h3 class="folio-title">
-                      Reading and handling of data in CSV format
-                    </h3>
-                  </div>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/pd9.png" data-lightbox="project3" data-title="Main Panel">
+                  <img src="images/portfolio/pd9.png" alt="cema">
                 </a>
-                <a href="#" class="details-link" title="details">
-                  <i class="icon-UpRightArrow"></i>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/pd10.png" data-lightbox="project3" data-title="Main Panel">
+                  <img src="images/portfolio/pd10.png" alt="cema">
                 </a>
-              </div>
-              <!-- end item-wrap -->
-
-              <div id="15" class="hide">
-                <h4>Reading and handling of data in CSV format</h4>
-                <p>
-                  With the help of libraries within the framework, external
-                  information imported in CSV extension is processed.
-                </p>
-              </div>
-            </div>
-            <!-- end folio-item -->
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/pd11.png" data-lightbox="project3" data-title="Main Panel">
+                  <img src="images/portfolio/pd11.png" alt="cema">
+                </a>
+              </li>
+            </ul>
           </div>
-          <!-- end folio-wrap never too much money-->
-          <br />
-          <br />
-          <div id="folio-wrap" class="bricks-wrapper">
-            <div class="brick folio-item">
-              <div
-                class="item-wrap animate-this"
-                data-src="images/portfolio/g-cema0.png"
-                data-sub-html="#01"
-              >
-                <a href="#" class="overlay">
-                  <img src="images/portfolio/cema0.png" alt="Skaterboy" />
-                  <div class="item-text">
-                    <span class="folio-types"> Web develompent </span>
-                    <h3 class="folio-title">CEMA México S.C.</h3>
-                  </div>
-                </a>
-                <a href="#" class="details-link" title="details">
-                  <i class="icon-UpRightArrow"></i>
-                </a>
-              </div>
-              <!-- end item-wrap -->
-              <div id="01" class="hide">
-                <h4></h4>
-                <p></p>
-              </div>
-            </div>
-            <!-- end folio-item -->
-
-            <div class="brick folio-item">
-              <div
-                class="item-wrap animate-this"
-                data-src="images/portfolio/cema1.png"
-                data-sub-html="#02"
-              >
-                <a href="#" class="overlay">
-                  <img src="images/portfolio/cema1.png" alt="cema1" />
-                  <div class="item-text">
-                    <span class="folio-types"> Logbook module </span>
-                    <h3 class="folio-title">Main panel</h3>
-                  </div>
-                </a>
-                <a href="#" class="details-link" title="details">
-                  <i class="icon-UpRightArrow"></i>
-                </a>
-              </div>
-              <!-- end item-wrap -->
-
-              <div id="02" class="hide">
-                <h4>Main panel</h4>
-                <p>
-                  Main panel with log entries. Each entry contains different
-                  options such as data capture, export to PDF and complete
-                  entry.
-                </p>
-              </div>
-            </div>
-            <!-- end folio-item -->
-
-            <div class="brick folio-item">
-              <div
-                class="item-wrap animate-this"
-                data-src="images/portfolio/cema2.png"
-                data-sub-html="#03"
-              >
-                <a href="#" class="overlay">
-                  <img src="images/portfolio/cema2.png" alt="cema2" />
-                  <div class="item-text">
-                    <span class="folio-types"> Logbook module </span>
-                    <h3 class="folio-title">PDF File Exported</h3>
-                  </div>
-                </a>
-                <a href="#" class="details-link" title="details">
-                  <i class="icon-UpRightArrow"></i>
-                </a>
-              </div>
-              <!-- end item-wrap -->
-
-              <div id="03" class="hide">
-                <h4>PDF File</h4>
-                <p>
-                  Each logbook in the module contains the option to export PDF
-                  information in formats established by the company.
-                </p>
-              </div>
-            </div>
-            <!-- end folio-item -->
-
-            <div class="brick folio-item">
-              <div
-                class="item-wrap animate-this"
-                data-src="images/portfolio/cema3.png"
-                data-sub-html="#04"
-              >
-                <a href="#" class="overlay">
-                  <img src="images/portfolio/cema3.png" alt="cema3" />
-                  <div class="item-text">
-                    <span class="folio-types"> Logbook module </span>
-                    <h3 class="folio-title">Forms</h3>
-                  </div>
-                </a>
-                <a href="#" class="details-link" title="details">
-                  <i class="icon-UpRightArrow"></i>
-                </a>
-              </div>
-              <!-- end item-wrap -->
-
-              <div id="04" class="hide">
-                <h4>Forms</h4>
-                <p>
-                  All entries have data validation both in the frontend and in
-                  the backend. When the entries are typed in the fields, the
-                  logbook operations are automatically performed.
-                </p>
-              </div>
-            </div>
-            <!-- end folio-item -->
-
-            <div class="brick folio-item">
-              <div
-                class="item-wrap animate-this"
-                data-src="images/portfolio/cema4.png"
-                data-sub-html="#05"
-              >
-                <a href="#" class="overlay">
-                  <img src="images/portfolio/cema4.png" alt="cema4" />
-                  <div class="item-text">
-                    <span class="folio-types"> Logbook module </span>
-                    <h3 class="folio-title">Multi Panel Functions</h3>
-                  </div>
-                </a>
-                <a href="#" class="details-link" title="details">
-                  <i class="icon-UpRightArrow"></i>
-                </a>
-              </div>
-              <!-- end item-wrap -->
-
-              <div id="05" class="hide">
-                <h4>Multi Panel Functions</h4>
-                <p>
-                  Using arrayLists, several modalities are handled in logbooks
-                  as shown in the image. Each separate entry has its own
-                  options, from displaying graphics, CRUD, to Export to PDF.
-                </p>
-              </div>
-            </div>
-            <!-- end folio-item -->
-
-            <div class="brick folio-item">
-              <div
-                class="item-wrap animate-this"
-                data-src="images/portfolio/cema5.png"
-                data-sub-html="#06"
-              >
-                <a href="#" class="overlay">
-                  <img src="images/portfolio/cema5.png" alt="cema5" />
-                  <div class="item-text">
-                    <span class="folio-types"> Logbook module </span>
-                    <h3 class="folio-title">Ajax Forms</h3>
-                  </div>
-                </a>
-                <a href="#" class="details-link" title="details">
-                  <i class="icon-UpRightArrow"></i>
-                </a>
-              </div>
-              <!-- end item-wrap -->
-
-              <div id="06" class="hide">
-                <h4>Ajax forms</h4>
-                <p>
-                  Using Ajax, the functionality to select elements from the
-                  database and perform operations between them asynchronously
-                  was implemented.
-                </p>
-              </div>
-            </div>
-            <!-- end folio-item -->
+          <!-- Indicadores (puntos) -->
+          <div class="glide__bullets" data-glide-el="controls[nav]">
+            <button class="glide__bullet" data-glide-dir="=0"></button>
+            <button class="glide__bullet" data-glide-dir="=1"></button>
+            <button class="glide__bullet" data-glide-dir="=2"></button>
+            <button class="glide__bullet" data-glide-dir="=3"></button>
+            <button class="glide__bullet" data-glide-dir="=4"></button>
+            <button class="glide__bullet" data-glide-dir="=5"></button>
+            <button class="glide__bullet" data-glide-dir="=6"></button>
+            <button class="glide__bullet" data-glide-dir="=7"></button>
+            <button class="glide__bullet" data-glide-dir="=8"></button>
+            <button class="glide__bullet" data-glide-dir="=9"></button>
+            <button class="glide__bullet" data-glide-dir="=10"></button>
           </div>
-          <!-- end folio-wrap cema mexico-->
-         
         </div>
-        <!-- end twelve -->
       </div>
-      <!-- end portfolio-content -->
-    </section>
-    <!-- end portfolio -->
-
-    <!-- footer
-   ================================================== -->
-    <footer id="footer">
-      <div class="row contact-info">
-        <div class="col-four tab-full">
-          <h5 class="animate-this">Where am I located?</h5>
-
-          <p class="animate-this" id="contFoc">
-            I'm based in Morelia, MX <br />
-          </p>
-        </div>
-        <!-- end col-four -->
-
-        <div class="col-four tab-full collapse">
-          <h5 class="animate-this">Email Me At</h5>
-
-          <p class="animate-this" id="contFoc">rastherdev@gmail.com<br /></p>
-        </div>
-        <!-- end col-four -->
-
-        <div class="col-four tab-full">
-          <h5 class="animate-this">Call Me At</h5>
-
-          <p class="animate-this" id="contFoc">Phone: (+52) 4432138396</p>
-        </div>
-        <!-- end col-four -->
-      </div>
-      <!-- end row contact-info -->
-
-      <div class="row">
-        <div class="col-twelve tab-full social">
-          <ul class="animate-this footer-social">
-            <li>
-              <a href="www.linkedin.com/in/rastherdev" target="_blank">LinkedIn</a
-              >
+      <div class="animate-this col-six align-items" data-animate="fadeInRight">
+        <br></br>
+        <p class="project-description">It is a platform that has similar objectives to an ERP and CRM. It is
+          tailor-made, it is an ecosystem of modules that help the processing of information within the municipal
+          council.</p>
+        <div class="hover-icons">
+          <ul>
+            <!-- CodeIgniter -->
+            <li style="--i:#dd4814;--j:#f8a31c">
+              <span class="icon"><img class="icon-png" src="images/icons/codeigniter.png" alt="codeigniter-logo"></span>
+              <span class="title">Codeigniter</span>
             </li>
-            <li>
-              <a href="https://github.com/rastherdev" target="_blank">Github</a>
+           
+            <!-- Bootstrap -->
+            <li style="--i:#7952b3;--j:#563d7c">
+              <span class="icon"><img class="icon-png" src="images/icons/bootstrap.png" alt="bootstrap-logo"></span>
+              <span class="title">Bootstrap</span>
+            </li>
+            <!-- jQuery -->
+            <li style="--i:#0769ad;--j:#7acef4">
+              <span class="icon"><img class="icon-png" src="images/icons/jquery.png" alt="jquery-logo"></span>
+              <span class="title">JQuery</span>
+            </li>
+            <!-- MySQL -->
+            <li style="--i:#00758f;--j:#f29111">
+              <span class="icon"><img class="icon-png" src="images/icons/mysql.png" alt="mysql-logo"></span>
+              <span class="title">MySQL</span>
             </li>
           </ul>
         </div>
-
-        <div class="col-twelve tab-full">
-          <div class="copyright animate-this">
-            <span>© Copyright Rasther DEV 2024.</span>
+      </div>
+    </div>
+    <br><br><br><br>
+    <div class="row">
+      <h3 class="animate-this subtitle-portfolio" style="text-align: center; text-transform: uppercase;">Never Too Much Money</h3
+        style="color: black!important;">
+      <div class="animate-this col-six" data-animate="fadeInLeft">
+        <div class="glide2 animate-this">
+          <div class="glide__track" data-glide-el="track">
+            <ul class="glide__slides">
+              <li class="glide__slide">
+                <a href="images/portfolio/n2mm.png" data-lightbox="project2" data-title="Never Too Much Money Project">
+                  <img src="images/portfolio/n2mm.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/n2mm1.png" data-lightbox="project2" data-title="Main Panel">
+                  <img src="images/portfolio/n2mm1.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/n2mm2.png" data-lightbox="project2" data-title="Main Panel">
+                  <img src="images/portfolio/n2mm2.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/n2mm3.png" data-lightbox="project2" data-title="Main Panel">
+                  <img src="images/portfolio/n2mm3.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/n2mm4.png" data-lightbox="project2" data-title="Main Panel">
+                  <img src="images/portfolio/n2mm4.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/n2mm5.png" data-lightbox="project2" data-title="Main Panel">
+                  <img src="images/portfolio/n2mm5.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/n2mm6.png" data-lightbox="project2" data-title="Main Panel">
+                  <img src="images/portfolio/n2mm6.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/n2mm7.png" data-lightbox="project2" data-title="Main Panel">
+                  <img src="images/portfolio/n2mm7.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/n2mm8.png" data-lightbox="project2" data-title="Main Panel">
+                  <img src="images/portfolio/n2mm8.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/n2mm9.png" data-lightbox="project2" data-title="Main Panel">
+                  <img src="images/portfolio/n2mm9.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/n2mm10.png" data-lightbox="project2" data-title="Main Panel">
+                  <img src="images/portfolio/n2mm10.png" alt="cema">
+                </a>
+              </li>
+            </ul>
+          </div>
+          <!-- Indicadores (puntos) -->
+          <div class="glide__bullets" data-glide-el="controls[nav]">
+            <button class="glide__bullet" data-glide-dir="=0"></button>
+            <button class="glide__bullet" data-glide-dir="=1"></button>
+            <button class="glide__bullet" data-glide-dir="=2"></button>
+            <button class="glide__bullet" data-glide-dir="=3"></button>
+            <button class="glide__bullet" data-glide-dir="=4"></button>
+            <button class="glide__bullet" data-glide-dir="=5"></button>
+            <button class="glide__bullet" data-glide-dir="=6"></button>
+            <button class="glide__bullet" data-glide-dir="=7"></button>
+            <button class="glide__bullet" data-glide-dir="=8"></button>
+            <button class="glide__bullet" data-glide-dir="=9"></button>
+            <button class="glide__bullet" data-glide-dir="=10"></button>
           </div>
         </div>
       </div>
-      <!-- end row -->
-
-      <div id="go-top">
-        <a class="smoothscroll" title="Back to Top" href="#top"
-          ><i class="icon-UpArrow"></i
-        ></a>
+      <div class="animate-this col-six align-items" data-animate="fadeInRight">
+        <br></br>
+        <p class="project-description">It is a web application in charge of managing clients who have purchased a
+          mortgage loan consulting service in the United States. It processes the data by creating fictitious or test
+          scenarios to obtain detailed reports on the loans according to the information added. </p>
+        <div class="hover-icons">
+          <ul>
+            <!-- CodeIgniter -->
+            <li style="--i:#dd4814;--j:#f8a31c">
+              <span class="icon"><img class="icon-png" src="images/icons/codeigniter.png" alt="codeigniter-logo"></span>
+              <span class="title">Codeigniter</span>
+            </li>
+           
+            <!-- Bootstrap -->
+            <li style="--i:#7952b3;--j:#563d7c">
+              <span class="icon"><img class="icon-png" src="images/icons/bootstrap.png" alt="bootstrap-logo"></span>
+              <span class="title">Bootstrap</span>
+            </li>
+            <!-- jQuery -->
+            <li style="--i:#0769ad;--j:#7acef4">
+              <span class="icon"><img class="icon-png" src="images/icons/jquery.png" alt="jquery-logo"></span>
+              <span class="title">JQuery</span>
+            </li>
+            <!-- MySQL -->
+            <li style="--i:#00758f;--j:#f29111">
+              <span class="icon"><img class="icon-png" src="images/icons/mysql.png" alt="mysql-logo"></span>
+              <span class="title">MySQL</span>
+            </li>
+          </ul>
+        </div>
       </div>
-    </footer>
-
-    <div id="preloader">
-      <div id="loader"></div>
     </div>
+    <br><br><br><br>
+    <div class="row">
+      <h3 class="animate-this subtitle-portfolio" style="text-align: center; text-transform: uppercase;">CEMA Mexico S.C.</h3
+        style="color: black!important;">
+      <div class="animate-this col-six" data-animate="fadeInLeft">
+        <div class="glide animate-this">
+          <div class="glide__track" data-glide-el="track">
+            <ul class="glide__slides">
+              <li class="glide__slide">
+                <a href="images/portfolio/cema.png" data-lightbox="project1" data-title="CEMA Project">
+                  <img src="images/portfolio/cema.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/cema1.png" data-lightbox="project1" data-title="Main Panel">
+                  <img src="images/portfolio/cema1.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/cema2.png" data-lightbox="project1" data-title="Main Panel">
+                  <img src="images/portfolio/cema2.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/cema3.png" data-lightbox="project1" data-title="Main Panel">
+                  <img src="images/portfolio/cema3.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/cema4.png" data-lightbox="project1" data-title="Main Panel">
+                  <img src="images/portfolio/cema4.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/cema5.png" data-lightbox="project1" data-title="Main Panel">
+                  <img src="images/portfolio/cema5.png" alt="cema">
+                </a>
+              </li>
+              <li class="glide__slide">
+                <a href="images/portfolio/cema6.png" data-lightbox="project1" data-title="Main Panel">
+                  <img src="images/portfolio/cema6.png" alt="cema">
+                </a>
+              </li>
+            </ul>
+          </div>
+          <!-- Indicadores (puntos) -->
+          <div class="glide__bullets" data-glide-el="controls[nav]">
+            <button class="glide__bullet" data-glide-dir="=0"></button>
+            <button class="glide__bullet" data-glide-dir="=1"></button>
+            <button class="glide__bullet" data-glide-dir="=2"></button>
+            <button class="glide__bullet" data-glide-dir="=3"></button>
+            <button class="glide__bullet" data-glide-dir="=4"></button>
+            <button class="glide__bullet" data-glide-dir="=5"></button>
+          </div>
+        </div>
+      </div>
+      <div class="animate-this col-six align-items" data-animate="fadeInRight">
+        <br></br>
+        <p class="project-description">It is a module of the current ERP and CRM used in that company. It is a log of
+          incidents and processes related to the experiments or tests performed on samples entering the laboratory.</p>
+        <div class="hover-icons">
+          <ul>
+            <!-- CodeIgniter -->
+            <li style="--i:#dd4814;--j:#f8a31c">
+              <span class="icon"><img class="icon-png" src="images/icons/codeigniter.png" alt="codeigniter-logo"></span>
+              <span class="title">Codeigniter</span>
+            </li>
+           
+            <!-- Bootstrap -->
+            <li style="--i:#7952b3;--j:#563d7c">
+              <span class="icon"><img class="icon-png" src="images/icons/bootstrap.png" alt="bootstrap-logo"></span>
+              <span class="title">Bootstrap</span>
+            </li>
+            <!-- jQuery -->
+            <li style="--i:#0769ad;--j:#7acef4">
+              <span class="icon"><img class="icon-png" src="images/icons/jquery.png" alt="jquery-logo"></span>
+              <span class="title">JQuery</span>
+            </li>
+            <!-- MySQL -->
+            <li style="--i:#00758f;--j:#f29111">
+              <span class="icon"><img class="icon-png" src="images/icons/mysql.png" alt="mysql-logo"></span>
+              <span class="title">MySQL</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- end row section-intro -->
+  </section>
+  <!-- end portfolio -->
 
-    <!-- Java Script
+  <!-- footer
    ================================================== -->
-    <script src="js/jquery-2.1.3.min.js"></script>
-    <script src="js/plugins.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/typed.js"></script>
-    <script>
-      if ($(".text-slider").length == 1) {
-        var typed_strings = $(".text-slider-items").text();
+  <footer id="footer">
+    <div class="row contact-info">
+      <div class="col-four tab-full">
+        <h5 class="animate-this">Where am I located?</h5>
 
-        var typed = new Typed(".text-slider", {
-          strings: typed_strings.split(", "),
-          typeSpeed: 60,
-          loop: true,
-          backDelay: 3000,
-          backSpeed: 30,
-        });
-      }
-    </script>
-  </body>
+        <p class="animate-this" id="contFoc">
+          I'm based in Morelia, MX <br />
+        </p>
+      </div>
+      <!-- end col-four -->
+
+      <div class="col-four tab-full collapse">
+        <h5 class="animate-this">Email Me At</h5>
+
+        <p class="animate-this" id="contFoc">rastherdev@gmail.com<br /></p>
+      </div>
+      <!-- end col-four -->
+
+      <div class="col-four tab-full">
+        <h5 class="animate-this">Call Me At</h5>
+
+        <p class="animate-this" id="contFoc">Phone: (+52) 4432138396</p>
+      </div>
+      <!-- end col-four -->
+    </div>
+    <!-- end row contact-info -->
+
+    <div class="row">
+      <div class="col-twelve tab-full social">
+        <ul class="animate-this footer-social">
+          <li>
+            <a href="https://www.linkedin.com/in/rastherdev" target="_blank">LinkedIn</a>
+          </li>
+          <li>
+            <a href="https://github.com/rastherdev" target="_blank">Github</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-twelve tab-full">
+        <div class="copyright animate-this">
+          <span>© Copyright Rasther DEV 2024.</span>
+        </div>
+      </div>
+    </div>
+    <!-- end row -->
+
+    <div id="go-top">
+      <a class="smoothscroll" title="Back to Top" href="#top"><i class="icon-UpArrow"></i></a>
+    </div>
+  </footer>
+
+  <div id="preloader">
+    <div id="loader"></div>
+  </div>
+
+  <!-- Java Script
+   ================================================== -->
+  <script src="js/jquery-2.1.3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="js/lightbox.js"></script>
+  <script src="js/glide.min.js"></script>
+  <script src="js/plugins.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/typed.js"></script>
+  <script src="js/galleries.js"></script>
   <script>
-    const scrollProgress = document.getElementById("scroll-progress");
-    const height =
-      document.documentElement.scrollHeight -
-      document.documentElement.clientHeight;
+    if ($(".text-slider").length == 1) {
+      var typed_strings = $(".text-slider-items").text();
 
-    window.addEventListener("scroll", () => {
-      const scrollTop =
-        document.body.scrollTop || document.documentElement.scrollTop;
-      scrollProgress.style.width = `${(scrollTop / height) * 100}%`;
-    });
+      var typed = new Typed(".text-slider", {
+        strings: typed_strings.split(", "),
+        typeSpeed: 60,
+        loop: true,
+        backDelay: 3000,
+        backSpeed: 30,
+      });
+    }
   </script>
+</body>
+<script>
+  const scrollProgress = document.getElementById("scroll-progress");
+  const height =
+    document.documentElement.scrollHeight -
+    document.documentElement.clientHeight;
+
+  window.addEventListener("scroll", () => {
+    const scrollTop =
+      document.body.scrollTop || document.documentElement.scrollTop;
+    scrollProgress.style.width = `${(scrollTop / height) * 100}%`;
+  });
+</script>
+
 </html>
