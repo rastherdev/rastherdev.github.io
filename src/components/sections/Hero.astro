@@ -37,11 +37,16 @@ interface Props {
         </div>
       </div>
 
-      <!-- Background decorative elements -->
+      <!-- Background decorative elements with parallax -->
       <div class="hero__bg" aria-hidden="true">
-        <div class="hero__grid"></div>
-        <div class="hero__glow hero__glow--1"></div>
-        <div class="hero__glow hero__glow--2"></div>
+        <div class="hero__grid" data-speed="0.3"></div>
+        <div class="hero__glow hero__glow--1" data-speed="0.6"></div>
+        <div class="hero__glow hero__glow--2" data-speed="0.4"></div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="hero__scroll-indicator" aria-hidden="true">
+        <span class="hero__scroll-line"></span>
       </div>
     </section>
   );
@@ -75,12 +80,13 @@ interface Props {
     width: 100%;
     display: flex;
     justify-content: center;
+    /* Natural state is visible — GSAP from() adds entrance drama */
   }
 
   .hero__content {
     text-align: center;
     max-width: 700px;
-    opacity: 0;
+    /* Natural state is visible — no opacity: 0 */
   }
 
   .hero__greeting {
@@ -95,6 +101,10 @@ interface Props {
     font-weight: 700;
     margin-bottom: var(--space-xs);
     letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--color-text) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .hero__title {
@@ -128,84 +138,136 @@ interface Props {
 
   .hero__grid {
     position: absolute;
-    inset: 0;
+    inset: -20%;
     background-image:
       linear-gradient(var(--color-border) 1px, transparent 1px),
       linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
     background-size: 60px 60px;
-    opacity: 0.15;
-    mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+    opacity: 0.1;
+    mask-image: radial-gradient(ellipse 70% 60% at center, black 25%, transparent 70%);
   }
 
   .hero__glow {
     position: absolute;
     border-radius: 50%;
-    filter: blur(120px);
-    opacity: 0.12;
+    filter: blur(140px);
+    opacity: 0.1;
   }
 
   .hero__glow--1 {
-    width: 600px;
-    height: 600px;
+    width: 700px;
+    height: 700px;
     background: var(--color-accent);
-    top: -200px;
-    right: -100px;
+    top: -250px;
+    right: -150px;
   }
 
   .hero__glow--2 {
-    width: 400px;
-    height: 400px;
+    width: 500px;
+    height: 500px;
     background: var(--color-code);
-    bottom: -100px;
+    bottom: -150px;
     left: -100px;
+  }
+
+  /* Scroll indicator */
+  .hero__scroll-indicator {
+    position: absolute;
+    bottom: var(--space-xl);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+
+  .hero__scroll-line {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: var(--color-border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero__scroll-line::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--color-accent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { transform: translateY(-100%); }
+    50% { transform: translateY(100%); }
   }
 </style>
 
 <script>
   import { gsap } from "../../scripts/utils/gsap-setup";
 
+  // Entrance animation — uses from() so natural CSS state is visible
+  // If GSAP fails to load, content remains fully visible
   const mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-    // Terminal fades in
-    tl.fromTo(
-      "#hero-terminal",
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 0.8 },
-      0.2
-    )
-      // Terminal "types out" effect — we let CSS handle line visibility
-      // Then reveal the hero content
-      .fromTo(
-        "#hero-content",
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 0.8 },
-        "+=0.6"
-      )
-      // Stagger children within hero content
-      .fromTo(
-        "#hero-content > *",
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, stagger: 0.12, duration: 0.5 },
-        "-=0.4"
-      );
-
-    // Simulate terminal line appearance
-    const terminalLines = document.querySelectorAll<HTMLElement>(".terminal__line:not(.terminal__line--active)");
-    terminalLines.forEach((line, i) => {
-      line.style.opacity = "0";
-      line.style.transform = "translateX(-8px)";
+    const tl = gsap.timeline({
+      defaults: { ease: "power3.out" },
+      delay: 0.1, // Small delay so loader has time to start fading
     });
 
-    const termTl = gsap.timeline({ delay: 0.5 });
-    termTl.to(terminalLines, {
-      opacity: 1,
-      x: 0,
-      duration: 0.08,
-      stagger: 0.25,
-      ease: "none",
+    // Terminal entrance
+    tl.from("#hero-terminal", {
+      opacity: 0,
+      y: 30,
+      scale: 0.97,
+      duration: 0.7,
+    })
+      // Animate terminal lines appearing
+      .from(
+        ".terminal__line:not(.terminal__line--active)",
+        {
+          opacity: 0,
+          x: -10,
+          duration: 0.08,
+          stagger: 0.2,
+          ease: "none",
+        },
+        "-=0.3"
+      )
+      // Hero content entrance
+      .from(
+        "#hero-content",
+        {
+          opacity: 0,
+          y: 40,
+          duration: 0.8,
+        },
+        "+=0.3"
+      )
+      // Stagger children
+      .from(
+        "#hero-content > *",
+        {
+          opacity: 0,
+          y: 25,
+          stagger: 0.1,
+          duration: 0.6,
+        },
+        "-=0.5"
+      );
+
+    // Scroll indicator fades out on scroll
+    gsap.to(".hero__scroll-indicator", {
+      opacity: 0,
+      scrollTrigger: {
+        trigger: ".hero",
+        start: "top top",
+        end: "bottom top",
+        scrub: 0.3,
+      },
     });
   });
 </script>

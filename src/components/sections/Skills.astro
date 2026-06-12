@@ -21,11 +21,11 @@ interface Props {
         <SectionHeading title={dict.skills.heading} />
 
         <div class="skills__grid">
-          {dict.skills.categories.map((cat) => {
+          {dict.skills.categories.map((cat, i) => {
             const data = skillCategories.find((s) => s.key === cat.key);
             if (!data) return null;
             return (
-              <div class="skills__category">
+              <div class="skills__category" data-speed={1 + i * 0.05}>
                 <h3 class="skills__category-title">{cat.label}</h3>
                 <ul class="skills__list">
                   {data.items.map((skill) => (
@@ -113,70 +113,68 @@ interface Props {
   const mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
-    // Reveal section heading
-    gsap.fromTo(
-      ".skills .section-heading__title",
-      { opacity: 0, y: 20 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".skills",
-          start: "top 75%",
-        },
-      }
-    );
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".skills",
+        start: "top 70%",
+      },
+    });
 
-    gsap.fromTo(
-      ".skills .section-heading__line",
-      { scaleX: 0, opacity: 0 },
-      {
-        scaleX: 1,
-        opacity: 1,
-        duration: 0.5,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".skills",
-          start: "top 75%",
+    tl.from(".skills .section-heading__title", {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      ease: "power3.out",
+    })
+      .from(
+        ".skills .section-heading__line",
+        { scaleX: 0, opacity: 0, duration: 0.5, ease: "power3.out" },
+        "-=0.2"
+      )
+      .from(
+        ".skills__category",
+        {
+          opacity: 0,
+          y: 40,
+          scale: 0.95,
+          stagger: 0.1,
+          duration: 0.6,
+          ease: "power3.out",
         },
-      }
-    );
-
-    // Stagger cards
-    gsap.fromTo(
-      ".skills__category",
-      { opacity: 0, y: 30, scale: 0.96 },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        stagger: 0.12,
-        duration: 0.6,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".skills__grid",
-          start: "top 78%",
+        "-=0.1"
+      )
+      .from(
+        ".skills__item",
+        {
+          opacity: 0,
+          x: -15,
+          stagger: 0.04,
+          duration: 0.35,
+          ease: "power2.out",
         },
-      }
-    );
+        "-=0.3"
+      );
+  });
 
-    // Stagger items within each category
-    gsap.fromTo(
-      ".skills__item",
-      { opacity: 0, x: -10 },
-      {
-        opacity: 1,
-        x: 0,
-        stagger: 0.06,
+  // Hover microinteraction on skill categories
+  document.querySelectorAll<HTMLElement>(".skills__category").forEach((cat) => {
+    cat.addEventListener("mouseenter", () => {
+      gsap.to(cat, {
+        y: -5,
+        boxShadow: "0 8px 25px rgba(240, 160, 48, 0.1)",
+        borderColor: "var(--color-accent)",
         duration: 0.3,
         ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".skills__grid",
-          start: "top 78%",
-        },
-      }
-    );
+      });
+    });
+    cat.addEventListener("mouseleave", () => {
+      gsap.to(cat, {
+        y: 0,
+        boxShadow: "none",
+        borderColor: "var(--color-border)",
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    });
   });
 </script>

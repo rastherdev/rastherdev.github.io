@@ -1,6 +1,8 @@
 ---
 import Nav from "../components/layout/Nav.astro";
 import Footer from "../components/layout/Footer.astro";
+import Loader from "../components/ui/Loader.astro";
+import CustomCursor from "../components/ui/CustomCursor.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -22,12 +24,125 @@ interface Props {
     <!-- Preload fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Prevent FOUC — hide content until loader finishes -->
+    <style is:inline>
+      html:not(.loader-done) body > *:not(#loader) {
+        opacity: 0;
+      }
+      html.loader-done body > *:not(#loader) {
+        opacity: 1;
+        transition: opacity 0.3s ease;
+      }
+    </style>
   </head>
   <body>
-    <Nav locale={Astro.props.locale} />
-    <main>
-      <slot />
-    </main>
-    <Footer locale={Astro.props.locale} />
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
+        <Loader />
+        <CustomCursor />
+        <Nav locale={Astro.props.locale} />
+        <main>
+          <slot />
+        </main>
+        <Footer locale={Astro.props.locale} />
+      </div>
+    </div>
   </body>
 </html>
+
+<script>
+  import { gsap, ScrollTrigger, ScrollSmoother } from "../scripts/utils/gsap-setup";
+
+  // ── ScrollSmoother ──────────────────────────────────────
+  const smoother = ScrollSmoother.create({
+    wrapper: "#smooth-wrapper",
+    content: "#smooth-content",
+    smooth: 1.2,
+    effects: true,
+    smoothTouch: 0.1,
+    normalizeScroll: true,
+    ignoreMobileResize: true,
+  });
+
+  // ── Loader sequence ────────────────────────────────────
+  async function initLoader() {
+    const loaderEl = document.getElementById("loader");
+    if (!loaderEl) return;
+
+    // Wait for loader animation to signal ready
+    await new Promise<void>((resolve) => {
+      if (document.documentElement.classList.contains("loader-ready")) {
+        resolve();
+      } else {
+        const observer = new MutationObserver(() => {
+          if (document.documentElement.classList.contains("loader-ready")) {
+            observer.disconnect();
+            resolve();
+          }
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+        // Fallback: resolve after 2s
+        setTimeout(() => { observer.disconnect(); resolve(); }, 2500);
+      }
+    });
+
+    // Hide loader with animation
+    const loaderAnim = (window as any).__loader;
+    if (loaderAnim?.hide) {
+      await loaderAnim.hide();
+    } else {
+      loaderEl.style.opacity = "0";
+      loaderEl.style.pointerEvents = "none";
+      await new Promise((r) => setTimeout(r, 400));
+    }
+
+    // Reveal page
+    document.documentElement.classList.add("loader-done");
+
+    // Remove loader from DOM
+    loaderEl.remove();
+
+    // Refresh ScrollTrigger after layout settles
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+    });
+  }
+
+  initLoader();
+
+  // ── Language switch support ───────────────────────────
+  // Re-show loader on navigation (Astro View Transitions or full page nav)
+  document.addEventListener("astro:before-swap", () => {
+    // Create a fresh loader overlay for the transition
+    const overlay = document.createElement("div");
+    overlay.id = "loader";
+    overlay.className = "loader";
+    overlay.setAttribute("aria-hidden", "true");
+    overlay.innerHTML = `
+      <div class="loader__content">
+        <div class="loader__terminal">
+          <div class="loader__line"><span class="loader__prompt">$</span><span class="loader__cmd">switching language...</span></div>
+        </div>
+        <div class="loader__bar">
+          <div class="loader__bar-fill" id="loader-bar"></div>
+        </div>
+      </div>`;
+    overlay.style.opacity = "0";
+    document.body.appendChild(overlay);
+
+    gsap.to(overlay, {
+      opacity: 1,
+      duration: 0.2,
+      ease: "power2.out",
+      onComplete: () => {
+        gsap.to("#loader-bar", { width: "100%", duration: 0.8, ease: "power2.inOut" });
+      },
+    });
+  });
+
+  // Mark current page for ScrollTrigger cleanup on navigation
+  document.addEventListener("astro:after-swap", () => {
+    ScrollTrigger.refresh();
+  });
+</script>

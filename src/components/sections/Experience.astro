@@ -201,36 +201,57 @@ interface Props {
   const mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
-    // Reveal heading
-    gsap.fromTo(
-      ".experience .section-heading__title",
-      { opacity: 0, y: 20 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".experience",
-          start: "top 75%",
-        },
-      }
-    );
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".experience",
+        start: "top 70%",
+      },
+    });
 
-    gsap.fromTo(
-      ".experience .section-heading__line",
-      { scaleX: 0, opacity: 0 },
-      {
-        scaleX: 1,
-        opacity: 1,
-        duration: 0.5,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".experience",
-          start: "top 75%",
+    tl.from(".experience .section-heading__title", {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      ease: "power3.out",
+    })
+      .from(
+        ".experience .section-heading__line",
+        { scaleX: 0, opacity: 0, duration: 0.5, ease: "power3.out" },
+        "-=0.2"
+      )
+      .from(
+        ".experience__entry",
+        {
+          opacity: 0,
+          y: 40,
+          stagger: 0.2,
+          duration: 0.7,
+          ease: "power3.out",
         },
-      }
-    );
+        "-=0.1"
+      )
+      .from(
+        ".experience__dot",
+        {
+          opacity: 0,
+          scale: 0,
+          stagger: 0.2,
+          duration: 0.4,
+          ease: "back.out(2)",
+        },
+        "-=0.5"
+      )
+      .from(
+        ".experience__achievement",
+        {
+          opacity: 0,
+          x: -15,
+          stagger: 0.05,
+          duration: 0.35,
+          ease: "power2.out",
+        },
+        "-=0.3"
+      );
 
     // Draw the SVG line on scroll
     gsap.fromTo(
@@ -245,40 +266,6 @@ interface Props {
           start: "top 70%",
           end: "bottom 30%",
           scrub: 1,
-        },
-      }
-    );
-
-    // Reveal entries with stagger
-    gsap.fromTo(
-      ".experience__entry",
-      { opacity: 0, y: 30 },
-      {
-        opacity: 1,
-        y: 0,
-        stagger: 0.2,
-        duration: 0.6,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".experience__entries",
-          start: "top 75%",
-        },
-      }
-    );
-
-    // Dots pop in
-    gsap.fromTo(
-      ".experience__dot",
-      { opacity: 0, scale: 0 },
-      {
-        opacity: 1,
-        scale: 1,
-        stagger: 0.2,
-        duration: 0.4,
-        ease: "back.out(2)",
-        scrollTrigger: {
-          trigger: ".experience__entries",
-          start: "top 75%",
         },
       }
     );

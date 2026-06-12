@@ -1,0 +1,168 @@
+---
+// Full-page loader with terminal-style animation
+// Shows on initial load and during language transitions
+---
+
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader__content">
+    <div class="loader__terminal">
+      <div class="loader__line">
+        <span class="loader__prompt">$</span>
+        <span class="loader__cmd">booting portfolio</span>
+      </div>
+      <div class="loader__line loader__line--delay-1">
+        <span class="loader__dim">[1/4]</span>
+        <span class="loader__text"> loading dependencies...</span>
+      </div>
+      <div class="loader__line loader__line--delay-2">
+        <span class="loader__dim">[2/4]</span>
+        <span class="loader__text"> compiling assets...</span>
+      </div>
+      <div class="loader__line loader__line--delay-3">
+        <span class="loader__dim">[3/4]</span>
+        <span class="loader__text"> building routes...</span>
+      </div>
+      <div class="loader__line loader__line--delay-4">
+        <span class="loader__dim">[4/4]</span>
+        <span class="loader__text loader__text--success"> serving on :443 ✓</span>
+      </div>
+    </div>
+    <div class="loader__bar">
+      <div class="loader__bar-fill" id="loader-bar"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .loader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--color-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: all;
+  }
+
+  .loader__content {
+    text-align: left;
+  }
+
+  .loader__terminal {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-code);
+    margin-bottom: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .loader__line {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+
+  .loader__prompt {
+    color: var(--color-accent);
+    margin-right: 0.5em;
+  }
+
+  .loader__cmd {
+    color: var(--color-text);
+  }
+
+  .loader__dim {
+    color: var(--color-text-muted);
+    margin-right: 0.5em;
+  }
+
+  .loader__text {
+    color: var(--color-text-muted);
+  }
+
+  .loader__text--success {
+    color: #28c840;
+  }
+
+  .loader__bar {
+    width: 260px;
+    height: 2px;
+    background: var(--color-border);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .loader__bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--color-accent);
+    border-radius: 1px;
+  }
+</style>
+
+<script>
+  import { gsap } from "../../scripts/utils/gsap-setup";
+
+  function showLoader(): Promise<void> {
+    return new Promise((resolve) => {
+      const loader = document.getElementById("loader")!;
+      const bar = document.getElementById("loader-bar")!;
+      const lines = loader.querySelectorAll<HTMLElement>(".loader__line");
+
+      // Reset state
+      loader.style.opacity = "1";
+      loader.style.pointerEvents = "all";
+      bar.style.width = "0%";
+
+      const tl = gsap.timeline({
+        onComplete: () => resolve(),
+      });
+
+      // Reveal lines one by one
+      tl.to(lines, {
+        opacity: 1,
+        x: 0,
+        duration: 0.15,
+        stagger: 0.25,
+        ease: "none",
+      })
+        // Fill the bar while lines appear
+        .to(
+          bar,
+          { width: "100%", duration: 1.2, ease: "power2.inOut" },
+          "-=1.2"
+        )
+        // Hold briefly
+        .to({}, { duration: 0.3 });
+    });
+  }
+
+  function hideLoader(): Promise<void> {
+    return new Promise((resolve) => {
+      const loader = document.getElementById("loader")!;
+      gsap.to(loader, {
+        opacity: 0,
+        duration: 0.4,
+        ease: "power2.in",
+        onComplete: () => {
+          loader.style.pointerEvents = "none";
+          resolve();
+        },
+      });
+    });
+  }
+
+  // Expose loader API globally
+  (window as any).__loader = { show: showLoader, hide: hideLoader };
+
+  // Auto-show on first load (handled by BaseLayout)
+  const loader = document.getElementById("loader");
+  if (loader && loader.style.opacity !== "0") {
+    showLoader().then(() => {
+      // Signal that loader animation is complete; BaseLayout handles hiding
+      document.documentElement.classList.add("loader-ready");
+    });
+  }
+</script>

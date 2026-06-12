@@ -1,25 +1,19 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { TextPlugin } from "gsap/TextPlugin";
 
 // Single registration point for all GSAP plugins
-gsap.registerPlugin(ScrollTrigger, TextPlugin);
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother, TextPlugin);
 
-// Responsive + reduced-motion aware animation helper
+// MatchMedia for responsive + reduced-motion aware animations
 export const mm = gsap.matchMedia();
 
-// Reduced motion: disable all animations
-mm.add(
-  {
-    prefersReducedMotion: "(prefers-reduced-motion: reduce)",
-  },
-  (ctx) => {
-    const { prefersReducedMotion } = ctx.conditions!;
-    if (prefersReducedMotion) {
-      gsap.globalTimeline.timeScale(0);
-    }
-  }
-);
+// Reduced motion: simplify animations (don't kill them entirely)
+mm.add("(prefers-reduced-motion: reduce)", (ctx) => {
+  // Override durations to be instant
+  gsap.defaults({ duration: 0, overwrite: true });
+});
 
 // Responsive breakpoints for animation adjustments
 mm.add(
@@ -30,11 +24,27 @@ mm.add(
   },
   (ctx) => {
     const { isMobile } = ctx.conditions!;
-    // Reduce animation distance on mobile
     gsap.defaults({
       duration: isMobile ? 0.4 : 0.6,
     });
   }
 );
 
-export { gsap, ScrollTrigger };
+// Reveal animation helper — from() ensures element's natural CSS state is visible
+export function revealFrom(
+  target: string | Element,
+  vars: gsap.TweenVars = {},
+  scrollTriggerVars?: ScrollTrigger.Vars
+) {
+  return gsap.from(target, {
+    opacity: 0,
+    y: 30,
+    duration: 0.6,
+    ease: "power3.out",
+    ...vars,
+    scrollTrigger: scrollTriggerVars,
+  });
+}
+
+export { gsap, ScrollTrigger, ScrollSmoother };
+

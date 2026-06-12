@@ -48,71 +48,57 @@ interface Props {
   const mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
-    // Reveal heading
-    gsap.fromTo(
-      ".projects .section-heading__title",
-      { opacity: 0, y: 20 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".projects",
-          start: "top 75%",
-        },
-      }
-    );
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".projects",
+        start: "top 70%",
+      },
+    });
 
-    gsap.fromTo(
-      ".projects .section-heading__line",
-      { scaleX: 0, opacity: 0 },
-      {
-        scaleX: 1,
-        opacity: 1,
-        duration: 0.5,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".projects",
-          start: "top 75%",
+    tl.from(".projects .section-heading__title", {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      ease: "power3.out",
+    })
+      .from(
+        ".projects .section-heading__line",
+        { scaleX: 0, opacity: 0, duration: 0.5, ease: "power3.out" },
+        "-=0.2"
+      )
+      .from(
+        ".project-card",
+        {
+          opacity: 0,
+          y: 50,
+          scale: 0.96,
+          stagger: 0.15,
+          duration: 0.7,
+          ease: "power3.out",
         },
-      }
-    );
-
-    // Stagger project cards
-    gsap.fromTo(
-      ".project-card",
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1,
-        y: 0,
-        stagger: 0.15,
-        duration: 0.7,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".projects__grid",
-          start: "top 78%",
-        },
-      }
-    );
+        "-=0.1"
+      );
   });
 
-  // Hover microinteraction for project cards
+  // Hover microinteraction
   document.querySelectorAll<HTMLElement>(".project-card").forEach((card) => {
     card.addEventListener("mouseenter", () => {
       gsap.to(card, {
-        y: -4,
-        scale: 1.01,
-        duration: 0.3,
+        y: -6,
+        scale: 1.02,
+        boxShadow: "0 12px 40px rgba(240, 160, 48, 0.12)",
+        borderColor: "var(--color-accent)",
+        duration: 0.35,
         ease: "power2.out",
       });
     });
-
     card.addEventListener("mouseleave", () => {
       gsap.to(card, {
         y: 0,
         scale: 1,
-        duration: 0.3,
+        boxShadow: "var(--shadow-md)",
+        borderColor: "var(--color-border)",
+        duration: 0.35,
         ease: "power2.out",
       });
     });
