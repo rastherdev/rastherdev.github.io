@@ -39,9 +39,9 @@ interface Props {
   <body>
     <Loader />
     <CustomCursor />
+    <Nav locale={Astro.props.locale} />
     <div id="smooth-wrapper">
       <div id="smooth-content">
-        <Nav locale={Astro.props.locale} />
         <main>
           <slot />
         </main>
@@ -64,6 +64,9 @@ interface Props {
     normalizeScroll: true,
     ignoreMobileResize: true,
   });
+
+  // Expose smoother globally so Nav can use it for anchor links
+  (window as any).__smoother = smoother;
 
   // ── Loader sequence ────────────────────────────────────
   async function initLoader() {

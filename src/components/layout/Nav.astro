@@ -222,11 +222,18 @@ interface Props {
 </style>
 
 <script>
-  // Scroll background blur
   const nav = document.getElementById("nav")!;
-  window.addEventListener("scroll", () => {
-    nav.classList.toggle("is-scrolled", window.scrollY > 20);
-  });
+  const burger = document.getElementById("nav-burger")!;
+  const navLinks = document.getElementById("nav-links")!;
+
+  // Scroll-aware background blur (uses ScrollSmoother exposed by BaseLayout)
+  function updateNavBg() {
+    const smoother = (window as any).__smoother;
+    const scrollY = smoother?.scrollTop() ?? window.scrollY;
+    nav.classList.toggle("is-scrolled", scrollY > 20);
+    requestAnimationFrame(updateNavBg);
+  }
+  requestAnimationFrame(updateNavBg);
 
   // Active section tracking via IntersectionObserver
   const sections = document.querySelectorAll<HTMLElement>("section[id]");
@@ -247,22 +254,31 @@ interface Props {
 
   sections.forEach((s) => observer.observe(s));
 
-  // Mobile menu toggle
-  const burger = document.getElementById("nav-burger")!;
-  const navLinks = document.getElementById("nav-links")!;
+  // Anchor links: use ScrollSmoother for smooth scroll
+  links.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const targetId = link.getAttribute("href")!;
+      const target = document.querySelector(targetId) as HTMLElement;
+      if (!target) return;
 
-  burger.addEventListener("click", () => {
-    const isOpen = navLinks.classList.toggle("is-open");
-    burger.classList.toggle("is-open", isOpen);
-    burger.setAttribute("aria-expanded", String(isOpen));
-  });
+      const smoother = (window as any).__smoother;
+      if (smoother) {
+        smoother.scrollTo(target, true, "top 4rem");
+      } else {
+        target.scrollIntoView({ behavior: "smooth" });
+      }
 
-  // Close mobile menu on link click
-  navLinks.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
       navLinks.classList.remove("is-open");
       burger.classList.remove("is-open");
       burger.setAttribute("aria-expanded", "false");
     });
+  });
+
+  // Mobile menu toggle
+  burger.addEventListener("click", () => {
+    const isOpen = navLinks.classList.toggle("is-open");
+    burger.classList.toggle("is-open", isOpen);
+    burger.setAttribute("aria-expanded", String(isOpen));
   });
 </script>

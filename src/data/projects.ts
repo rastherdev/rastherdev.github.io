@@ -8,6 +8,7 @@ export interface Project {
   repoUrl?: string;
   imageAlt?: string;
   snippet?: string;
+  codeFilename?: string;
 }
 
 export const projects: Project[] = [
@@ -21,6 +22,7 @@ export const projects: Project[] = [
       "Built a modular monolithic architecture in Laravel with independent services per domain (users, billing, crops). Implemented multi-tenant PostgreSQL databases per client for data isolation and horizontal scalability. Used Redis-backed queues for async processing of critical workloads like payroll and bulk data.",
     stack: ["Laravel", "PostgreSQL", "DigitalOcean", "Redis", "JWT", "REST APIs"],
     url: "https://bloomingtec.com/",
+    codeFilename: "app/Services/TenantManager.php",
     snippet: `// Multi-tenant database resolver
 class TenantManager
 {
@@ -49,6 +51,7 @@ class TenantManager
       "Developed a comprehensive SaaS platform with Laravel and Bootstrap, featuring document management with advanced search, citizen service modules for requests and issue tracking, and social program monitoring dashboards for real-time data-driven governance.",
     stack: ["Laravel", "Bootstrap", "MySQL", "DigitalOcean", "PHP"],
     url: "https://presidenciadigital.com/",
+    codeFilename: "app/Http/Controllers/DocumentController.php",
     snippet: `// Document management with advanced search
 class DocumentController extends Controller
 {

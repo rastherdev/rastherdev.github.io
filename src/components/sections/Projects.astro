@@ -1,6 +1,7 @@
 ---
 import SectionHeading from "../ui/SectionHeading.astro";
 import Card from "../ui/Card.astro";
+import ProjectModal from "../ui/ProjectModal.astro";
 import en from "../../i18n/en";
 import es from "../../i18n/es";
 import { projects } from "../../data/projects";
@@ -24,6 +25,15 @@ interface Props {
           ))}
         </div>
       </div>
+
+      <!-- Shared modal — content updated dynamically via JS -->
+      <div id="project-modals" style="display:none" aria-hidden="true">
+        {projects.map((project, i) => (
+          <div data-project-index={i}>
+            <ProjectModal project={project} dict={dict.projects} />
+          </div>
+        ))}
+      </div>
     </section>
   );
 })()}
@@ -31,7 +41,7 @@ interface Props {
 <style>
   .projects__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
     gap: var(--space-xl);
   }
 
@@ -49,58 +59,82 @@ interface Props {
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
     const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".projects",
-        start: "top 70%",
-      },
+      scrollTrigger: { trigger: ".projects", start: "top 70%" },
     });
 
     tl.from(".projects .section-heading__title", {
-      opacity: 0,
-      y: 20,
-      duration: 0.6,
-      ease: "power3.out",
+      opacity: 0, y: 20, duration: 0.6, ease: "power3.out",
     })
-      .from(
-        ".projects .section-heading__line",
-        { scaleX: 0, opacity: 0, duration: 0.5, ease: "power3.out" },
-        "-=0.2"
-      )
-      .from(
-        ".project-card",
-        {
-          opacity: 0,
-          y: 50,
-          scale: 0.96,
-          stagger: 0.15,
-          duration: 0.7,
-          ease: "power3.out",
-        },
-        "-=0.1"
-      );
+      .from(".projects .section-heading__line", {
+        scaleX: 0, opacity: 0, duration: 0.5, ease: "power3.out",
+      }, "-=0.2")
+      .from(".project-card", {
+        opacity: 0, y: 50, scale: 0.96, stagger: 0.15, duration: 0.7, ease: "power3.out",
+      }, "-=0.1");
   });
 
   // Hover microinteraction
   document.querySelectorAll<HTMLElement>(".project-card").forEach((card) => {
     card.addEventListener("mouseenter", () => {
       gsap.to(card, {
-        y: -6,
-        scale: 1.02,
+        y: -6, scale: 1.02,
         boxShadow: "0 12px 40px rgba(240, 160, 48, 0.12)",
         borderColor: "var(--color-accent)",
-        duration: 0.35,
-        ease: "power2.out",
+        duration: 0.35, ease: "power2.out",
       });
     });
     card.addEventListener("mouseleave", () => {
       gsap.to(card, {
-        y: 0,
-        scale: 1,
+        y: 0, scale: 1,
         boxShadow: "var(--shadow-md)",
         borderColor: "var(--color-border)",
-        duration: 0.35,
-        ease: "power2.out",
+        duration: 0.35, ease: "power2.out",
       });
     });
+  });
+
+  // Modal logic: extract modals from hidden container, show correct one
+  const modalsContainer = document.getElementById("project-modals")!;
+  const modals = modalsContainer.querySelectorAll<HTMLElement>("[data-project-index]");
+
+  // Move modals to body for proper stacking
+  modals.forEach((m) => document.body.appendChild(m));
+
+  // Override global opener
+  (window as any).__openProjectModal = () => {
+    const idx = (window as any).__activeProjectIndex ?? 0;
+    modals.forEach((m) => {
+      const overlay = m.querySelector<HTMLElement>(".modal-overlay")!;
+      const isTarget = parseInt(m.dataset.projectIndex ?? "0") === idx;
+      if (isTarget) {
+        overlay.classList.add("is-open");
+        overlay.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      }
+    });
+  };
+
+  // Close all modals
+  function closeAllModals() {
+    modals.forEach((m) => {
+      const overlay = m.querySelector<HTMLElement>(".modal-overlay")!;
+      overlay.classList.remove("is-open");
+      overlay.setAttribute("aria-hidden", "true");
+    });
+    document.body.style.overflow = "";
+  }
+
+  // Wire close buttons & overlay clicks
+  modals.forEach((m) => {
+    const overlay = m.querySelector<HTMLElement>(".modal-overlay")!;
+    const closeBtn = m.querySelector<HTMLElement>("#modal-close");
+    closeBtn?.addEventListener("click", closeAllModals);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeAllModals();
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeAllModals();
   });
 </script>
