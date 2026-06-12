@@ -46,5 +46,5 @@ export function revealFrom(
   });
 }
 
-export { gsap, ScrollTrigger, ScrollSmoother };
+export { gsap, ScrollTrigger, ScrollSmoother, TextPlugin };
 

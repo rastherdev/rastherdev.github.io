@@ -16,16 +16,18 @@ interface Props {
   return (
     <section class="hero" id="top">
       <div class="hero__inner">
-        <div class="hero__terminal-wrapper" id="hero-terminal">
-          <Terminal lines={dict.hero.terminalLines} />
-        </div>
-
+        <!-- Left: personal info -->
         <div class="hero__content" id="hero-content">
           <p class="hero__greeting">{dict.hero.greeting}</p>
-          <h1 class="hero__name">{dict.hero.name}</h1>
-          <p class="hero__title">{dict.hero.title}</p>
+          <h1 class="hero__name">
+            <span class="hero__name-line">Giovany</span>
+            <span class="hero__name-line">Domínguez</span>
+          </h1>
+          <div class="hero__title-row">
+            <p class="hero__title">{dict.hero.title}</p>
+            <span class="hero__title-bar"></span>
+          </div>
           <p class="hero__tagline">{dict.hero.tagline}</p>
-
           <div class="hero__ctas">
             <Button href="#projects" variant="primary" size="lg">
               {dict.hero.viewProjects}
@@ -34,17 +36,36 @@ interface Props {
               {dict.hero.downloadCv}
             </Button>
           </div>
+          <div class="hero__stats">
+            <div class="hero__stat">
+              <span class="hero__stat-number">3+</span>
+              <span class="hero__stat-label">{dict.about.quickFacts[1].label}</span>
+            </div>
+            <div class="hero__stat-divider"></div>
+            <div class="hero__stat">
+              <span class="hero__stat-number">2</span>
+              <span class="hero__stat-label">SaaS Platforms</span>
+            </div>
+            <div class="hero__stat-divider"></div>
+            <div class="hero__stat">
+              <span class="hero__stat-number">95%</span>
+              <span class="hero__stat-label">Perf. Boost</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: interactive terminal -->
+        <div class="hero__terminal-wrapper" id="hero-terminal">
+          <Terminal lines={dict.hero.terminalLines} locale={Astro.props.locale} />
         </div>
       </div>
 
-      <!-- Background decorative elements with parallax -->
       <div class="hero__bg" aria-hidden="true">
         <div class="hero__grid" data-speed="0.3"></div>
         <div class="hero__glow hero__glow--1" data-speed="0.6"></div>
         <div class="hero__glow hero__glow--2" data-speed="0.4"></div>
       </div>
 
-      <!-- Scroll indicator -->
       <div class="hero__scroll-indicator" aria-hidden="true">
         <span class="hero__scroll-line"></span>
       </div>
@@ -60,75 +81,128 @@ interface Props {
     justify-content: center;
     position: relative;
     overflow: hidden;
-    padding-block: calc(var(--nav-height) + var(--space-4xl)) var(--space-4xl);
+    padding-block: calc(var(--nav-height) + var(--space-3xl)) var(--space-3xl);
   }
 
+  /* 2-column grid on desktop */
   .hero__inner {
     max-width: var(--max-width);
     width: 100%;
     margin-inline: auto;
     padding-inline: var(--space-xl);
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(var(--space-2xl), 5vw, var(--space-4xl));
     align-items: center;
-    gap: var(--space-3xl);
     position: relative;
     z-index: 2;
   }
 
-  .hero__terminal-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    /* Natural state is visible — GSAP from() adds entrance drama */
-  }
-
-  .hero__content {
-    text-align: center;
-    max-width: 700px;
-    /* Natural state is visible — no opacity: 0 */
-  }
-
   .hero__greeting {
     font-family: var(--font-mono);
-    font-size: var(--text-lg);
+    font-size: var(--text-base);
     color: var(--color-accent);
     margin-bottom: var(--space-sm);
+    letter-spacing: 0.02em;
   }
 
   .hero__name {
     font-size: var(--text-4xl);
     font-weight: 700;
-    margin-bottom: var(--space-xs);
-    letter-spacing: -0.02em;
-    background: linear-gradient(135deg, var(--color-text) 0%, var(--color-accent) 100%);
+    margin-bottom: var(--space-md);
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero__name-line {
+    display: block;
+    background: linear-gradient(135deg, var(--color-text) 0%, var(--color-text) 40%, var(--color-accent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    transition: background 0.5s ease;
+  }
+
+  .hero__title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
   }
 
   .hero__title {
     font-family: var(--font-mono);
-    font-size: var(--text-xl);
+    font-size: var(--text-lg);
     color: var(--color-code);
-    margin-bottom: var(--space-lg);
+    white-space: nowrap;
+  }
+
+  .hero__title-bar {
+    display: block;
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, var(--color-border), transparent);
+    min-width: 30px;
   }
 
   .hero__tagline {
-    font-size: var(--text-lg);
+    font-size: var(--text-base);
     color: var(--color-text-muted);
     line-height: 1.7;
-    margin-bottom: var(--space-2xl);
+    margin-bottom: var(--space-xl);
+    max-width: 460px;
   }
 
   .hero__ctas {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-md);
-    justify-content: center;
+    margin-bottom: var(--space-2xl);
   }
 
-  /* Background decoration */
+  .hero__stats {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+
+  .hero__stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero__stat-number {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1.2;
+  }
+
+  .hero__stat-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .hero__stat-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--color-border);
+    flex-shrink: 0;
+  }
+
+  .hero__terminal-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Background */
   .hero__bg {
     position: absolute;
     inset: 0;
@@ -151,26 +225,25 @@ interface Props {
     position: absolute;
     border-radius: 50%;
     filter: blur(140px);
-    opacity: 0.1;
+    opacity: 0.08;
   }
 
   .hero__glow--1 {
-    width: 700px;
-    height: 700px;
+    width: 600px;
+    height: 600px;
     background: var(--color-accent);
-    top: -250px;
-    right: -150px;
+    top: -150px;
+    right: -100px;
   }
 
   .hero__glow--2 {
-    width: 500px;
-    height: 500px;
+    width: 450px;
+    height: 450px;
     background: var(--color-code);
-    bottom: -150px;
-    left: -100px;
+    bottom: -100px;
+    left: 10%;
   }
 
-  /* Scroll indicator */
   .hero__scroll-indicator {
     position: absolute;
     bottom: var(--space-xl);
@@ -203,63 +276,89 @@ interface Props {
     0%, 100% { transform: translateY(-100%); }
     50% { transform: translateY(100%); }
   }
+
+  /* Mobile: stack vertically */
+  @media (max-width: 900px) {
+    .hero__inner {
+      grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+    }
+
+    .hero__content {
+      order: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero__terminal-wrapper {
+      order: 2;
+    }
+
+    .hero__tagline {
+      max-width: 100%;
+    }
+
+    .hero__title-row {
+      justify-content: center;
+    }
+
+    .hero__stats {
+      justify-content: center;
+    }
+
+    .hero__name {
+      align-items: center;
+    }
+  }
 </style>
 
 <script>
   import { gsap } from "../../scripts/utils/gsap-setup";
 
-  // Entrance animation — uses from() so natural CSS state is visible
-  // If GSAP fails to load, content remains fully visible
   const mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
     const tl = gsap.timeline({
       defaults: { ease: "power3.out" },
-      delay: 0.1, // Small delay so loader has time to start fading
+      delay: 0.1,
     });
 
-    // Terminal entrance
+    // Terminal slides in from right
     tl.from("#hero-terminal", {
       opacity: 0,
-      y: 30,
-      scale: 0.97,
-      duration: 0.7,
+      x: 60,
+      scale: 0.96,
+      duration: 0.8,
     })
-      // Animate terminal lines appearing
-      .from(
-        ".terminal__line:not(.terminal__line--active)",
-        {
-          opacity: 0,
-          x: -10,
-          duration: 0.08,
-          stagger: 0.2,
-          ease: "none",
-        },
-        "-=0.3"
-      )
-      // Hero content entrance
+      // Content slides in from left
       .from(
         "#hero-content",
-        {
-          opacity: 0,
-          y: 40,
-          duration: 0.8,
-        },
-        "+=0.3"
+        { opacity: 0, x: -40, duration: 0.8 },
+        "-=0.6"
       )
       // Stagger children
       .from(
         "#hero-content > *",
+        { opacity: 0, y: 20, stagger: 0.08, duration: 0.5 },
+        "-=0.4"
+      )
+      // Stats pop
+      .from(
+        ".hero__stat",
         {
           opacity: 0,
-          y: 25,
+          y: 15,
+          scale: 0.9,
           stagger: 0.1,
-          duration: 0.6,
+          duration: 0.4,
+          ease: "back.out(2)",
         },
-        "-=0.5"
+        "-=0.2"
       );
 
-    // Scroll indicator fades out on scroll
+    // Scroll indicator fade
     gsap.to(".hero__scroll-indicator", {
       opacity: 0,
       scrollTrigger: {
@@ -269,5 +368,25 @@ interface Props {
         scrub: 0.3,
       },
     });
+
+    // Name gradient shift on hover
+    const nameEl = document.querySelector<HTMLElement>(".hero__name");
+    if (nameEl) {
+      const lines = nameEl.querySelectorAll<HTMLElement>(".hero__name-line");
+      nameEl.addEventListener("mouseenter", () => {
+        gsap.to(lines, {
+          backgroundImage: "linear-gradient(135deg, var(--color-accent) 0%, var(--color-text) 100%)",
+          duration: 0.5,
+          ease: "power2.out",
+        });
+      });
+      nameEl.addEventListener("mouseleave", () => {
+        gsap.to(lines, {
+          backgroundImage: "linear-gradient(135deg, var(--color-text) 0%, var(--color-text) 40%, var(--color-accent) 100%)",
+          duration: 0.5,
+          ease: "power2.out",
+        });
+      });
+    }
   });
 </script>

@@ -25,22 +25,22 @@ interface Props {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Prevent FOUC — hide content until loader finishes -->
+    <!-- Prevent FOUC — hide smooth-wrapper until loader finishes. Loader is outside so it stays visible -->
     <style is:inline>
-      html:not(.loader-done) body > *:not(#loader) {
+      html:not(.loader-done) #smooth-wrapper {
         opacity: 0;
       }
-      html.loader-done body > *:not(#loader) {
+      html.loader-done #smooth-wrapper {
         opacity: 1;
         transition: opacity 0.3s ease;
       }
     </style>
   </head>
   <body>
+    <Loader />
+    <CustomCursor />
     <div id="smooth-wrapper">
       <div id="smooth-content">
-        <Loader />
-        <CustomCursor />
         <Nav locale={Astro.props.locale} />
         <main>
           <slot />

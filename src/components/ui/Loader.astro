@@ -120,22 +120,22 @@
         onComplete: () => resolve(),
       });
 
-      // Reveal lines one by one
+      // Reveal lines one by one (slow, so visitor can read)
       tl.to(lines, {
         opacity: 1,
         x: 0,
-        duration: 0.15,
-        stagger: 0.25,
+        duration: 0.3,
+        stagger: 0.4,
         ease: "none",
       })
-        // Fill the bar while lines appear
+        // Fill the bar slowly — total ~5s
         .to(
           bar,
-          { width: "100%", duration: 1.2, ease: "power2.inOut" },
-          "-=1.2"
+          { width: "100%", duration: 3.5, ease: "power1.inOut" },
+          "-=2.0"
         )
-        // Hold briefly
-        .to({}, { duration: 0.3 });
+        // Hold at 100% so visitor sees "serving on :443 ✓"
+        .to({}, { duration: 1.5 });
     });
   }
 

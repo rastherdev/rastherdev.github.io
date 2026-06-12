@@ -1,41 +1,53 @@
 ---
 export interface Props {
   lines: string[];
+  locale?: "en" | "es";
 }
+
+const loc = Astro.props.locale ?? "en";
 ---
 
-<div class="terminal" aria-hidden="true">
+<div class="terminal" aria-hidden="true" id="hero-terminal-el">
   <div class="terminal__header">
     <span class="terminal__dot terminal__dot--red"></span>
     <span class="terminal__dot terminal__dot--yellow"></span>
     <span class="terminal__dot terminal__dot--green"></span>
-    <span class="terminal__title">Terminal — portfolio serve</span>
+    <span class="terminal__title">guest@portfolio — bash</span>
   </div>
-  <div class="terminal__body" id="terminal-body">
-    {Astro.props.lines.map((line) => (
-      <div class="terminal__line">
-        <span class="terminal__text">{line}</span>
-      </div>
-    ))}
-    <div class="terminal__line terminal__line--active">
+  <div class="terminal__body">
+    <!-- Static boot lines -->
+    <div class="terminal__line">
+      <span class="terminal__dim">Last login: {new Date().toDateString()}</span>
+    </div>
+    <div class="terminal__line">
+      <span class="terminal__dim">PHP 8.5.7 (cli) — Laravel 13.15.0</span>
+    </div>
+    <!-- Dynamic typewriter line -->
+    <div class="terminal__line terminal__line--active" id="typewriter-line">
       <span class="terminal__prompt">$&nbsp;</span>
+      <span class="terminal__typing" id="typewriter-text"></span>
       <span class="terminal__cursor">▌</span>
+    </div>
+    <!-- Output area -->
+    <div class="terminal__line" id="typewriter-output" style="display:none">
+      <span class="terminal__output"></span>
     </div>
   </div>
 </div>
 
 <style>
   .terminal {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.55);
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius-lg);
     overflow: hidden;
     font-family: var(--font-mono);
     font-size: var(--text-sm);
-    box-shadow: var(--shadow-lg);
-    max-width: 580px;
+    box-shadow: var(--shadow-lg), 0 0 40px rgba(240, 160, 48, 0.05);
     width: 100%;
-    /* Natural state is visible — GSAP from() adds entrance */
+    max-width: 540px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 
   .terminal__header {
@@ -64,8 +76,8 @@ export interface Props {
   }
 
   .terminal__body {
-    padding: 1rem;
-    min-height: 180px;
+    padding: 1rem 1.2rem;
+    min-height: 200px;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -75,15 +87,21 @@ export interface Props {
     display: flex;
     gap: 0;
     color: var(--color-code);
-    line-height: 1.6;
+    line-height: 1.7;
+    min-height: 1.7em;
   }
 
-  .terminal__text {
-    white-space: pre-wrap;
+  .terminal__dim {
+    color: var(--color-text-muted);
   }
 
   .terminal__prompt {
     color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .terminal__typing {
+    color: var(--color-text);
   }
 
   .terminal__cursor {
@@ -91,8 +109,77 @@ export interface Props {
     animation: blink 1s step-end infinite;
   }
 
+  .terminal__output {
+    color: var(--color-code);
+    white-space: pre-wrap;
+    padding-left: 1.2em;
+  }
+
   @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
   }
 </style>
+
+<script>
+  import { gsap } from "../../scripts/utils/gsap-setup";
+
+  // Typewriter commands — cycles through these, typing and erasing
+  const commands = [
+    { cmd: "php artisan inspire", output: '> "Simplicity is the ultimate sophistication." — Leonardo da Vinci' },
+    { cmd: "composer show laravel/framework", output: "laravel/framework  v11.x  The Laravel Framework." },
+    { cmd: "php artisan route:list --path=api", output: "GET|HEAD  api/v1/users ........... users.index\nGET|HEAD  api/v1/projects ........ projects.index" },
+    { cmd: "php artisan tinker --execute=\"echo app()->version();\"", output: "Laravel Framework 11.x" },
+    { cmd: "redis-cli PING", output: "PONG" },
+    { cmd: "./vendor/bin/pest --parallel", output: "Tests:  42 passed (72 assertions)\nTime:   0.32s" },
+  ];
+
+  let cmdIndex = 0;
+  const textEl = document.getElementById("typewriter-text")!;
+  const outputLine = document.getElementById("typewriter-output")!;
+  const outputText = outputLine.querySelector(".terminal__output")!;
+
+  async function typeCommand(text: string): Promise<void> {
+    textEl.textContent = "";
+    // Type each character
+    for (let i = 0; i < text.length; i++) {
+      textEl.textContent += text[i];
+      await new Promise((r) => setTimeout(r, 35 + Math.random() * 25));
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+
+  async function showOutput(text: string): Promise<void> {
+    outputText.textContent = text;
+    outputLine.style.display = "flex";
+    // Reveal output with fade
+    gsap.fromTo(outputLine, { opacity: 0, y: -6 }, { opacity: 1, y: 0, duration: 0.3 });
+    await new Promise((r) => setTimeout(r, 1800));
+  }
+
+  async function eraseLine(): Promise<void> {
+    const text = textEl.textContent || "";
+    for (let i = text.length; i >= 0; i--) {
+      textEl.textContent = text.substring(0, i);
+      await new Promise((r) => setTimeout(r, 15 + Math.random() * 15));
+    }
+    outputLine.style.display = "none";
+  }
+
+  async function runTypewriter() {
+    // Small delay so the hero entrance animation starts first
+    await new Promise((r) => setTimeout(r, 400));
+
+    while (true) {
+      const { cmd, output } = commands[cmdIndex % commands.length];
+      await typeCommand(cmd);
+      await showOutput(output);
+      await eraseLine();
+      cmdIndex++;
+      // Brief pause between commands
+      await new Promise((r) => setTimeout(r, 400));
+    }
+  }
+
+  runTypewriter();
+</script>
