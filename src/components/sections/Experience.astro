@@ -17,45 +17,51 @@ interface Props {
       <div class="section__inner">
         <SectionHeading title={dict.experience.heading} />
 
-        <div class="experience__timeline">
-          {/* SVG line that gets drawn */}
-          <svg class="experience__line" viewBox="0 0 4 100" preserveAspectRatio="none" aria-hidden="true">
-            <line x1="2" y1="0" x2="2" y2="100" stroke="var(--color-border)" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke" />
-            <line class="experience__line-draw" x1="2" y1="0" x2="2" y2="100" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke" stroke-dasharray="1" stroke-dashoffset="1" pathLength="1" />
+        <!-- Zigzag timeline: line in center, cards alternate sides -->
+        <div class="exp-timeline">
+          <!-- SVG line centered -->
+          <svg class="exp-timeline__svg" viewBox="0 0 4 100" preserveAspectRatio="none" aria-hidden="true">
+            <line class="exp-timeline__track" x1="2" y1="0" x2="2" y2="100" stroke-width="2" vector-effect="non-scaling-stroke" />
+            <line class="exp-timeline__progress" x1="2" y1="0" x2="2" y2="100" stroke-width="2" vector-effect="non-scaling-stroke" stroke-dasharray="1" stroke-dashoffset="1" pathLength="1" />
           </svg>
 
-          <div class="experience__entries">
+          <div class="exp-timeline__entries">
             {experience.map((entry, i) => (
-              <div class="experience__entry">
-                <div class="experience__dot" aria-hidden="true"></div>
-                <div class="experience__card">
-                  <div class="experience__card-header">
-                    <div>
-                      <h3 class="experience__role">{entry.role}</h3>
-                      <p class="experience__company">{entry.company}</p>
-                    </div>
-                    <span class="experience__dates">
-                      {new Date(entry.startDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })} —{" "}
-                      {entry.endDate
-                        ? new Date(entry.endDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })
-                        : dict.experience.present}
-                    </span>
-                  </div>
-
-                  <div class="experience__card-body">
-                    <div class="experience__section">
-                      <h4 class="experience__section-title">{dict.experience.achievementsLabel}</h4>
-                      <ul class="experience__achievements">
-                        {entry.achievements.map((a) => (
-                          <li class="experience__achievement">{a.text}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
+              <div class={`exp-entry exp-entry--${i % 2 === 0 ? 'left' : 'right'}`} data-index={i}>
+                <div class="exp-entry__dot">
+                  <div class="exp-entry__dot-inner"></div>
                 </div>
+                <button class="exp-card" data-exp-index={i} type="button">
+                  <div class="exp-card__connector"></div>
+                  <div class="exp-card__date">
+                    <span class="exp-card__date-dot"></span>
+                    {new Date(entry.startDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                    <span class="exp-card__date-sep">—</span>
+                    {entry.endDate
+                      ? new Date(entry.endDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+                      : dict.experience.present}
+                  </div>
+                  <div class="exp-card__body">
+                    <h3 class="exp-card__role">{entry.role}</h3>
+                    <p class="exp-card__company">
+                      <i class="fa-solid fa-building exp-card__icon"></i>
+                      {entry.company}
+                    </p>
+                  </div>
+                </button>
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      <!-- Slide panel (right side) -->
+      <div class="exp-panel" id="exp-panel" aria-hidden="true">
+        <div class="exp-panel__card" id="exp-panel-card" role="dialog" aria-modal="true">
+          <button class="exp-panel__close" id="exp-panel-close" type="button" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <div class="exp-panel__inner" id="exp-panel-inner"></div>
         </div>
       </div>
     </section>
@@ -63,211 +69,508 @@ interface Props {
 })()}
 
 <style>
-  .experience__timeline {
+  /* ── Timeline zigzag ─────────────────── */
+  .exp-timeline {
     position: relative;
-    max-width: 800px;
+    max-width: 900px;
     margin-inline: auto;
-    padding-left: var(--space-2xl);
+    padding-block: var(--space-xl);
   }
 
-  .experience__line {
+  /* SVG line centered */
+  .exp-timeline__svg {
     position: absolute;
-    left: 0;
+    left: 50%;
     top: 0;
     width: 4px;
     height: 100%;
-    overflow: visible;
+    transform: translateX(-50%);
   }
 
-  .experience__line-draw {
-    transition: none;
+  .exp-timeline__track {
+    stroke: var(--color-border);
   }
 
-  .experience__entries {
+  .exp-timeline__progress {
+    stroke: var(--color-accent);
+  }
+
+  .exp-timeline__entries {
     display: flex;
     flex-direction: column;
     gap: var(--space-3xl);
+    position: relative;
+    z-index: 1;
   }
 
-  .experience__entry {
+  /* Each entry: 2-column grid with dot in center */
+  .exp-entry {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+    align-items: center;
     position: relative;
   }
 
-  .experience__dot {
-    position: absolute;
-    left: calc(-1 * var(--space-2xl) - 6px);
-    top: 1.2rem;
-    width: 16px;
-    height: 16px;
-    background: var(--color-bg);
-    border: 3px solid var(--color-accent);
+  .exp-entry__dot {
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    z-index: 2;
-    opacity: 0;
+    background: var(--color-bg);
+    border: 2px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    margin: 0 auto;
+    transition: border-color 0.3s, box-shadow 0.3s;
   }
 
-  .experience__card {
+  .exp-entry__dot-inner {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-border);
+    transition: background 0.3s, transform 0.3s;
+  }
+
+  .exp-entry:hover .exp-entry__dot {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 14px var(--color-accent-glow);
+  }
+  .exp-entry:hover .exp-entry__dot-inner {
+    background: var(--color-accent);
+    transform: scale(1.6);
+  }
+
+  /* Card positioning */
+  .exp-entry--left .exp-card { grid-column: 1; grid-row: 1; }
+  .exp-entry--left .exp-entry__dot { grid-column: 2; grid-row: 1; }
+  .exp-entry--right .exp-card { grid-column: 3; grid-row: 1; }
+  .exp-entry--right .exp-entry__dot { grid-column: 2; grid-row: 1; }
+
+  .exp-card {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius-xl);
-    padding: var(--space-xl);
-    transition: border-color var(--transition-base);
+    padding: var(--space-lg) var(--space-xl);
+    text-align: left;
+    cursor: pointer;
+    color: inherit;
+    font-family: inherit;
+    background: none;
+    width: 100%;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
   }
 
-  .experience__card:hover {
-    border-color: var(--color-border-hover);
+  .exp-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(ellipse at center, var(--color-accent-glow), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.35s;
+    pointer-events: none;
   }
 
-  .experience__card-header {
+  .exp-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 10px 35px rgba(240, 160, 48, 0.1);
+    transform: translateY(-4px) scale(1.02);
+  }
+  .exp-card:hover::after { opacity: 1; }
+
+  .exp-card__date {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--space-md);
-    margin-bottom: var(--space-lg);
-    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
   }
 
-  .experience__role {
-    font-size: var(--text-xl);
+  .exp-card__date-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    flex-shrink: 0;
+  }
+  .exp-card__date-sep { color: var(--color-border); }
+
+  .exp-card__body { position: relative; z-index: 1; }
+
+  .exp-card__role {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--color-text);
     margin-bottom: 2px;
   }
 
-  .experience__company {
+  .exp-card__company {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .exp-card__icon { font-size: var(--text-xs); opacity: 0.7; }
+
+  /* ── Slide Panel ────────────────────── */
+  .exp-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 44%;
+    min-width: 380px;
+    max-width: 580px;
+    height: 100vh;
+    height: 100dvh;
+    z-index: var(--z-modal);
+    pointer-events: none;
+    transform: translateX(105%);
+  }
+
+  .exp-panel.is-open {
+    pointer-events: all;
+    transform: translateX(0);
+  }
+
+  .exp-panel__card {
+    height: 100%;
+    background: rgba(17, 17, 34, 0.92);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-left: 1px solid var(--color-border);
+    box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Accent glow line on left edge */
+  .exp-panel__card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--color-accent), var(--color-code), transparent 80%);
+    opacity: 0.6;
+  }
+
+  .exp-panel__close {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    background: rgba(8,8,15,0.8);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    font-size: var(--text-base);
+    transition: all 0.25s;
+    z-index: 10;
+    flex-shrink: 0;
+  }
+  .exp-panel__close:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    box-shadow: 0 0 16px var(--color-accent-glow);
+  }
+
+  .exp-panel__inner {
+    padding: var(--space-3xl) var(--space-xl) var(--space-xl);
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .exp-panel__inner .panel-head {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .exp-panel__inner .panel-head-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, rgba(240,160,48,0.15), rgba(77,212,192,0.06));
+    border: 1px solid rgba(240,160,48,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-2xl);
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .exp-panel__inner h3 {
+    font-size: var(--text-xl);
+    color: var(--color-text);
+    margin-bottom: 2px;
+  }
+
+  .exp-panel__inner .panel-company {
     font-family: var(--font-mono);
     font-size: var(--text-sm);
     color: var(--color-accent);
   }
 
-  .experience__dates {
+  .exp-panel__inner .panel-dates {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-text-muted);
-    padding: 0.3em 0.7em;
-    border: 1px solid var(--color-border);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+    background: rgba(240,160,48,0.06);
+    padding: 0.3em 0.8em;
     border-radius: var(--border-radius-full);
-    white-space: nowrap;
   }
 
-  .experience__section-title {
+  .panel-section {
+    margin-bottom: var(--space-lg);
+    background: rgba(8,8,15,0.35);
+    border-radius: var(--border-radius);
+    padding: var(--space-md);
+  }
+
+  .panel-section__title {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: var(--color-accent);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
   }
 
-  .experience__achievements {
+  .panel-section__title i {
+    background: linear-gradient(135deg, rgba(240,160,48,0.12), rgba(77,212,192,0.05));
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: var(--text-sm);
+    color: var(--color-code);
+  }
+
+  .panel-list {
     list-style: none;
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
   }
 
-  .experience__achievement {
+  .panel-list li {
     color: var(--color-text-muted);
     font-size: var(--text-sm);
-    line-height: 1.7;
+    line-height: 1.75;
     padding-left: var(--space-lg);
     position: relative;
+    opacity: 0;
+    transform: translateX(-8px);
   }
 
-  .experience__achievement::before {
-    content: "▹";
+  .panel-list li.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .panel-list li::before {
+    content: "";
     position: absolute;
     left: 0;
-    color: var(--color-accent);
+    top: 0.7em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 8px var(--color-accent-glow);
   }
 
+  /* Mobile: full width */
   @media (max-width: 768px) {
-    .experience__timeline {
-      padding-left: var(--space-xl);
+    .exp-panel {
+      width: 100%;
+      min-width: unset;
+      max-width: unset;
     }
-
-    .experience__dot {
-      left: calc(-1 * var(--space-xl) - 6px);
-    }
-
-    .experience__card-header {
-      flex-direction: column;
-      gap: var(--space-xs);
+    .exp-panel__inner {
+      padding: var(--space-2xl) var(--space-lg) var(--space-lg);
     }
   }
 </style>
 
 <script>
   import { gsap, ScrollTrigger } from "../../scripts/utils/gsap-setup";
+  import { experience as expData } from "../../data/experience";
 
   const mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
+    // ── Entry stagger ──────────────────────
     const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".experience",
-        start: "top 70%",
-      },
+      scrollTrigger: { trigger: ".experience", start: "top 60%" },
     });
 
     tl.from(".experience .section-heading__title", {
-      opacity: 0,
-      y: 20,
-      duration: 0.6,
-      ease: "power3.out",
+      opacity: 0, y: 20, duration: 0.6, ease: "power3.out",
     })
-      .from(
-        ".experience .section-heading__line",
-        { scaleX: 0, opacity: 0, duration: 0.5, ease: "power3.out" },
-        "-=0.2"
-      )
-      .from(
-        ".experience__entry",
-        {
-          opacity: 0,
-          y: 40,
-          stagger: 0.2,
-          duration: 0.7,
-          ease: "power3.out",
-        },
-        "-=0.1"
-      )
-      .from(
-        ".experience__dot",
-        {
-          opacity: 0,
-          scale: 0,
-          stagger: 0.2,
-          duration: 0.4,
-          ease: "back.out(2)",
-        },
-        "-=0.5"
-      )
-      .from(
-        ".experience__achievement",
-        {
-          opacity: 0,
-          x: -15,
-          stagger: 0.05,
-          duration: 0.35,
-          ease: "power2.out",
-        },
-        "-=0.3"
-      );
+      .from(".experience .section-heading__line", {
+        scaleX: 0, opacity: 0, duration: 0.5, ease: "power3.out",
+      }, "-=0.2")
+      .from(".exp-entry", {
+        opacity: 0, y: 50, stagger: 0.2, duration: 0.7, ease: "power3.out",
+      }, "-=0.1");
 
-    // Draw the SVG line on scroll
-    gsap.fromTo(
-      ".experience__line-draw",
-      { strokeDashoffset: 1 },
-      {
-        strokeDashoffset: 0,
-        duration: 1,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".experience__entries",
-          start: "top 70%",
-          end: "bottom 30%",
-          scrub: 1,
+    // Dot pop
+    gsap.from(".exp-entry__dot", {
+      scale: 0, opacity: 0, stagger: 0.2, duration: 0.4, ease: "back.out(2)",
+      scrollTrigger: { trigger: ".exp-timeline__entries", start: "top 62%" },
+    });
+
+    // ── Line draw (scrub) ─────────────────
+    gsap.fromTo(".exp-timeline__progress", { strokeDashoffset: 1 }, {
+      strokeDashoffset: 0,
+      duration: 1.5,
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".exp-timeline__entries",
+        start: "top 55%",
+        end: "bottom 35%",
+        scrub: 1,
+      },
+    });
+
+    // Pulsing glow on the line as it draws
+    gsap.to(".exp-timeline__progress", {
+      attr: { "stroke-width": 3.5 },
+      duration: 0.6,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+      scrollTrigger: {
+        trigger: ".exp-timeline__entries",
+        start: "top 55%",
+        end: "bottom 35%",
+        scrub: false,
+        toggleActions: "play none none reverse",
+      },
+    });
+
+    // Dot activation on scroll
+    document.querySelectorAll<HTMLElement>(".exp-entry").forEach((entry) => {
+      ScrollTrigger.create({
+        trigger: entry,
+        start: "top 50%",
+        onEnter: () => {
+          gsap.to(entry.querySelector(".exp-entry__dot"), {
+            borderColor: "var(--color-accent)",
+            boxShadow: "0 0 16px var(--color-accent-glow)",
+            duration: 0.5,
+          });
+          gsap.to(entry.querySelector(".exp-entry__dot-inner"), {
+            background: "var(--color-accent)",
+            scale: 1.7,
+            duration: 0.5,
+          });
         },
+      });
+    });
+  });
+
+  // ── Slide Panel ───────────────────────
+  const panel = document.getElementById("exp-panel")!;
+  document.body.appendChild(panel);
+  const panelInner = document.getElementById("exp-panel-inner")!;
+
+  function fmtDate(d: string, end: string | null): string {
+    const s = new Date(d).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+    const e = end ? new Date(end).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : "Present";
+    return `${s} — ${e}`;
+  }
+
+  function openPanel(i: number) {
+    const e = expData[i];
+    if (!e) return;
+
+    panelInner.innerHTML = `
+      <div class="panel-head">
+        <div class="panel-head-icon"><i class="fa-solid fa-briefcase"></i></div>
+        <div>
+          <h3>${e.role}</h3>
+          <p class="panel-company">${e.company}</p>
+          <span class="panel-dates"><i class="fa-regular fa-calendar"></i> ${fmtDate(e.startDate, e.endDate)}</span>
+        </div>
+      </div>
+      <div class="panel-section">
+        <div class="panel-section__title"><i class="fa-solid fa-list-check"></i> Responsibilities</div>
+        <ul class="panel-list">${e.responsibilities.map((r: string) => `<li>${r}</li>`).join("")}</ul>
+      </div>
+      <div class="panel-section">
+        <div class="panel-section__title"><i class="fa-solid fa-trophy"></i> Key Achievements</div>
+        <ul class="panel-list">${e.achievements.map((a: {text: string}) => `<li>${a.text}</li>`).join("")}</ul>
+      </div>
+    `;
+
+    // Pause ScrollSmoother
+    const smoother = (window as any).__smoother;
+    if (smoother) smoother.paused(true);
+
+    panel.classList.add("is-open");
+    panel.setAttribute("aria-hidden", "false");
+
+    // Slide in
+    gsap.to(panel, { x: 0, duration: 0.5, ease: "power4.out" });
+
+    // Animate list items
+    requestAnimationFrame(() => {
+      const items = panelInner.querySelectorAll<HTMLElement>(".panel-list li");
+      gsap.fromTo(items,
+        { opacity: 0, x: -12 },
+        { opacity: 1, x: 0, stagger: 0.05, duration: 0.35, ease: "power2.out", delay: 0.2 }
+      );
+    });
+  }
+
+  function closePanel() {
+    const smoother = (window as any).__smoother;
+    if (smoother) smoother.paused(false);
+
+    // Slide out
+    gsap.to(panel, {
+      x: "105%", duration: 0.4, ease: "power3.in",
+      onComplete: () => {
+        panel.classList.remove("is-open");
+        panel.setAttribute("aria-hidden", "true");
       }
-    );
+    });
+  }
+
+  document.getElementById("exp-panel-close")?.addEventListener("click", closePanel);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePanel(); });
+
+  document.querySelectorAll<HTMLElement>(".exp-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      openPanel(parseInt(card.dataset.expIndex ?? "0"));
+    });
   });
 </script>
