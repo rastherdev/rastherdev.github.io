@@ -39,7 +39,7 @@ const locale = "en";
         <div class="cv__skills-grid">
           {skillCategories.map((cat) => (
             <div class="cv__skill-group">
-              <strong>{cat.key}</strong>: {cat.items.join(", ")}
+              <strong>{cat.key}</strong>: {cat.items.map((s: {name: string}) => s.name).join(", ")}
             </div>
           ))}
         </div>

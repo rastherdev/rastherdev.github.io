@@ -44,7 +44,7 @@ const skillLabels: Record<string, string> = {
         <div class="cv__skills-grid">
           {skillCategories.map((cat) => (
             <div class="cv__skill-group">
-              <strong>{skillLabels[cat.key] ?? cat.key}</strong>: {cat.items.join(", ")}
+              <strong>{skillLabels[cat.key] ?? cat.key}</strong>: {cat.items.map((s: {name: string}) => s.name).join(", ")}
             </div>
           ))}
         </div>

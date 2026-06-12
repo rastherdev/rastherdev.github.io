@@ -7,13 +7,54 @@ import { skillCategories } from "../../data/skills";
 interface Props {
   locale: "en" | "es";
 }
+
+// FontAwesome icon mapping: tech name → FA class
+const faIcons: Record<string, string> = {
+  php: "fa-brands fa-php",
+  typescript: "fa-brands fa-js",
+  javascript: "fa-brands fa-js",
+  python: "fa-brands fa-python",
+  sql: "fa-solid fa-database",
+  laravel: "fa-brands fa-laravel",
+  vue: "fa-brands fa-vuejs",
+  react: "fa-brands fa-react",
+  angular: "fa-brands fa-angular",
+  express: "fa-brands fa-node-js",
+  bootstrap: "fa-brands fa-bootstrap",
+  postgresql: "fa-solid fa-server",
+  mysql: "fa-solid fa-database",
+  redis: "fa-solid fa-bolt",
+  sqlite: "fa-solid fa-hard-drive",
+  docker: "fa-brands fa-docker",
+  aws: "fa-brands fa-aws",
+  gcp: "fa-brands fa-google",
+  digitalocean: "fa-brands fa-digital-ocean",
+  github: "fa-brands fa-github",
+  nginx: "fa-solid fa-server",
+  git: "fa-brands fa-git-alt",
+  phpunit: "fa-solid fa-vial",
+  pest: "fa-solid fa-bug",
+  postman: "fa-solid fa-paper-plane",
+  vscode: "fa-solid fa-code",
+  linux: "fa-brands fa-linux",
+};
+
+const categoryIcons: Record<string, string> = {
+  languages: "fa-solid fa-code",
+  frameworks: "fa-solid fa-cubes",
+  databases: "fa-solid fa-database",
+  devops: "fa-solid fa-cloud",
+  tools: "fa-solid fa-toolbox",
+};
+
+function toFaIcon(name: string): string {
+  const key = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+  return faIcons[key] ?? "fa-solid fa-gear";
+}
 ---
 
 {(() => {
   const dict = Astro.props.locale === "en" ? en : es;
-
-  // Map dict category labels to data keys
-  const categoryOrder = ["languages", "frameworks", "databases", "devops", "tools"];
 
   return (
     <section class="skills section" id="skills">
@@ -25,13 +66,22 @@ interface Props {
             const data = skillCategories.find((s) => s.key === cat.key);
             if (!data) return null;
             return (
-              <div class="skills__category" data-speed={1 + i * 0.05}>
-                <h3 class="skills__category-title">{cat.label}</h3>
+              <div class="skills__card" style={`--delay:${i}`}>
+                <h3 class="skills__card-title">
+                  <i class={`${categoryIcons[cat.key] ?? "fa-solid fa-folder"} skills__cat-icon`}></i>
+                  {cat.label}
+                </h3>
                 <ul class="skills__list">
                   {data.items.map((skill) => (
                     <li class="skills__item">
-                      <span class="skills__dot" aria-hidden="true"></span>
-                      {skill}
+                      <div class="skills__item-header">
+                        <i class={`${toFaIcon(skill.name)} skills__item-icon`}></i>
+                        <span class="skills__item-name">{skill.name}</span>
+                        <span class="skills__item-pct">{skill.level}%</span>
+                      </div>
+                      <div class="skills__bar">
+                        <div class="skills__bar-fill" style={`--level:${skill.level}%`}></div>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -47,51 +97,91 @@ interface Props {
 <style>
   .skills__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--space-xl);
   }
 
-  .skills__category {
+  .skills__card {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius-xl);
     padding: var(--space-xl);
-    transition: border-color var(--transition-base);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
   }
 
-  .skills__category:hover {
+  .skills__card:hover {
     border-color: var(--color-border-hover);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   }
 
-  .skills__category-title {
+  .skills__card-title {
     font-family: var(--font-display);
     font-size: var(--text-lg);
     color: var(--color-accent);
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  /* Category icon */
+  .skills__cat-icon {
+    width: 20px;
+    font-size: var(--text-base);
+    color: var(--color-accent);
   }
 
   .skills__list {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: var(--space-md);
   }
 
-  .skills__item {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
+  .skills__item-header {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
+    margin-bottom: 4px;
   }
 
-  .skills__dot {
-    width: 6px;
-    height: 6px;
-    background: var(--color-code);
-    border-radius: 50%;
-    flex-shrink: 0;
+  .skills__item-icon {
+    width: 18px;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-align: center;
+  }
+
+  .skills__item-name {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    flex: 1;
+  }
+
+  .skills__item-pct {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .skills__bar {
+    height: 4px;
+    background: var(--color-border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .skills__bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-code));
+    border-radius: 2px;
+    transition: width 1s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .skills__bar-fill.is-visible {
+    width: var(--level);
   }
 
   @media (max-width: 768px) {
@@ -114,65 +204,51 @@ interface Props {
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
     const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".skills",
-        start: "top 70%",
-      },
+      scrollTrigger: { trigger: ".skills", start: "top 68%" },
     });
 
     tl.from(".skills .section-heading__title", {
-      opacity: 0,
-      y: 20,
-      duration: 0.6,
-      ease: "power3.out",
+      opacity: 0, y: 20, duration: 0.6, ease: "power3.out",
     })
-      .from(
-        ".skills .section-heading__line",
-        { scaleX: 0, opacity: 0, duration: 0.5, ease: "power3.out" },
-        "-=0.2"
-      )
-      .from(
-        ".skills__category",
-        {
-          opacity: 0,
-          y: 40,
-          scale: 0.95,
-          stagger: 0.1,
-          duration: 0.6,
-          ease: "power3.out",
-        },
-        "-=0.1"
-      )
-      .from(
-        ".skills__item",
-        {
-          opacity: 0,
-          x: -15,
-          stagger: 0.04,
-          duration: 0.35,
-          ease: "power2.out",
-        },
-        "-=0.3"
-      );
+      .from(".skills .section-heading__line", {
+        scaleX: 0, opacity: 0, duration: 0.5, ease: "power3.out",
+      }, "-=0.2")
+      .from(".skills__card", {
+        opacity: 0, y: 40, scale: 0.96, stagger: 0.1, duration: 0.6, ease: "power3.out",
+      }, "-=0.1");
+
+    // Animate bars on scroll
+    ScrollTrigger.create({
+      trigger: ".skills__list",
+      start: "top 75%",
+      onEnter: () => {
+        document.querySelectorAll<HTMLElement>(".skills__bar-fill").forEach((bar, i) => {
+          setTimeout(() => bar.classList.add("is-visible"), i * 40);
+        });
+      },
+      once: true,
+    });
   });
 
-  // Hover microinteraction on skill categories
-  document.querySelectorAll<HTMLElement>(".skills__category").forEach((cat) => {
-    cat.addEventListener("mouseenter", () => {
-      gsap.to(cat, {
-        y: -5,
-        boxShadow: "0 8px 25px rgba(240, 160, 48, 0.1)",
+  // Hover effect
+  document.querySelectorAll<HTMLElement>(".skills__card").forEach((card) => {
+    card.addEventListener("mouseenter", () => {
+      gsap.to(card, {
+        scale: 1.10,
+        y: -6,
+        boxShadow: "0 12px 35px rgba(240, 160, 48, 0.15)",
         borderColor: "var(--color-accent)",
-        duration: 0.3,
+        duration: 0.35,
         ease: "power2.out",
       });
     });
-    cat.addEventListener("mouseleave", () => {
-      gsap.to(cat, {
+    card.addEventListener("mouseleave", () => {
+      gsap.to(card, {
+        scale: 1,
         y: 0,
-        boxShadow: "none",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
         borderColor: "var(--color-border)",
-        duration: 0.3,
+        duration: 0.35,
         ease: "power2.out",
       });
     });
