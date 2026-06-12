@@ -1,0 +1,30 @@
+---
+export interface Props {
+  text: string;
+  variant?: "default" | "accent";
+}
+---
+
+<span class={`badge badge--${Astro.props.variant ?? "default"}`}>
+  {Astro.props.text}
+</span>
+
+<style>
+  .badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    padding: 0.2em 0.6em;
+    border-radius: var(--border-radius-full);
+    border: 1px solid var(--color-border);
+    color: var(--color-code);
+    background: rgba(77, 212, 192, 0.06);
+    letter-spacing: 0.02em;
+  }
+
+  .badge--accent {
+    color: var(--color-accent);
+    background: rgba(240, 160, 48, 0.08);
+    border-color: rgba(240, 160, 48, 0.2);
+  }
+</style>

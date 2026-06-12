@@ -1,0 +1,69 @@
+/* ═══════════════════════════════════════════════════════════════
+   Design Tokens — Portfolio + CV
+   Convention: BEM-like naming for components,
+   custom properties as single source of truth.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Palette ───────────────────────────────────────────── */
+  --color-bg: #08080f;
+  --color-surface: #111122;
+  --color-surface-raised: #1a1a30;
+  --color-text: #e2e2f0;
+  --color-text-muted: #8080a0;
+  --color-accent: #f0a030;
+  --color-accent-glow: rgba(240, 160, 48, 0.25);
+  --color-code: #4dd4c0;
+  --color-border: #1e1e35;
+  --color-border-hover: #2a2a45;
+
+  /* ── Typography ────────────────────────────────────────── */
+  --font-display: "DM Sans", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
+  --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);
+  --text-base: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
+  --text-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.75rem);
+  --text-2xl: clamp(1.5rem, 1.25rem + 1.25vw, 2.25rem);
+  --text-3xl: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);
+  --text-4xl: clamp(2.5rem, 1.75rem + 3.75vw, 5rem);
+
+  /* ── Spacing ───────────────────────────────────────────── */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
+  --space-section: clamp(4rem, 6vw, 8rem);
+
+  /* ── Layout ────────────────────────────────────────────── */
+  --max-width: 1200px;
+  --nav-height: 4rem;
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-full: 9999px;
+
+  /* ── Transitions ───────────────────────────────────────── */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* ── Shadows ───────────────────────────────────────────── */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px var(--color-accent-glow);
+
+  /* ── Z-index scale ─────────────────────────────────────── */
+  --z-base: 1;
+  --z-nav: 100;
+  --z-modal: 200;
+  --z-overlay: 300;
+}

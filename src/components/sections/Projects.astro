@@ -1,0 +1,120 @@
+---
+import SectionHeading from "../ui/SectionHeading.astro";
+import Card from "../ui/Card.astro";
+import en from "../../i18n/en";
+import es from "../../i18n/es";
+import { projects } from "../../data/projects";
+
+interface Props {
+  locale: "en" | "es";
+}
+---
+
+{(() => {
+  const dict = Astro.props.locale === "en" ? en : es;
+
+  return (
+    <section class="projects section" id="projects">
+      <div class="section__inner">
+        <SectionHeading title={dict.projects.heading} />
+
+        <div class="projects__grid">
+          {projects.map((project, i) => (
+            <Card project={project} dict={dict.projects} index={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+})()}
+
+<style>
+  .projects__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: var(--space-xl);
+  }
+
+  @media (max-width: 768px) {
+    .projects__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger } from "../../scripts/utils/gsap-setup";
+
+  const mm = gsap.matchMedia();
+
+  mm.add("(prefers-reduced-motion: no-preference)", () => {
+    // Reveal heading
+    gsap.fromTo(
+      ".projects .section-heading__title",
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".projects",
+          start: "top 75%",
+        },
+      }
+    );
+
+    gsap.fromTo(
+      ".projects .section-heading__line",
+      { scaleX: 0, opacity: 0 },
+      {
+        scaleX: 1,
+        opacity: 1,
+        duration: 0.5,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".projects",
+          start: "top 75%",
+        },
+      }
+    );
+
+    // Stagger project cards
+    gsap.fromTo(
+      ".project-card",
+      { opacity: 0, y: 40 },
+      {
+        opacity: 1,
+        y: 0,
+        stagger: 0.15,
+        duration: 0.7,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".projects__grid",
+          start: "top 78%",
+        },
+      }
+    );
+  });
+
+  // Hover microinteraction for project cards
+  document.querySelectorAll<HTMLElement>(".project-card").forEach((card) => {
+    card.addEventListener("mouseenter", () => {
+      gsap.to(card, {
+        y: -4,
+        scale: 1.01,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    });
+
+    card.addEventListener("mouseleave", () => {
+      gsap.to(card, {
+        y: 0,
+        scale: 1,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    });
+  });
+</script>

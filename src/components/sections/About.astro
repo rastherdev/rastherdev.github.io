@@ -1,0 +1,178 @@
+---
+import SectionHeading from "../ui/SectionHeading.astro";
+import en from "../../i18n/en";
+import es from "../../i18n/es";
+import { siteConfig } from "../../data/social";
+
+interface Props {
+  locale: "en" | "es";
+}
+---
+
+{(() => {
+  const dict = Astro.props.locale === "en" ? en : es;
+
+  return (
+    <section class="about section" id="about">
+      <div class="section__inner">
+        <SectionHeading title={dict.about.heading} />
+
+        <div class="about__grid">
+          <div class="about__bio">
+            {dict.about.bio.map((paragraph) => (
+              <p class="about__paragraph">{paragraph}</p>
+            ))}
+          </div>
+
+          <div class="about__facts">
+            {dict.about.quickFacts.map((fact) => (
+              <div class="about__fact">
+                <span class="about__fact-label">{fact.label}</span>
+                <span class="about__fact-value">{fact.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+})()}
+
+<style>
+  .about__grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: var(--space-3xl);
+    align-items: start;
+  }
+
+  .about__bio {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .about__paragraph {
+    color: var(--color-text-muted);
+    line-height: 1.8;
+    font-size: var(--text-base);
+  }
+
+  .about__facts {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-xl);
+    padding: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .about__fact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .about__fact:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .about__fact-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .about__fact-value {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--color-text);
+    text-align: right;
+  }
+
+  @media (max-width: 768px) {
+    .about__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+    }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger } from "../../scripts/utils/gsap-setup";
+
+  const mm = gsap.matchMedia();
+
+  mm.add("(prefers-reduced-motion: no-preference)", () => {
+    // Reveal section heading
+    gsap.fromTo(
+      ".about .section-heading__title",
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".about",
+          start: "top 75%",
+        },
+      }
+    );
+
+    gsap.fromTo(
+      ".about .section-heading__line",
+      { scaleX: 0, opacity: 0 },
+      {
+        scaleX: 1,
+        opacity: 1,
+        duration: 0.5,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".about",
+          start: "top 75%",
+        },
+      }
+    );
+
+    // Reveal bio paragraphs
+    gsap.fromTo(
+      ".about__paragraph",
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        stagger: 0.15,
+        duration: 0.5,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".about__bio",
+          start: "top 75%",
+        },
+      }
+    );
+
+    // Reveal facts with stagger
+    gsap.fromTo(
+      ".about__fact",
+      { opacity: 0, x: 30 },
+      {
+        opacity: 1,
+        x: 0,
+        stagger: 0.1,
+        duration: 0.5,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".about__facts",
+          start: "top 75%",
+        },
+      }
+    );
+  });
+</script>

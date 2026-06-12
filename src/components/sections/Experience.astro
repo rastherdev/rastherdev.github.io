@@ -1,0 +1,286 @@
+---
+import SectionHeading from "../ui/SectionHeading.astro";
+import en from "../../i18n/en";
+import es from "../../i18n/es";
+import { experience } from "../../data/experience";
+
+interface Props {
+  locale: "en" | "es";
+}
+---
+
+{(() => {
+  const dict = Astro.props.locale === "en" ? en : es;
+
+  return (
+    <section class="experience section" id="experience">
+      <div class="section__inner">
+        <SectionHeading title={dict.experience.heading} />
+
+        <div class="experience__timeline">
+          {/* SVG line that gets drawn */}
+          <svg class="experience__line" viewBox="0 0 4 100" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="2" y1="0" x2="2" y2="100" stroke="var(--color-border)" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+            <line class="experience__line-draw" x1="2" y1="0" x2="2" y2="100" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke" stroke-dasharray="1" stroke-dashoffset="1" pathLength="1" />
+          </svg>
+
+          <div class="experience__entries">
+            {experience.map((entry, i) => (
+              <div class="experience__entry">
+                <div class="experience__dot" aria-hidden="true"></div>
+                <div class="experience__card">
+                  <div class="experience__card-header">
+                    <div>
+                      <h3 class="experience__role">{entry.role}</h3>
+                      <p class="experience__company">{entry.company}</p>
+                    </div>
+                    <span class="experience__dates">
+                      {new Date(entry.startDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })} —{" "}
+                      {entry.endDate
+                        ? new Date(entry.endDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+                        : dict.experience.present}
+                    </span>
+                  </div>
+
+                  <div class="experience__card-body">
+                    <div class="experience__section">
+                      <h4 class="experience__section-title">{dict.experience.achievementsLabel}</h4>
+                      <ul class="experience__achievements">
+                        {entry.achievements.map((a) => (
+                          <li class="experience__achievement">{a.text}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+})()}
+
+<style>
+  .experience__timeline {
+    position: relative;
+    max-width: 800px;
+    margin-inline: auto;
+    padding-left: var(--space-2xl);
+  }
+
+  .experience__line {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .experience__line-draw {
+    transition: none;
+  }
+
+  .experience__entries {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xl);
+  }
+
+  .experience__entry {
+    position: relative;
+  }
+
+  .experience__dot {
+    position: absolute;
+    left: calc(-1 * var(--space-2xl) - 6px);
+    top: 1.2rem;
+    width: 16px;
+    height: 16px;
+    background: var(--color-bg);
+    border: 3px solid var(--color-accent);
+    border-radius: 50%;
+    z-index: 2;
+    opacity: 0;
+  }
+
+  .experience__card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-xl);
+    padding: var(--space-xl);
+    transition: border-color var(--transition-base);
+  }
+
+  .experience__card:hover {
+    border-color: var(--color-border-hover);
+  }
+
+  .experience__card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+  }
+
+  .experience__role {
+    font-size: var(--text-xl);
+    margin-bottom: 2px;
+  }
+
+  .experience__company {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+  }
+
+  .experience__dates {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    padding: 0.3em 0.7em;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-full);
+    white-space: nowrap;
+  }
+
+  .experience__section-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--space-sm);
+  }
+
+  .experience__achievements {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .experience__achievement {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    padding-left: var(--space-lg);
+    position: relative;
+  }
+
+  .experience__achievement::before {
+    content: "▹";
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 768px) {
+    .experience__timeline {
+      padding-left: var(--space-xl);
+    }
+
+    .experience__dot {
+      left: calc(-1 * var(--space-xl) - 6px);
+    }
+
+    .experience__card-header {
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger } from "../../scripts/utils/gsap-setup";
+
+  const mm = gsap.matchMedia();
+
+  mm.add("(prefers-reduced-motion: no-preference)", () => {
+    // Reveal heading
+    gsap.fromTo(
+      ".experience .section-heading__title",
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".experience",
+          start: "top 75%",
+        },
+      }
+    );
+
+    gsap.fromTo(
+      ".experience .section-heading__line",
+      { scaleX: 0, opacity: 0 },
+      {
+        scaleX: 1,
+        opacity: 1,
+        duration: 0.5,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".experience",
+          start: "top 75%",
+        },
+      }
+    );
+
+    // Draw the SVG line on scroll
+    gsap.fromTo(
+      ".experience__line-draw",
+      { strokeDashoffset: 1 },
+      {
+        strokeDashoffset: 0,
+        duration: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".experience__entries",
+          start: "top 70%",
+          end: "bottom 30%",
+          scrub: 1,
+        },
+      }
+    );
+
+    // Reveal entries with stagger
+    gsap.fromTo(
+      ".experience__entry",
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
+        y: 0,
+        stagger: 0.2,
+        duration: 0.6,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".experience__entries",
+          start: "top 75%",
+        },
+      }
+    );
+
+    // Dots pop in
+    gsap.fromTo(
+      ".experience__dot",
+      { opacity: 0, scale: 0 },
+      {
+        opacity: 1,
+        scale: 1,
+        stagger: 0.2,
+        duration: 0.4,
+        ease: "back.out(2)",
+        scrollTrigger: {
+          trigger: ".experience__entries",
+          start: "top 75%",
+        },
+      }
+    );
+  });
+</script>

@@ -1,0 +1,99 @@
+---
+export interface Props {
+  lines: string[];
+}
+---
+
+<div class="terminal" aria-hidden="true">
+  <div class="terminal__header">
+    <span class="terminal__dot terminal__dot--red"></span>
+    <span class="terminal__dot terminal__dot--yellow"></span>
+    <span class="terminal__dot terminal__dot--green"></span>
+    <span class="terminal__title">Terminal — portfolio serve</span>
+  </div>
+  <div class="terminal__body" id="terminal-body">
+    {Astro.props.lines.map((line) => (
+      <div class="terminal__line">
+        <span class="terminal__text">{line}</span>
+      </div>
+    ))}
+    <div class="terminal__line terminal__line--active">
+      <span class="terminal__prompt">$&nbsp;</span>
+      <span class="terminal__cursor">▌</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .terminal {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    box-shadow: var(--shadow-lg);
+    max-width: 580px;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .terminal__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.6rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .terminal__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .terminal__dot--red { background: #ff5f57; }
+  .terminal__dot--yellow { background: #febc2e; }
+  .terminal__dot--green { background: #28c840; }
+
+  .terminal__title {
+    margin-left: var(--space-sm);
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+  }
+
+  .terminal__body {
+    padding: 1rem;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .terminal__line {
+    display: flex;
+    gap: 0;
+    color: var(--color-code);
+    line-height: 1.6;
+  }
+
+  .terminal__text {
+    white-space: pre-wrap;
+  }
+
+  .terminal__prompt {
+    color: var(--color-accent);
+  }
+
+  .terminal__cursor {
+    color: var(--color-accent);
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>

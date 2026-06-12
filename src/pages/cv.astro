@@ -1,0 +1,327 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { experience } from "../data/experience";
+import { projects } from "../data/projects";
+import { skillCategories } from "../data/skills";
+import { resumeUrl } from "../data/social";
+
+const locale = "en";
+---
+
+<BaseLayout locale={locale} title="CV — Giovany Domínguez">
+  <div class="cv">
+    <div class="cv__inner">
+      <!-- Header -->
+      <header class="cv__header">
+        <h1 class="cv__name">Giovany Domínguez</h1>
+        <p class="cv__title">Laravel Backend Developer</p>
+        <div class="cv__contact-row">
+          <span>rastherdev@gmail.com</span>
+          <span>github.com/rastherdev</span>
+          <span>linkedin.com/in/rastherdev</span>
+          <span>Michoacán, México</span>
+        </div>
+      </header>
+
+      <!-- Summary -->
+      <section class="cv__section">
+        <h2 class="cv__section-title">Professional Summary</h2>
+        <p class="cv__summary">
+          Backend developer with 3+ years of experience building scalable SaaS applications using Laravel and PHP.
+          Specialized in multi-tenant architectures, asynchronous queue systems, and performance optimization.
+          Experienced in migrating legacy systems and designing robust APIs. Based in Michoacán, México.
+        </p>
+      </section>
+
+      <!-- Skills -->
+      <section class="cv__section">
+        <h2 class="cv__section-title">Technical Skills</h2>
+        <div class="cv__skills-grid">
+          {skillCategories.map((cat) => (
+            <div class="cv__skill-group">
+              <strong>{cat.key}</strong>: {cat.items.join(", ")}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Experience -->
+      <section class="cv__section">
+        <h2 class="cv__section-title">Professional Experience</h2>
+        {experience.map((entry) => (
+          <div class="cv__exp">
+            <div class="cv__exp-header">
+              <div>
+                <h3 class="cv__exp-role">{entry.role}</h3>
+                <p class="cv__exp-company">{entry.company}</p>
+              </div>
+              <span class="cv__exp-dates">
+                {new Date(entry.startDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })} —{" "}
+                {entry.endDate
+                  ? new Date(entry.endDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+                  : "Present"}
+              </span>
+            </div>
+            <ul class="cv__exp-achievements">
+              {entry.achievements.map((a) => (
+                <li>{a.text}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+
+      <!-- Projects -->
+      <section class="cv__section">
+        <h2 class="cv__section-title">Featured Projects</h2>
+        {projects.map((p) => (
+          <div class="cv__project">
+            <h3 class="cv__project-name">
+              {p.name}
+              <span class="cv__project-link"> — {p.url}</span>
+            </h3>
+            <p class="cv__project-desc">{p.description}</p>
+            <p class="cv__project-stack"><strong>Stack:</strong> {p.stack.join(", ")}</p>
+          </div>
+        ))}
+      </section>
+
+      <!-- Languages -->
+      <section class="cv__section">
+        <h2 class="cv__section-title">Languages</h2>
+        <p>Spanish (Native), English (Professional working proficiency)</p>
+      </section>
+
+      <!-- Download / Print -->
+      <div class="cv__actions no-print">
+        <a href={resumeUrl} class="cv__btn" download>Download PDF</a>
+        <button class="cv__btn cv__btn--print" onclick="window.print()">Print CV</button>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .cv {
+    padding: calc(var(--nav-height) + var(--space-4xl)) 0 var(--space-4xl);
+    color: var(--color-text);
+  }
+
+  .cv__inner {
+    max-width: 800px;
+    margin-inline: auto;
+    padding-inline: var(--space-xl);
+  }
+
+  .cv__header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+    padding-bottom: var(--space-2xl);
+    border-bottom: 2px solid var(--color-accent);
+  }
+
+  .cv__name {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-xs);
+  }
+
+  .cv__title {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    color: var(--color-accent);
+    margin-bottom: var(--space-md);
+  }
+
+  .cv__contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-md);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .cv__section {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .cv__section-title {
+    font-size: var(--text-xl);
+    color: var(--color-accent);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .cv__summary {
+    color: var(--color-text-muted);
+    line-height: 1.8;
+  }
+
+  .cv__skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+  }
+
+  .cv__skill-group {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .cv__skill-group strong {
+    color: var(--color-text);
+    text-transform: capitalize;
+  }
+
+  .cv__exp {
+    margin-bottom: var(--space-xl);
+  }
+
+  .cv__exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-md);
+    margin-bottom: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .cv__exp-role {
+    font-size: var(--text-lg);
+  }
+
+  .cv__exp-company {
+    font-family: var(--font-mono);
+    color: var(--color-accent);
+    font-size: var(--text-sm);
+  }
+
+  .cv__exp-dates {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .cv__exp-achievements {
+    padding-left: var(--space-lg);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .cv__project {
+    margin-bottom: var(--space-lg);
+  }
+
+  .cv__project-name {
+    font-size: var(--text-base);
+  }
+
+  .cv__project-link {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-code);
+    font-weight: 400;
+  }
+
+  .cv__project-desc {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    margin-top: var(--space-xs);
+  }
+
+  .cv__project-stack {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin-top: var(--space-xs);
+  }
+
+  .cv__actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    margin-top: var(--space-3xl);
+  }
+
+  .cv__btn {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-bg);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .cv__btn:hover {
+    background: transparent;
+    color: var(--color-accent);
+  }
+
+  .cv__btn--print {
+    background: transparent;
+    color: var(--color-text);
+    border-color: var(--color-border);
+  }
+
+  .cv__btn--print:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 768px) {
+    .cv__skills-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .no-print,
+    .nav,
+    .footer {
+      display: none !important;
+    }
+
+    .cv {
+      padding: 1rem;
+    }
+
+    body {
+      background: white;
+      color: black;
+      font-size: 11pt;
+    }
+
+    .cv__section-title {
+      color: black;
+    }
+
+    .cv__title {
+      color: #555;
+    }
+
+    .cv__exp-company {
+      color: #555;
+    }
+
+    .cv__contact-row,
+    .cv__project-desc,
+    .cv__exp-achievements,
+    .cv__skill-group,
+    .cv__summary {
+      color: #333;
+    }
+  }
+</style>

@@ -1,0 +1,182 @@
+---
+import SectionHeading from "../ui/SectionHeading.astro";
+import en from "../../i18n/en";
+import es from "../../i18n/es";
+import { skillCategories } from "../../data/skills";
+
+interface Props {
+  locale: "en" | "es";
+}
+---
+
+{(() => {
+  const dict = Astro.props.locale === "en" ? en : es;
+
+  // Map dict category labels to data keys
+  const categoryOrder = ["languages", "frameworks", "databases", "devops", "tools"];
+
+  return (
+    <section class="skills section" id="skills">
+      <div class="section__inner">
+        <SectionHeading title={dict.skills.heading} />
+
+        <div class="skills__grid">
+          {dict.skills.categories.map((cat) => {
+            const data = skillCategories.find((s) => s.key === cat.key);
+            if (!data) return null;
+            return (
+              <div class="skills__category">
+                <h3 class="skills__category-title">{cat.label}</h3>
+                <ul class="skills__list">
+                  {data.items.map((skill) => (
+                    <li class="skills__item">
+                      <span class="skills__dot" aria-hidden="true"></span>
+                      {skill}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+})()}
+
+<style>
+  .skills__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-xl);
+  }
+
+  .skills__category {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-xl);
+    padding: var(--space-xl);
+    transition: border-color var(--transition-base);
+  }
+
+  .skills__category:hover {
+    border-color: var(--color-border-hover);
+  }
+
+  .skills__category-title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    color: var(--color-accent);
+    margin-bottom: var(--space-md);
+  }
+
+  .skills__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .skills__item {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .skills__dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-code);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    .skills__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .skills__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger } from "../../scripts/utils/gsap-setup";
+
+  const mm = gsap.matchMedia();
+
+  mm.add("(prefers-reduced-motion: no-preference)", () => {
+    // Reveal section heading
+    gsap.fromTo(
+      ".skills .section-heading__title",
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".skills",
+          start: "top 75%",
+        },
+      }
+    );
+
+    gsap.fromTo(
+      ".skills .section-heading__line",
+      { scaleX: 0, opacity: 0 },
+      {
+        scaleX: 1,
+        opacity: 1,
+        duration: 0.5,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".skills",
+          start: "top 75%",
+        },
+      }
+    );
+
+    // Stagger cards
+    gsap.fromTo(
+      ".skills__category",
+      { opacity: 0, y: 30, scale: 0.96 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        stagger: 0.12,
+        duration: 0.6,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: ".skills__grid",
+          start: "top 78%",
+        },
+      }
+    );
+
+    // Stagger items within each category
+    gsap.fromTo(
+      ".skills__item",
+      { opacity: 0, x: -10 },
+      {
+        opacity: 1,
+        x: 0,
+        stagger: 0.06,
+        duration: 0.3,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".skills__grid",
+          start: "top 78%",
+        },
+      }
+    );
+  });
+</script>

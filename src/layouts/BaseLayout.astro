@@ -1,0 +1,33 @@
+---
+import Nav from "../components/layout/Nav.astro";
+import Footer from "../components/layout/Footer.astro";
+import "../styles/global.css";
+
+interface Props {
+  locale: "en" | "es";
+  title?: string;
+  description?: string;
+}
+---
+
+<!doctype html>
+<html lang={Astro.props.locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={Astro.props.description ?? "Giovany Domínguez — Laravel Backend Developer. Portfolio & CV."} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{Astro.props.title ?? "Giovany Domínguez — Laravel Backend Developer"}</title>
+
+    <!-- Preload fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+  <body>
+    <Nav locale={Astro.props.locale} />
+    <main>
+      <slot />
+    </main>
+    <Footer locale={Astro.props.locale} />
+  </body>
+</html>
