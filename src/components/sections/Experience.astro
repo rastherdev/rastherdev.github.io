@@ -58,6 +58,7 @@ function duration(start: string, end: string | null): string {
           <div class="exp-log__rail" aria-hidden="true">
             <span class="exp-log__track"></span>
             <span class="exp-log__progress"></span>
+            <span class="exp-log__tip"></span>
           </div>
 
           {experience.map((entry) => (
@@ -208,30 +209,35 @@ function duration(start: string, end: string | null): string {
     );
   }
 
-  /* fills top→bottom via height (scrubbed by GSAP) */
+  /* fills top→bottom via scaleY (compositor-only; animating height would
+     force layout + repaint on every scrolled frame) */
   .exp-log__progress {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-    height: 0%;
+    height: 100%;
     background: linear-gradient(180deg, var(--color-accent), var(--color-code));
     border-radius: var(--border-radius-full);
     box-shadow: 0 0 8px var(--color-accent-glow);
+    transform: scaleY(0);
+    transform-origin: top;
+    will-change: transform;
   }
 
-  /* glowing pen tip at the drawing edge */
-  .exp-log__progress::after {
-    content: "";
+  /* glowing pen tip — separate element moved with translateY so the bar's
+     scaleY doesn't squash it */
+  .exp-log__tip {
     position: absolute;
-    bottom: -3px;
+    top: -4px;
     left: 50%;
-    transform: translateX(-50%);
     width: 8px;
     height: 8px;
+    margin-left: -4px;
     border-radius: 50%;
     background: var(--color-code);
     box-shadow: 0 0 10px rgba(77, 212, 192, 0.9);
+    will-change: transform;
   }
 
   .exp-commit {
@@ -521,16 +527,26 @@ function duration(start: string, end: string | null): string {
         opacity: 0, x: -20, duration: 0.5, ease: "power2.out",
       }, "-=0.2");
 
-    // ── Rail draws as you scroll (scrub) ───────────────
-    gsap.fromTo(".exp-log__progress", { height: "0%" }, {
-      height: "100%",
+    // ── Rail draws as you scroll (scrub, transform-only) ──
+    const railScrub = {
+      trigger: ".exp-log",
+      start: "top 60%",
+      end: "bottom 45%",
+      scrub: 1,
+      invalidateOnRefresh: true,
+    };
+
+    gsap.fromTo(".exp-log__progress", { scaleY: 0 }, {
+      scaleY: 1,
       ease: "none",
-      scrollTrigger: {
-        trigger: ".exp-log",
-        start: "top 60%",
-        end: "bottom 45%",
-        scrub: 1,
-      },
+      scrollTrigger: railScrub,
+    });
+
+    const rail = document.querySelector<HTMLElement>(".exp-log__rail")!;
+    gsap.fromTo(".exp-log__tip", { y: 0 }, {
+      y: () => rail.clientHeight,
+      ease: "none",
+      scrollTrigger: railScrub,
     });
 
     // ── Each commit reveals on its own trigger ─────────

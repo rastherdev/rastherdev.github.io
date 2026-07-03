@@ -15,10 +15,13 @@ export interface Props {
   data-index={Astro.props.index}
 >
   {Astro.props.project.featured && (
-    <span class="project-card__flag">
-      <i class="fa-solid fa-star" aria-hidden="true"></i>
-      {Astro.props.dict.featuredBadge}
-    </span>
+    <>
+      <div class="project-card__beam" aria-hidden="true"><span></span></div>
+      <span class="project-card__flag">
+        <i class="fa-solid fa-star" aria-hidden="true"></i>
+        {Astro.props.dict.featuredBadge}
+      </span>
+    </>
   )}
   <div class="project-card__content">
     <div class="project-card__icon" aria-hidden="true">
@@ -77,31 +80,48 @@ export interface Props {
 
   /* ── Featured (flagship) card ─────────────────────── */
   .project-card--featured {
-    --beam-angle: 0deg;
     border-color: rgba(240, 160, 48, 0.25);
     box-shadow: 0 0 30px rgba(240, 160, 48, 0.06);
   }
 
-  /* light beam orbiting the border (angle driven by GSAP) */
-  .project-card--featured::after {
-    content: "";
+  /* light beam orbiting the border — gradient painted once on an oversized
+     inner square, rotated with transform (compositor-only, no repaints) */
+  .project-card__beam {
     position: absolute;
     inset: 0;
     border-radius: inherit;
     padding: 1px;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .project-card__beam span {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 250%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
     background: conic-gradient(
-      from var(--beam-angle),
+      from 0deg,
       transparent 0%,
       transparent 70%,
       var(--color-accent) 86%,
       rgba(226, 226, 240, 0.9) 93%,
       transparent 100%
     );
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
+    animation: cardBeamSpin 5s linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes cardBeamSpin {
+    to {
+      transform: translate(-50%, -50%) rotate(1turn);
+    }
   }
 
   .project-card__flag {

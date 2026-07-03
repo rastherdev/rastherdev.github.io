@@ -44,6 +44,7 @@ const isKeyword = (part: string) =>
 
       <div class="section__inner">
         <div class="about__panel" id="about-panel">
+          <div class="about__panel-beam" aria-hidden="true"><span></span></div>
           <SectionHeading title={dict.about.heading} />
           <!-- no data-speed here: parallax drift would push content outside the bordered panel -->
           <div class="about__grid">
@@ -163,7 +164,6 @@ const isKeyword = (part: string) =>
 
   /* ── Panel: light wash + animated beam border to delimit the section ── */
   .about__panel {
-    --beam-angle: 0deg;
     position: relative;
     z-index: 2;
     border-radius: var(--border-radius-xl);
@@ -178,26 +178,45 @@ const isKeyword = (part: string) =>
     box-shadow: 0 0 60px rgba(226, 226, 240, 0.03) inset, var(--shadow-lg);
   }
 
-  /* Beam that travels around the panel perimeter (angle driven by GSAP) */
-  .about__panel::before {
-    content: "";
+  /* Beam traveling around the panel perimeter. The gradient sits on an
+     oversized inner square rotated with transform (compositor-only, painted
+     once) — animating the gradient angle itself repaints every frame. */
+  .about__panel-beam {
     position: absolute;
     inset: -1px;
     border-radius: inherit;
     padding: 1px;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .about__panel-beam span {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 250%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
     background: conic-gradient(
-      from var(--beam-angle),
+      from 0deg,
       transparent 0%,
       transparent 72%,
       var(--color-accent) 86%,
       rgba(226, 226, 240, 0.9) 93%,
       transparent 100%
     );
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
+    animation: beamSpin 7s linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes beamSpin {
+    to {
+      transform: translate(-50%, -50%) rotate(1turn);
+    }
   }
 
   /* Soft light spill above the panel edge */
@@ -396,14 +415,6 @@ const isKeyword = (part: string) =>
   const mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
-    // ── Beam border: light travels around the panel perimeter ──
-    gsap.to("#about-panel", {
-      "--beam-angle": "360deg",
-      duration: 7,
-      repeat: -1,
-      ease: "none",
-    });
-
     // ── Section entrance: aggressive opposite stagger ──────
     const tl = gsap.timeline({
       scrollTrigger: { trigger: ".about", start: "top 65%" },

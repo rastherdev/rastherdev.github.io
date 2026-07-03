@@ -79,6 +79,21 @@ interface Props {
   // Expose smoother globally so Nav can use it for anchor links
   (window as any).__smoother = smoother;
 
+  // Route ALL in-page anchors through the smoother: with normalizeScroll,
+  // native hash jumps desync scroll position from the content transform and
+  // ScrollTriggers never fire (sections stay at opacity 0 — black screen).
+  // Components with their own handlers (Nav, SectionNav) preventDefault first
+  // and are skipped here.
+  document.addEventListener("click", (e) => {
+    if (e.defaultPrevented) return;
+    const link = (e.target as HTMLElement).closest?.('a[href^="#"]') as HTMLAnchorElement | null;
+    if (!link) return;
+    const target = document.querySelector<HTMLElement>(link.getAttribute("href")!);
+    if (!target) return;
+    e.preventDefault();
+    smoother.scrollTo(target, true, "top 72px");
+  });
+
   // ── Loader sequence ────────────────────────────────────
   async function initLoader() {
     const loaderEl = document.getElementById("loader");
@@ -120,6 +135,13 @@ interface Props {
     // Refresh ScrollTrigger after layout settles
     requestAnimationFrame(() => {
       ScrollTrigger.refresh();
+
+      // Deep links (/#projects): redo the browser's native hash jump through
+      // the smoother so triggers fire and content actually reveals
+      if (location.hash) {
+        const target = document.querySelector<HTMLElement>(location.hash);
+        if (target) smoother.scrollTo(target, false, "top 72px");
+      }
     });
   }
 
