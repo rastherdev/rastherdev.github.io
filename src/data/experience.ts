@@ -9,6 +9,7 @@ export interface ExperienceEntry {
   endDate: string | null; // null = present
   responsibilities: string[];
   achievements: Achievement[];
+  stack: string[];
 }
 
 export const experience: ExperienceEntry[] = [
@@ -41,6 +42,7 @@ export const experience: ExperienceEntry[] = [
         text: "Set up DigitalOcean infrastructure from scratch, including servers, databases, and storage, ensuring high availability and scalability.",
       },
     ],
+    stack: ["Laravel", "PostgreSQL", "Redis", "DigitalOcean", "Sanctum / JWT"],
   },
   {
     company: "Presidencia Digital",
@@ -67,5 +69,6 @@ export const experience: ExperienceEntry[] = [
         text: "Configured a social program tracking platform for local governments, enabling real-time data-driven decision making.",
       },
     ],
+    stack: ["Laravel", "Bootstrap", "MySQL", "WPS Hosting"],
   },
 ];

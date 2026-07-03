@@ -7,61 +7,114 @@ import { experience } from "../../data/experience";
 interface Props {
   locale: "en" | "es";
 }
+
+// Deterministic pseudo commit hash from company name (pure flavor)
+function pseudoHash(s: string): string {
+  let h = 0;
+  for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return h.toString(16).padStart(7, "0").slice(0, 7);
+}
+
+// "1y 6m" — language-neutral, terminal style. Computed at build time;
+// "Present" durations refresh on each deploy, which is fine for a static CV.
+function duration(start: string, end: string | null): string {
+  const s = new Date(start + "-01");
+  const e = end ? new Date(end + "-01") : new Date();
+  const months =
+    (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth());
+  const y = Math.floor(months / 12);
+  const m = months % 12;
+  return [y ? `${y}y` : "", m ? `${m}m` : ""].filter(Boolean).join(" ") || "1m";
+}
 ---
 
 {(() => {
   const dict = Astro.props.locale === "en" ? en : es;
+  const dateLocale = Astro.props.locale === "es" ? "es-MX" : "en-US";
+  const fmt = (d: string) =>
+    new Date(d + "-01").toLocaleDateString(dateLocale, { month: "short", year: "numeric" });
 
   return (
     <section class="experience section" id="experience">
       <div class="section__inner">
         <SectionHeading title={dict.experience.heading} />
 
-        <!-- Zigzag timeline: line in center, cards alternate sides -->
-        <div class="exp-timeline">
-          <!-- SVG line centered -->
-          <svg class="exp-timeline__svg" viewBox="0 0 4 100" preserveAspectRatio="none" aria-hidden="true">
-            <line class="exp-timeline__track" x1="2" y1="0" x2="2" y2="100" stroke-width="2" vector-effect="non-scaling-stroke" />
-            <line class="exp-timeline__progress" x1="2" y1="0" x2="2" y2="100" stroke-width="2" vector-effect="non-scaling-stroke" stroke-dasharray="1" stroke-dashoffset="1" pathLength="1" />
+        <p class="exp-cli" aria-hidden="true">
+          <span class="exp-cli__prompt">$</span> git log --graph --author="Giovany Domínguez"
+        </p>
+
+        <!-- git-log timeline: branch rail on the left, one "commit" per job -->
+        <div class="exp-log">
+          <svg class="exp-log__rail" viewBox="0 0 4 100" preserveAspectRatio="none" aria-hidden="true">
+            <line class="exp-log__track" x1="2" y1="0" x2="2" y2="100" stroke-width="2" vector-effect="non-scaling-stroke" />
+            <line class="exp-log__progress" x1="2" y1="0" x2="2" y2="100" stroke-width="2" vector-effect="non-scaling-stroke" stroke-dasharray="1" stroke-dashoffset="1" pathLength="1" />
           </svg>
 
-          <div class="exp-timeline__entries">
-            {experience.map((entry, i) => (
-              <div class={`exp-entry exp-entry--${i % 2 === 0 ? 'left' : 'right'}`} data-index={i}>
-                <div class="exp-entry__dot">
-                  <div class="exp-entry__dot-inner"></div>
-                </div>
-                <button class="exp-card" data-exp-index={i} type="button">
-                  <div class="exp-card__connector"></div>
-                  <div class="exp-card__date">
-                    <span class="exp-card__date-dot"></span>
-                    {new Date(entry.startDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
-                    <span class="exp-card__date-sep">—</span>
-                    {entry.endDate
-                      ? new Date(entry.endDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })
-                      : dict.experience.present}
-                  </div>
-                  <div class="exp-card__body">
-                    <h3 class="exp-card__role">{entry.role}</h3>
-                    <p class="exp-card__company">
-                      <i class="fa-solid fa-building exp-card__icon"></i>
-                      {entry.company}
-                    </p>
-                  </div>
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+          <!-- comet: plain HTML div (SVG dash tricks misrender with preserveAspectRatio=none) -->
+          <div class="exp-log__comet" aria-hidden="true"></div>
 
-      <!-- Slide panel (right side) -->
-      <div class="exp-panel" id="exp-panel" aria-hidden="true">
-        <div class="exp-panel__card" id="exp-panel-card" role="dialog" aria-modal="true">
-          <button class="exp-panel__close" id="exp-panel-close" type="button" aria-label="Close">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-          <div class="exp-panel__inner" id="exp-panel-inner"></div>
+          {experience.map((entry) => (
+            <div class="exp-commit">
+              <div class={`exp-commit__dot${!entry.endDate ? " exp-commit__dot--head" : ""}`} aria-hidden="true">
+                <span class="exp-commit__dot-core"></span>
+              </div>
+
+              <article class="exp-card">
+                <header class="exp-card__head">
+                  <p class="exp-card__meta">
+                    <span class="exp-card__label">commit</span>
+                    <span class="exp-card__hash" data-hash={pseudoHash(entry.company)}>{pseudoHash(entry.company)}</span>
+                    {!entry.endDate && (
+                      <span class="exp-card__head-badge">(HEAD → main) · {dict.experience.currentBadge}</span>
+                    )}
+                  </p>
+                  <div class="exp-card__title-row">
+                    <h3 class="exp-card__role">{entry.role}</h3>
+                    <span class="exp-card__company">@ {entry.company}</span>
+                  </div>
+                  <p class="exp-card__dates">
+                    <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+                    {fmt(entry.startDate)} — {entry.endDate ? fmt(entry.endDate) : dict.experience.present}
+                    <span class="exp-card__duration">{duration(entry.startDate, entry.endDate)}</span>
+                  </p>
+                </header>
+
+                <div class="exp-card__grid">
+                  <div class="exp-card__col">
+                    <h4 class="exp-card__col-title">
+                      <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+                      {dict.experience.responsibilitiesLabel}
+                    </h4>
+                    <ul class="exp-card__list">
+                      {entry.responsibilities.map((r) => <li>{r}</li>)}
+                    </ul>
+                  </div>
+
+                  <div class="exp-card__col">
+                    <h4 class="exp-card__col-title">
+                      <i class="fa-solid fa-trophy" aria-hidden="true"></i>
+                      {dict.experience.achievementsLabel}
+                    </h4>
+                    <ul class="exp-card__list exp-card__list--achievements">
+                      {entry.achievements.map((a) => (
+                        <li>
+                          {a.text.split(/(\d+%)/).map((part) =>
+                            /^\d+%$/.test(part)
+                              ? <strong class="exp-counter" data-target={parseInt(part)}>{part}</strong>
+                              : part
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <footer class="exp-card__stack">
+                  {entry.stack.map((tech) => <span class="exp-card__chip">{tech}</span>)}
+                </footer>
+              </article>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -69,107 +122,124 @@ interface Props {
 })()}
 
 <style>
-  /* ── Timeline zigzag ─────────────────── */
-  .exp-timeline {
-    position: relative;
-    max-width: 900px;
-    margin-inline: auto;
-    padding-block: var(--space-xl);
+  .exp-cli {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xl);
   }
 
-  /* SVG line centered */
-  .exp-timeline__svg {
+  .exp-cli__prompt {
+    color: var(--color-code);
+  }
+
+  /* ── Log layout: rail + commits ─────────────────────── */
+  .exp-log {
+    position: relative;
+    max-width: 1000px;
+    padding-left: 56px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+  }
+
+  .exp-log__rail {
     position: absolute;
-    left: 50%;
-    top: 0;
+    left: 20px;
+    top: 8px;
+    bottom: 8px;
     width: 4px;
-    height: 100%;
+    height: calc(100% - 16px);
     transform: translateX(-50%);
   }
 
-  .exp-timeline__track {
+  .exp-log__track {
     stroke: var(--color-border);
   }
 
-  .exp-timeline__progress {
+  .exp-log__progress {
     stroke: var(--color-accent);
+    filter: drop-shadow(0 0 4px var(--color-accent-glow));
   }
 
-  .exp-timeline__entries {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3xl);
-    position: relative;
+  .exp-log__comet {
+    position: absolute;
+    left: 20px;
+    top: 0;
+    width: 4px;
+    height: 90px;
+    transform: translateX(-50%);
+    border-radius: var(--border-radius-full);
+    /* trail fades in, bright teal head at the bottom (travel direction) */
+    background: linear-gradient(180deg, transparent, var(--color-code) 65%, #d9fff8);
+    filter: drop-shadow(0 0 6px rgba(77, 212, 192, 0.8));
+    opacity: 0;
+    pointer-events: none;
     z-index: 1;
   }
 
-  /* Each entry: 2-column grid with dot in center */
-  .exp-entry {
-    display: grid;
-    grid-template-columns: 1fr 40px 1fr;
-    align-items: center;
+  .exp-commit {
     position: relative;
   }
 
-  .exp-entry__dot {
-    width: 24px;
-    height: 24px;
+  .exp-commit__dot {
+    position: absolute;
+    /* center the dot on the rail (padding-left 56 → rail at -36px from card edge) */
+    left: -36px;
+    top: 26px;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     background: var(--color-bg);
-    border: 2px solid var(--color-border);
+    border: 2px solid var(--color-accent);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 3;
-    margin: 0 auto;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 14px var(--color-accent-glow);
+    z-index: 1;
   }
 
-  .exp-entry__dot-inner {
+  .exp-commit__dot-core {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--color-border);
-    transition: background 0.3s, transform 0.3s;
-  }
-
-  .exp-entry:hover .exp-entry__dot {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 14px var(--color-accent-glow);
-  }
-  .exp-entry:hover .exp-entry__dot-inner {
     background: var(--color-accent);
-    transform: scale(1.6);
   }
 
-  /* Card positioning */
-  .exp-entry--left .exp-card { grid-column: 1; grid-row: 1; }
-  .exp-entry--left .exp-entry__dot { grid-column: 2; grid-row: 1; }
-  .exp-entry--right .exp-card { grid-column: 3; grid-row: 1; }
-  .exp-entry--right .exp-entry__dot { grid-column: 2; grid-row: 1; }
+  /* Current job: expanding ping ring */
+  @media (prefers-reduced-motion: no-preference) {
+    .exp-commit__dot--head::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      border: 2px solid var(--color-accent);
+      animation: dotPing 2.2s ease-out infinite;
+    }
+  }
 
+  @keyframes dotPing {
+    0% { transform: scale(1); opacity: 0.8; }
+    70%, 100% { transform: scale(2.3); opacity: 0; }
+  }
+
+  /* ── Commit card ────────────────────────────────────── */
   .exp-card {
-    background: var(--color-surface);
+    background: linear-gradient(160deg, var(--color-surface-raised), var(--color-surface) 55%);
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius-xl);
-    padding: var(--space-lg) var(--space-xl);
-    text-align: left;
-    cursor: pointer;
-    color: inherit;
-    font-family: inherit;
-    background: none;
-    width: 100%;
-    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    padding: var(--space-xl);
     position: relative;
     overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
   }
 
-  .exp-card::after {
+  .exp-card::before {
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(ellipse at center, var(--color-accent-glow), transparent 70%);
+    background: radial-gradient(ellipse at top left, var(--color-accent-glow), transparent 60%);
     opacity: 0;
     transition: opacity 0.35s;
     pointer-events: none;
@@ -177,258 +247,216 @@ interface Props {
 
   .exp-card:hover {
     border-color: var(--color-accent);
-    box-shadow: 0 10px 35px rgba(240, 160, 48, 0.1);
-    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(240, 160, 48, 0.1);
+    transform: translateY(-3px);
   }
-  .exp-card:hover::after { opacity: 1; }
 
-  .exp-card__date {
+  .exp-card:hover::before {
+    opacity: 1;
+  }
+
+  .exp-card__head {
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px dashed var(--color-border);
+    position: relative;
+    z-index: 1;
+  }
+
+  .exp-card__meta {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     gap: var(--space-sm);
     margin-bottom: var(--space-sm);
   }
 
-  .exp-card__date-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--color-accent);
-    flex-shrink: 0;
+  .exp-card__label {
+    color: var(--color-text-muted);
   }
-  .exp-card__date-sep { color: var(--color-border); }
 
-  .exp-card__body { position: relative; z-index: 1; }
+  .exp-card__hash {
+    color: var(--color-code);
+  }
+
+  .exp-card__head-badge {
+    color: var(--color-accent);
+  }
+
+  .exp-card__title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xs);
+  }
 
   .exp-card__role {
-    font-size: var(--text-lg);
+    font-size: var(--text-xl);
     font-weight: 700;
     color: var(--color-text);
-    margin-bottom: 2px;
   }
 
   .exp-card__company {
     font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--color-accent);
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-  }
-
-  .exp-card__icon { font-size: var(--text-xs); opacity: 0.7; }
-
-  /* ── Slide Panel ────────────────────── */
-  .exp-panel {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 44%;
-    min-width: 380px;
-    max-width: 580px;
-    height: 100vh;
-    height: 100dvh;
-    z-index: var(--z-modal);
-    pointer-events: none;
-    transform: translateX(105%);
-  }
-
-  .exp-panel.is-open {
-    pointer-events: all;
-    transform: translateX(0);
-  }
-
-  .exp-panel__card {
-    height: 100%;
-    background: rgba(17, 17, 34, 0.92);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border-left: 1px solid var(--color-border);
-    box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-  }
-
-  /* Accent glow line on left edge */
-  .exp-panel__card::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 2px;
-    height: 100%;
-    background: linear-gradient(180deg, var(--color-accent), var(--color-code), transparent 80%);
-    opacity: 0.6;
-  }
-
-  .exp-panel__close {
-    position: absolute;
-    top: var(--space-md);
-    right: var(--space-md);
-    background: rgba(8,8,15,0.8);
-    border: 1px solid var(--color-border);
-    border-radius: 50%;
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--color-text-muted);
     font-size: var(--text-base);
-    transition: all 0.25s;
-    z-index: 10;
-    flex-shrink: 0;
-  }
-  .exp-panel__close:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-    box-shadow: 0 0 16px var(--color-accent-glow);
-  }
-
-  .exp-panel__inner {
-    padding: var(--space-3xl) var(--space-xl) var(--space-xl);
-    overflow-y: auto;
-    flex: 1;
-  }
-
-  .exp-panel__inner .panel-head {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-md);
-    margin-bottom: var(--space-lg);
-    padding-bottom: var(--space-lg);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .exp-panel__inner .panel-head-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: var(--border-radius);
-    background: linear-gradient(135deg, rgba(240,160,48,0.15), rgba(77,212,192,0.06));
-    border: 1px solid rgba(240,160,48,0.18);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--text-2xl);
-    color: var(--color-accent);
-    flex-shrink: 0;
-  }
-
-  .exp-panel__inner h3 {
-    font-size: var(--text-xl);
-    color: var(--color-text);
-    margin-bottom: 2px;
-  }
-
-  .exp-panel__inner .panel-company {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
     color: var(--color-accent);
   }
 
-  .exp-panel__inner .panel-dates {
+  .exp-card__dates {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-text-muted);
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: var(--space-sm);
-    margin-top: var(--space-sm);
-    background: rgba(240,160,48,0.06);
-    padding: 0.3em 0.8em;
+  }
+
+  .exp-card__duration {
+    background: rgba(240, 160, 48, 0.08);
+    border: 1px solid rgba(240, 160, 48, 0.2);
+    color: var(--color-accent);
     border-radius: var(--border-radius-full);
+    padding: 0.15em 0.7em;
   }
 
-  .panel-section {
+  /* ── Content columns ────────────────────────────────── */
+  .exp-card__grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: var(--space-xl);
+    position: relative;
+    z-index: 1;
     margin-bottom: var(--space-lg);
-    background: rgba(8,8,15,0.35);
-    border-radius: var(--border-radius);
-    padding: var(--space-md);
   }
 
-  .panel-section__title {
+  .exp-card__col-title {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-accent);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-bottom: var(--space-md);
     display: flex;
     align-items: center;
     gap: var(--space-sm);
+    margin-bottom: var(--space-md);
   }
 
-  .panel-section__title i {
-    background: linear-gradient(135deg, rgba(240,160,48,0.12), rgba(77,212,192,0.05));
-    padding: 6px 8px;
-    border-radius: 6px;
-    font-size: var(--text-sm);
+  .exp-card__col-title i {
     color: var(--color-code);
   }
 
-  .panel-list {
+  .exp-card__list {
     list-style: none;
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
   }
 
-  .panel-list li {
-    color: var(--color-text-muted);
+  .exp-card__list li {
     font-size: var(--text-sm);
-    line-height: 1.75;
-    padding-left: var(--space-lg);
+    color: var(--color-text-muted);
+    line-height: 1.65;
+    padding-left: var(--space-md);
     position: relative;
-    opacity: 0;
-    transform: translateX(-8px);
+    transition: color 0.3s;
   }
 
-  .panel-list li.is-visible {
-    opacity: 1;
-    transform: translateX(0);
-    transition: all 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-  }
-
-  .panel-list li::before {
-    content: "";
+  .exp-card__list li::before {
+    content: "❯";
     position: absolute;
     left: 0;
-    top: 0.7em;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--color-accent);
-    box-shadow: 0 0 8px var(--color-accent-glow);
+    color: var(--color-border-hover);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    top: 0.3em;
+    transition: color 0.3s;
   }
 
-  /* Mobile: full width */
+  .exp-card__list li:hover {
+    color: var(--color-text);
+  }
+
+  .exp-card__list li:hover::before {
+    color: var(--color-accent);
+  }
+
+  .exp-card__list--achievements li::before {
+    content: "★";
+    color: rgba(240, 160, 48, 0.4);
+  }
+
+  .exp-counter {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+  }
+
+  /* ── Stack chips ────────────────────────────────────── */
+  .exp-card__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    position: relative;
+    z-index: 1;
+  }
+
+  .exp-card__chip {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-code);
+    background: rgba(77, 212, 192, 0.06);
+    border: 1px solid rgba(77, 212, 192, 0.18);
+    border-radius: var(--border-radius-full);
+    padding: 0.3em 0.9em;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+
+  .exp-card__chip:hover {
+    border-color: var(--color-code);
+    box-shadow: 0 0 12px rgba(77, 212, 192, 0.15);
+  }
+
+  /* ── Mobile ─────────────────────────────────────────── */
   @media (max-width: 768px) {
-    .exp-panel {
-      width: 100%;
-      min-width: unset;
-      max-width: unset;
+    .exp-log {
+      padding-left: 36px;
     }
-    .exp-panel__inner {
-      padding: var(--space-2xl) var(--space-lg) var(--space-lg);
+
+    .exp-log__rail {
+      left: 10px;
+    }
+
+    .exp-log__comet {
+      left: 10px;
+    }
+
+    .exp-commit__dot {
+      left: -26px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .exp-card {
+      padding: var(--space-lg);
+    }
+
+    .exp-card__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
     }
   }
 </style>
 
 <script>
   import { gsap, ScrollTrigger } from "../../scripts/utils/gsap-setup";
-  import { experience as expData } from "../../data/experience";
 
   const mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
-    // ── Entry stagger ──────────────────────
+    // ── Heading + CLI line ─────────────────────────────
     const tl = gsap.timeline({
-      scrollTrigger: { trigger: ".experience", start: "top 60%" },
+      scrollTrigger: { trigger: ".experience", start: "top 65%" },
     });
 
     tl.from(".experience .section-heading__title", {
@@ -437,140 +465,91 @@ interface Props {
       .from(".experience .section-heading__line", {
         scaleX: 0, opacity: 0, duration: 0.5, ease: "power3.out",
       }, "-=0.2")
-      .from(".exp-entry", {
-        opacity: 0, y: 50, stagger: 0.2, duration: 0.7, ease: "power3.out",
-      }, "-=0.1");
+      .from(".exp-cli", {
+        opacity: 0, x: -20, duration: 0.5, ease: "power2.out",
+      }, "-=0.2");
 
-    // Dot pop
-    gsap.from(".exp-entry__dot", {
-      scale: 0, opacity: 0, stagger: 0.2, duration: 0.4, ease: "back.out(2)",
-      scrollTrigger: { trigger: ".exp-timeline__entries", start: "top 62%" },
-    });
-
-    // ── Line draw (scrub) ─────────────────
-    gsap.fromTo(".exp-timeline__progress", { strokeDashoffset: 1 }, {
+    // ── Rail draws as you scroll (scrub) ───────────────
+    gsap.fromTo(".exp-log__progress", { strokeDashoffset: 1 }, {
       strokeDashoffset: 0,
-      duration: 1.5,
       ease: "none",
       scrollTrigger: {
-        trigger: ".exp-timeline__entries",
-        start: "top 55%",
-        end: "bottom 35%",
+        trigger: ".exp-log",
+        start: "top 60%",
+        end: "bottom 45%",
         scrub: 1,
       },
     });
 
-    // Pulsing glow on the line as it draws
-    gsap.to(".exp-timeline__progress", {
-      attr: { "stroke-width": 3.5 },
-      duration: 0.6,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut",
-      scrollTrigger: {
-        trigger: ".exp-timeline__entries",
-        start: "top 55%",
-        end: "bottom 35%",
-        scrub: false,
-        toggleActions: "play none none reverse",
-      },
+    // ── Comet pulses down the rail while the section is on screen ──
+    // top in % of .exp-log so it adapts to any timeline height
+    const comet = gsap.timeline({ repeat: -1, repeatDelay: 0.9, paused: true });
+    comet
+      .fromTo(".exp-log__comet", { top: "-12%" }, { top: "104%", duration: 2.6, ease: "power1.inOut" }, 0)
+      .to(".exp-log__comet", { opacity: 1, duration: 0.35, ease: "none" }, 0)
+      .to(".exp-log__comet", { opacity: 0, duration: 0.4, ease: "none" }, 2.2);
+
+    ScrollTrigger.create({
+      trigger: ".exp-log",
+      start: "top 80%",
+      end: "bottom 10%",
+      onToggle: (self) => (self.isActive ? comet.play() : comet.pause()),
     });
 
-    // Dot activation on scroll
-    document.querySelectorAll<HTMLElement>(".exp-entry").forEach((entry) => {
-      ScrollTrigger.create({
-        trigger: entry,
-        start: "top 50%",
-        onEnter: () => {
-          gsap.to(entry.querySelector(".exp-entry__dot"), {
-            borderColor: "var(--color-accent)",
-            boxShadow: "0 0 16px var(--color-accent-glow)",
-            duration: 0.5,
-          });
-          gsap.to(entry.querySelector(".exp-entry__dot-inner"), {
-            background: "var(--color-accent)",
-            scale: 1.7,
-            duration: 0.5,
-          });
-        },
+    // ── Each commit reveals on its own trigger ─────────
+    document.querySelectorAll<HTMLElement>(".exp-commit").forEach((commit) => {
+      const trigger = { trigger: commit, start: "top 72%" };
+
+      gsap.from(commit.querySelector(".exp-card"), {
+        opacity: 0, x: -40, duration: 0.7, ease: "power3.out",
+        scrollTrigger: trigger,
+      });
+
+      gsap.from(commit.querySelector(".exp-commit__dot"), {
+        scale: 0, duration: 0.5, ease: "back.out(2.5)",
+        scrollTrigger: trigger,
+      });
+
+      // Commit hash "types in" (TextPlugin)
+      const hashEl = commit.querySelector<HTMLElement>(".exp-card__hash");
+      if (hashEl) {
+        const hash = hashEl.dataset.hash ?? "";
+        ScrollTrigger.create({
+          ...trigger,
+          once: true,
+          onEnter: () => {
+            hashEl.textContent = "";
+            gsap.to(hashEl, { text: hash, duration: 0.6, ease: "none", delay: 0.2 });
+          },
+        });
+      }
+
+      // List items cascade in
+      gsap.from(commit.querySelectorAll(".exp-card__list li"), {
+        opacity: 0, x: -14, stagger: 0.05, duration: 0.4, ease: "power2.out",
+        scrollTrigger: { trigger: commit, start: "top 65%" },
+      });
+
+      // Stack chips pop
+      gsap.from(commit.querySelectorAll(".exp-card__chip"), {
+        opacity: 0, scale: 0.7, stagger: 0.05, duration: 0.35, ease: "back.out(1.8)",
+        scrollTrigger: { trigger: commit, start: "top 60%" },
       });
     });
-  });
 
-  // ── Slide Panel ───────────────────────
-  const panel = document.getElementById("exp-panel")!;
-  document.body.appendChild(panel);
-  const panelInner = document.getElementById("exp-panel-inner")!;
-
-  function fmtDate(d: string, end: string | null): string {
-    const s = new Date(d).toLocaleDateString("en-US", { month: "short", year: "numeric" });
-    const e = end ? new Date(end).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : "Present";
-    return `${s} — ${e}`;
-  }
-
-  function openPanel(i: number) {
-    const e = expData[i];
-    if (!e) return;
-
-    panelInner.innerHTML = `
-      <div class="panel-head">
-        <div class="panel-head-icon"><i class="fa-solid fa-briefcase"></i></div>
-        <div>
-          <h3>${e.role}</h3>
-          <p class="panel-company">${e.company}</p>
-          <span class="panel-dates"><i class="fa-regular fa-calendar"></i> ${fmtDate(e.startDate, e.endDate)}</span>
-        </div>
-      </div>
-      <div class="panel-section">
-        <div class="panel-section__title"><i class="fa-solid fa-list-check"></i> Responsibilities</div>
-        <ul class="panel-list">${e.responsibilities.map((r: string) => `<li>${r}</li>`).join("")}</ul>
-      </div>
-      <div class="panel-section">
-        <div class="panel-section__title"><i class="fa-solid fa-trophy"></i> Key Achievements</div>
-        <ul class="panel-list">${e.achievements.map((a: {text: string}) => `<li>${a.text}</li>`).join("")}</ul>
-      </div>
-    `;
-
-    // Pause ScrollSmoother
-    const smoother = (window as any).__smoother;
-    if (smoother) smoother.paused(true);
-
-    panel.classList.add("is-open");
-    panel.setAttribute("aria-hidden", "false");
-
-    // Slide in
-    gsap.to(panel, { x: 0, duration: 0.5, ease: "power4.out" });
-
-    // Animate list items
-    requestAnimationFrame(() => {
-      const items = panelInner.querySelectorAll<HTMLElement>(".panel-list li");
-      gsap.fromTo(items,
-        { opacity: 0, x: -12 },
-        { opacity: 1, x: 0, stagger: 0.05, duration: 0.35, ease: "power2.out", delay: 0.2 }
-      );
-    });
-  }
-
-  function closePanel() {
-    const smoother = (window as any).__smoother;
-    if (smoother) smoother.paused(false);
-
-    // Slide out
-    gsap.to(panel, {
-      x: "105%", duration: 0.4, ease: "power3.in",
-      onComplete: () => {
-        panel.classList.remove("is-open");
-        panel.setAttribute("aria-hidden", "true");
-      }
-    });
-  }
-
-  document.getElementById("exp-panel-close")?.addEventListener("click", closePanel);
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePanel(); });
-
-  document.querySelectorAll<HTMLElement>(".exp-card").forEach((card) => {
-    card.addEventListener("click", () => {
-      openPanel(parseInt(card.dataset.expIndex ?? "0"));
+    // ── Percentages count up ───────────────────────────
+    document.querySelectorAll<HTMLElement>(".exp-counter").forEach((el) => {
+      const target = parseInt(el.dataset.target ?? "0");
+      const state = { v: 0 };
+      gsap.to(state, {
+        v: target,
+        duration: 1.4,
+        ease: "power2.out",
+        scrollTrigger: { trigger: el, start: "top 85%", once: true },
+        onUpdate: () => {
+          el.textContent = `${Math.round(state.v)}%`;
+        },
+      });
     });
   });
 </script>

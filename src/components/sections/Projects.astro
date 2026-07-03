@@ -53,7 +53,7 @@ interface Props {
 </style>
 
 <script>
-  import { gsap, ScrollTrigger } from "../../scripts/utils/gsap-setup";
+  import { gsap } from "../../scripts/utils/gsap-setup";
 
   const mm = gsap.matchMedia();
 
@@ -110,6 +110,15 @@ interface Props {
         overlay.classList.add("is-open");
         overlay.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
+        // Pause ScrollSmoother so the page doesn't scroll behind the modal
+        (window as any).__smoother?.paused(true);
+
+        // Staggered content entrance
+        gsap.fromTo(
+          overlay.querySelectorAll(".modal__body > *"),
+          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, stagger: 0.07, duration: 0.45, ease: "power2.out", delay: 0.1 }
+        );
       }
     });
   };
@@ -122,15 +131,33 @@ interface Props {
       overlay.setAttribute("aria-hidden", "true");
     });
     document.body.style.overflow = "";
+    (window as any).__smoother?.paused(false);
   }
 
-  // Wire close buttons & overlay clicks
+  // Wire close buttons, overlay clicks & gallery thumbnails
   modals.forEach((m) => {
     const overlay = m.querySelector<HTMLElement>(".modal-overlay")!;
-    const closeBtn = m.querySelector<HTMLElement>("#modal-close");
+    const closeBtn = m.querySelector<HTMLElement>(".modal__close");
     closeBtn?.addEventListener("click", closeAllModals);
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) closeAllModals();
+    });
+
+    // Gallery: thumbnail click crossfades the main image
+    const mainImg = m.querySelector<HTMLImageElement>(".modal__gallery-img");
+    m.querySelectorAll<HTMLElement>(".modal__thumb").forEach((thumb) => {
+      thumb.addEventListener("click", () => {
+        const src = thumb.dataset.src;
+        if (!mainImg || !src || mainImg.getAttribute("src") === src) return;
+        m.querySelector(".modal__thumb.is-active")?.classList.remove("is-active");
+        thumb.classList.add("is-active");
+        mainImg.setAttribute("src", src);
+        gsap.fromTo(
+          mainImg,
+          { opacity: 0.15, scale: 1.04 },
+          { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }
+        );
+      });
     });
   });
 

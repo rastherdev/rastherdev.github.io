@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="monospace">
+  <rect width="800" height="500" fill="#0d0d18"/>
+  <rect width="800" height="44" fill="#111122"/>
+  <circle cx="24" cy="22" r="6" fill="#ff5f57"/><circle cx="44" cy="22" r="6" fill="#febc2e"/><circle cx="64" cy="22" r="6" fill="#28c840"/>
+  <text x="400" y="27" fill="#8080a0" font-size="13" text-anchor="middle">bloomingtec.com — dashboard</text>
+  <rect x="24" y="68" width="180" height="408" rx="10" fill="#111122" stroke="#1e1e35"/>
+  <rect x="44" y="92" width="120" height="10" rx="5" fill="#f0a030"/>
+  <rect x="44" y="124" width="140" height="8" rx="4" fill="#2a2a45"/>
+  <rect x="44" y="148" width="110" height="8" rx="4" fill="#2a2a45"/>
+  <rect x="44" y="172" width="130" height="8" rx="4" fill="#2a2a45"/>
+  <rect x="228" y="68" width="256" height="120" rx="10" fill="#111122" stroke="#1e1e35"/>
+  <text x="248" y="100" fill="#8080a0" font-size="11">CROPS</text>
+  <text x="248" y="140" fill="#f0a030" font-size="30" font-weight="bold">1,248</text>
+  <rect x="508" y="68" width="268" height="120" rx="10" fill="#111122" stroke="#1e1e35"/>
+  <text x="528" y="100" fill="#8080a0" font-size="11">REVENUE</text>
+  <text x="528" y="140" fill="#4dd4c0" font-size="30" font-weight="bold">$84,300</text>
+  <rect x="228" y="212" width="548" height="264" rx="10" fill="#111122" stroke="#1e1e35"/>
+  <polyline points="260,430 340,380 420,400 500,330 580,350 660,290 740,260" fill="none" stroke="#f0a030" stroke-width="3"/>
+  <polyline points="260,450 340,420 420,435 500,390 580,410 660,370 740,340" fill="none" stroke="#4dd4c0" stroke-width="2" opacity="0.6"/>
+  <text x="400" y="490" fill="#3a3a55" font-size="12" text-anchor="middle">placeholder — replace with real screenshot</text>
+</svg>

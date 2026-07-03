@@ -1,23 +1,17 @@
 ---
 import Badge from "./Badge.astro";
 import type { Project } from "../../data/projects";
+import type { ProjectsDict } from "../../i18n/types";
 
 export interface Props {
   project: Project;
-  dict: {
-    viewProject: string;
-    viewCode: string;
-    techStack: string;
-    problem: string;
-    solution: string;
-    close: string;
-  };
+  dict: ProjectsDict;
 }
 ---
 
-<div class="modal-overlay" id="project-modal" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="modal" id="modal-inner">
-    <button class="modal__close" id="modal-close" aria-label={Astro.props.dict.close} type="button">
+<div class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal">
+    <button class="modal__close" aria-label={Astro.props.dict.close} type="button">
       <span class="modal__close-icon" aria-hidden="true">✕</span>
     </button>
 
@@ -26,6 +20,32 @@ export interface Props {
         <h2 class="modal__name">{Astro.props.project.name}</h2>
         <p class="modal__desc">{Astro.props.project.description}</p>
       </header>
+
+      {Astro.props.project.images && Astro.props.project.images.length > 0 && (
+        <div class="modal__gallery">
+          <span class="modal__gallery-label">{Astro.props.dict.gallery}</span>
+          <div class="modal__gallery-main">
+            <img
+              class="modal__gallery-img"
+              src={Astro.props.project.images[0]}
+              alt={`${Astro.props.project.name} — screenshot`}
+              loading="lazy"
+            />
+          </div>
+          <div class="modal__gallery-thumbs">
+            {Astro.props.project.images.map((src, i) => (
+              <button
+                class={`modal__thumb${i === 0 ? " is-active" : ""}`}
+                data-src={src}
+                type="button"
+                aria-label={`${Astro.props.dict.gallery} ${i + 1}`}
+              >
+                <img src={src} alt="" loading="lazy" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div class="modal__stack">
         <span class="modal__stack-label">{Astro.props.dict.techStack}:</span>
@@ -150,6 +170,74 @@ export interface Props {
   .modal__desc {
     color: var(--color-text-muted);
     line-height: 1.7;
+  }
+
+  /* ── Gallery ─────────────────────────── */
+  .modal__gallery {
+    margin-bottom: var(--space-xl);
+  }
+
+  .modal__gallery-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-sm);
+  }
+
+  .modal__gallery-main {
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.4);
+    aspect-ratio: 16 / 10;
+  }
+
+  .modal__gallery-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .modal__gallery-thumbs {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+  }
+
+  .modal__thumb {
+    flex: 1;
+    max-width: 110px;
+    aspect-ratio: 16 / 10;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0.55;
+    transition: opacity var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .modal__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .modal__thumb:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+  }
+
+  .modal__thumb.is-active {
+    opacity: 1;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 12px var(--color-accent-glow);
   }
 
   .modal__stack {

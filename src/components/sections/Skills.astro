@@ -51,6 +51,13 @@ function toFaIcon(name: string): string {
   const key = name.toLowerCase().replace(/[^a-z0-9]/g, "");
   return faIcons[key] ?? "fa-solid fa-gear";
 }
+
+// Two marquee rows (odd/even split), scrolling in opposite directions
+const allSkills = skillCategories.flatMap((c) => c.items.map((s) => s.name));
+const marqueeRows = [
+  allSkills.filter((_, i) => i % 2 === 0),
+  allSkills.filter((_, i) => i % 2 === 1),
+];
 ---
 
 {(() => {
@@ -60,6 +67,24 @@ function toFaIcon(name: string): string {
     <section class="skills section" id="skills">
       <div class="section__inner">
         <SectionHeading title={dict.skills.heading} />
+
+        <!-- Infinite marquee: content duplicated per row for a seamless -50% loop -->
+        <div class="skills__marquee" aria-hidden="true">
+          {marqueeRows.map((row) => (
+            <div class="skills__marquee-row">
+              {[0, 1].map(() => (
+                <div class="skills__marquee-group">
+                  {row.map((name) => (
+                    <span class="skills__mchip">
+                      <i class={toFaIcon(name)}></i>
+                      {name}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
 
         <div class="skills__grid">
           {dict.skills.categories.map((cat, i) => {
@@ -73,14 +98,14 @@ function toFaIcon(name: string): string {
                 </h3>
                 <ul class="skills__list">
                   {data.items.map((skill) => (
-                    <li class="skills__item">
+                    <li class="skills__item" data-level={skill.level}>
                       <div class="skills__item-header">
                         <i class={`${toFaIcon(skill.name)} skills__item-icon`}></i>
                         <span class="skills__item-name">{skill.name}</span>
                         <span class="skills__item-pct">{skill.level}%</span>
                       </div>
                       <div class="skills__bar">
-                        <div class="skills__bar-fill" style={`--level:${skill.level}%`}></div>
+                        <div class="skills__bar-fill"></div>
                       </div>
                     </li>
                   ))}
@@ -95,10 +120,59 @@ function toFaIcon(name: string): string {
 })()}
 
 <style>
+  /* ── Marquee ─────────────────────────────────────────── */
+  .skills__marquee {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    overflow: hidden;
+    margin-bottom: var(--space-2xl);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  }
+
+  .skills__marquee-row {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+  }
+
+  .skills__marquee-group {
+    display: flex;
+    gap: var(--space-md);
+    padding-right: var(--space-md);
+  }
+
+  .skills__mchip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-full);
+    padding: 0.45em 1.1em;
+    white-space: nowrap;
+    transition: border-color 0.25s, color 0.25s, box-shadow 0.25s;
+  }
+
+  .skills__mchip i {
+    color: var(--color-code);
+  }
+
+  .skills__mchip:hover {
+    border-color: var(--color-accent);
+    color: var(--color-text);
+    box-shadow: 0 0 14px var(--color-accent-glow);
+  }
+
   .skills__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--space-xl);
+    perspective: 1000px;
   }
 
   .skills__card {
@@ -177,11 +251,6 @@ function toFaIcon(name: string): string {
     width: 0%;
     background: linear-gradient(90deg, var(--color-accent), var(--color-code));
     border-radius: 2px;
-    transition: width 1s cubic-bezier(0.22, 0.61, 0.36, 1);
-  }
-
-  .skills__bar-fill.is-visible {
-    width: var(--level);
   }
 
   @media (max-width: 768px) {
@@ -198,7 +267,7 @@ function toFaIcon(name: string): string {
 </style>
 
 <script>
-  import { gsap, ScrollTrigger } from "../../scripts/utils/gsap-setup";
+  import { gsap } from "../../scripts/utils/gsap-setup";
 
   const mm = gsap.matchMedia();
 
@@ -213,29 +282,58 @@ function toFaIcon(name: string): string {
       .from(".skills .section-heading__line", {
         scaleX: 0, opacity: 0, duration: 0.5, ease: "power3.out",
       }, "-=0.2")
+      .from(".skills__marquee", {
+        opacity: 0, y: 20, duration: 0.6, ease: "power2.out",
+      }, "-=0.2")
+      // Cards flip in from a slight 3D tilt
       .from(".skills__card", {
-        opacity: 0, y: 40, scale: 0.96, stagger: 0.1, duration: 0.6, ease: "power3.out",
-      }, "-=0.1");
+        opacity: 0, y: 40, rotationX: -14, transformOrigin: "center top",
+        stagger: 0.1, duration: 0.7, ease: "power3.out",
+      }, "-=0.3");
 
-    // Animate bars on scroll
-    ScrollTrigger.create({
-      trigger: ".skills__list",
-      start: "top 75%",
-      onEnter: () => {
-        document.querySelectorAll<HTMLElement>(".skills__bar-fill").forEach((bar, i) => {
-          setTimeout(() => bar.classList.add("is-visible"), i * 40);
+    // ── Marquee: two rows, opposite directions, slow on hover ──
+    document.querySelectorAll<HTMLElement>(".skills__marquee-row").forEach((row, i) => {
+      const reverse = i % 2 === 1;
+      const tween = gsap.fromTo(
+        row,
+        { xPercent: reverse ? -50 : 0 },
+        { xPercent: reverse ? 0 : -50, duration: 28 + i * 6, repeat: -1, ease: "none" }
+      );
+      row.addEventListener("mouseenter", () => gsap.to(tween, { timeScale: 0.15, duration: 0.5 }));
+      row.addEventListener("mouseleave", () => gsap.to(tween, { timeScale: 1, duration: 0.5 }));
+    });
+
+    // ── Bars fill + percentages count up, per card ─────────
+    document.querySelectorAll<HTMLElement>(".skills__card").forEach((card) => {
+      card.querySelectorAll<HTMLElement>(".skills__item").forEach((item, i) => {
+        const level = parseInt(item.dataset.level ?? "0");
+        const bar = item.querySelector(".skills__bar-fill");
+        const pct = item.querySelector(".skills__item-pct");
+        const trigger = { trigger: card, start: "top 78%", once: true };
+
+        gsap.fromTo(bar, { width: "0%" }, {
+          width: `${level}%`, duration: 1.2, ease: "power3.out", delay: i * 0.08,
+          scrollTrigger: trigger,
         });
-      },
-      once: true,
+
+        const state = { v: 0 };
+        gsap.to(state, {
+          v: level, duration: 1.2, ease: "power3.out", delay: i * 0.08,
+          scrollTrigger: trigger,
+          onUpdate: () => {
+            if (pct) pct.textContent = `${Math.round(state.v)}%`;
+          },
+        });
+      });
     });
   });
 
-  // Hover effect
+  // Hover effect (subtle — the old scale(1.10) jumped too hard)
   document.querySelectorAll<HTMLElement>(".skills__card").forEach((card) => {
     card.addEventListener("mouseenter", () => {
       gsap.to(card, {
-        scale: 1.10,
-        y: -6,
+        scale: 1.03,
+        y: -5,
         boxShadow: "0 12px 35px rgba(240, 160, 48, 0.15)",
         borderColor: "var(--color-accent)",
         duration: 0.35,

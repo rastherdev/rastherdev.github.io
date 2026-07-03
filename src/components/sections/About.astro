@@ -37,18 +37,21 @@ interface Props {
       <div class="about__mouse-glow" id="about-glow" aria-hidden="true"></div>
 
       <div class="section__inner">
-        <SectionHeading title={dict.about.heading} />
-        <div class="about__grid">
-          <div class="about__bio" data-speed="0.85">
-            {dict.about.bio.map((p, i) => <p class="about__paragraph" style={`--i:${i}`}>{p}</p>)}
-          </div>
-          <div class="about__facts" data-speed="1.15">
-            {dict.about.quickFacts.map((f) => (
-              <div class="about__fact">
-                <span class="about__fact-label">{f.label}</span>
-                <span class="about__fact-value">{f.value}</span>
-              </div>
-            ))}
+        <div class="about__panel" id="about-panel">
+          <SectionHeading title={dict.about.heading} />
+          <!-- no data-speed here: parallax drift would push content outside the bordered panel -->
+          <div class="about__grid">
+            <div class="about__bio">
+              {dict.about.bio.map((p, i) => <p class="about__paragraph" style={`--i:${i}`}>{p}</p>)}
+            </div>
+            <div class="about__facts">
+              {dict.about.quickFacts.map((f) => (
+                <div class="about__fact">
+                  <span class="about__fact-label">{f.label}</span>
+                  <span class="about__fact-value">{f.value}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -128,6 +131,58 @@ interface Props {
     opacity: 0;
     transform: translate(-50%, -50%);
     transition: opacity 0.3s ease;
+  }
+
+  /* ── Panel: light wash + animated beam border to delimit the section ── */
+  .about__panel {
+    --beam-angle: 0deg;
+    position: relative;
+    z-index: 2;
+    border-radius: var(--border-radius-xl);
+    border: 1px solid var(--color-border);
+    padding: clamp(var(--space-xl), 4vw, var(--space-3xl));
+    background: linear-gradient(
+      180deg,
+      rgba(226, 226, 240, 0.05),
+      rgba(226, 226, 240, 0.015) 45%,
+      rgba(17, 17, 34, 0.4)
+    );
+    box-shadow: 0 0 60px rgba(226, 226, 240, 0.03) inset, var(--shadow-lg);
+  }
+
+  /* Beam that travels around the panel perimeter (angle driven by GSAP) */
+  .about__panel::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--beam-angle),
+      transparent 0%,
+      transparent 72%,
+      var(--color-accent) 86%,
+      rgba(226, 226, 240, 0.9) 93%,
+      transparent 100%
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Soft light spill above the panel edge */
+  .about__panel::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(226, 226, 240, 0.35), transparent);
+    filter: blur(0.5px);
+    pointer-events: none;
   }
 
   /* ── Layout ──────────────────────────────────────────── */
@@ -227,20 +282,36 @@ interface Props {
 </style>
 
 <script>
-  import { gsap, ScrollTrigger } from "../../scripts/utils/gsap-setup";
+  import { gsap } from "../../scripts/utils/gsap-setup";
 
   const mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
+    // ── Beam border: light travels around the panel perimeter ──
+    gsap.to("#about-panel", {
+      "--beam-angle": "360deg",
+      duration: 7,
+      repeat: -1,
+      ease: "none",
+    });
+
     // ── Section entrance: aggressive opposite stagger ──────
     const tl = gsap.timeline({
       scrollTrigger: { trigger: ".about", start: "top 65%" },
     });
 
-    // Heading scale-in
-    tl.from(".about .section-heading__title", {
-      opacity: 0, y: 30, scale: 0.95, duration: 0.7, ease: "power3.out",
+    // Panel reveals first, then its content
+    tl.from("#about-panel", {
+      opacity: 0,
+      y: 40,
+      scale: 0.985,
+      duration: 0.8,
+      ease: "power3.out",
     })
+      // Heading scale-in
+      .from(".about .section-heading__title", {
+        opacity: 0, y: 30, scale: 0.95, duration: 0.7, ease: "power3.out",
+      }, "-=0.4")
       .from(".about .section-heading__line", {
         scaleX: 0, opacity: 0, duration: 0.5, ease: "power3.out",
       }, "-=0.3")

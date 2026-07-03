@@ -38,6 +38,8 @@ export interface ExperienceDict {
   heading: string;
   present: string;
   achievementsLabel: string;
+  responsibilitiesLabel: string;
+  currentBadge: string;
 }
 
 export interface ProjectsDict {
@@ -48,6 +50,7 @@ export interface ProjectsDict {
   techStack: string;
   problem: string;
   solution: string;
+  gallery: string;
 }
 
 export interface ContactDict {

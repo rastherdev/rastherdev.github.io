@@ -55,6 +55,8 @@ const es: Dictionary = {
     heading: "Experiencia",
     present: "Actualidad",
     achievementsLabel: "Logros Clave",
+    responsibilitiesLabel: "Responsabilidades",
+    currentBadge: "Actual",
   },
   projects: {
     heading: "Proyectos Destacados",
@@ -64,6 +66,7 @@ const es: Dictionary = {
     techStack: "Tecnologías",
     problem: "Problema",
     solution: "Solución",
+    gallery: "Galería",
   },
   contact: {
     heading: "Conectemos",

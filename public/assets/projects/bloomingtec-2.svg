@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="monospace">
+  <rect width="800" height="500" fill="#0d0d18"/>
+  <rect width="800" height="44" fill="#111122"/>
+  <circle cx="24" cy="22" r="6" fill="#ff5f57"/><circle cx="44" cy="22" r="6" fill="#febc2e"/><circle cx="64" cy="22" r="6" fill="#28c840"/>
+  <text x="400" y="27" fill="#8080a0" font-size="13" text-anchor="middle">bloomingtec.com — payroll</text>
+  <rect x="24" y="68" width="752" height="52" rx="10" fill="#111122" stroke="#1e1e35"/>
+  <rect x="44" y="86" width="200" height="14" rx="7" fill="#2a2a45"/>
+  <rect x="640" y="82" width="116" height="24" rx="12" fill="#f0a030" opacity="0.85"/>
+  <g stroke="#1e1e35">
+    <rect x="24" y="140" width="752" height="56" rx="8" fill="#111122"/>
+    <rect x="24" y="208" width="752" height="56" rx="8" fill="#111122"/>
+    <rect x="24" y="276" width="752" height="56" rx="8" fill="#111122"/>
+    <rect x="24" y="344" width="752" height="56" rx="8" fill="#111122"/>
+    <rect x="24" y="412" width="752" height="56" rx="8" fill="#111122"/>
+  </g>
+  <g fill="#2a2a45">
+    <rect x="48" y="162" width="180" height="10" rx="5"/><rect x="48" y="230" width="150" height="10" rx="5"/>
+    <rect x="48" y="298" width="200" height="10" rx="5"/><rect x="48" y="366" width="160" height="10" rx="5"/>
+    <rect x="48" y="434" width="190" height="10" rx="5"/>
+  </g>
+  <g font-size="12">
+    <text x="700" y="172" fill="#4dd4c0">$1,240</text><text x="700" y="240" fill="#4dd4c0">$980</text>
+    <text x="700" y="308" fill="#4dd4c0">$1,610</text><text x="700" y="376" fill="#4dd4c0">$1,105</text>
+    <text x="700" y="444" fill="#4dd4c0">$1,330</text>
+  </g>
+  <text x="400" y="492" fill="#3a3a55" font-size="12" text-anchor="middle">placeholder — replace with real screenshot</text>
+</svg>

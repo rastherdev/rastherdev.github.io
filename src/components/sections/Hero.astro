@@ -119,7 +119,20 @@ interface Props {
   .hero__name-line {
     display: block;
     color: var(--color-accent);
-    background: linear-gradient(135deg, var(--color-text) 0%, var(--color-text) 40%, var(--color-accent) 100%);
+    /* Oversized gradient: hover animates background-position (tween-able),
+       never background-image (GSAP can't interpolate gradients) */
+    background: linear-gradient(
+      120deg,
+      var(--color-text) 0%,
+      var(--color-text) 15%,
+      var(--color-accent) 35%,
+      var(--color-code) 50%,
+      var(--color-accent) 65%,
+      var(--color-text) 85%,
+      var(--color-text) 100%
+    );
+    background-size: 250% 100%;
+    background-position: 0% 0%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -373,22 +386,24 @@ interface Props {
       },
     });
 
-    // Name gradient shift on hover
+    // Name gradient sweep on hover — a color wave crosses the letters
     const nameEl = document.querySelector<HTMLElement>(".hero__name");
     if (nameEl) {
       const lines = nameEl.querySelectorAll<HTMLElement>(".hero__name-line");
       nameEl.addEventListener("mouseenter", () => {
         gsap.to(lines, {
-          backgroundImage: "linear-gradient(135deg, var(--color-accent) 0%, var(--color-text) 100%)",
-          duration: 0.5,
-          ease: "power2.out",
+          backgroundPosition: "100% 0%",
+          duration: 0.9,
+          stagger: 0.12,
+          ease: "power2.inOut",
         });
       });
       nameEl.addEventListener("mouseleave", () => {
         gsap.to(lines, {
-          backgroundImage: "linear-gradient(135deg, var(--color-text) 0%, var(--color-text) 40%, var(--color-accent) 100%)",
-          duration: 0.5,
-          ease: "power2.out",
+          backgroundPosition: "0% 0%",
+          duration: 0.9,
+          stagger: 0.12,
+          ease: "power2.inOut",
         });
       });
     }
