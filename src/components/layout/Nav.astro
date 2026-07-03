@@ -137,6 +137,7 @@ interface Props {
     pointer-events: none;
   }
 
+  /* hidden only where the desktop section rail takes over */
   @media (min-width: 1400px) {
     .nav__progress {
       display: none;
@@ -306,12 +307,9 @@ interface Props {
       transition-delay: calc(100ms + var(--i, 0) * 70ms);
     }
 
+    /* resume button lives only in the desktop navbar */
     .nav__link--cv {
-      font-family: var(--font-mono);
-      font-size: var(--text-base);
-      font-weight: 400;
-      margin-top: var(--space-md);
-      color: var(--color-accent);
+      display: none;
     }
 
     .nav__burger {

@@ -7,7 +7,7 @@ const en: Dictionary = {
     experience: "Experience",
     projects: "Projects",
     contact: "Contact",
-    downloadCv: "Download CV",
+    downloadCv: "Download Resume",
   },
   hero: {
     terminalLines: [
@@ -25,7 +25,7 @@ const en: Dictionary = {
     tagline:
       "I build scalable and robust applications using Laravel, asynchronous queues, microservices, and design patterns. Focused on performance, security, and long-term maintainability.",
     viewProjects: "View Projects",
-    downloadCv: "Download CV",
+    downloadCv: "Download Resume",
   },
   about: {
     heading: "About Me",
@@ -78,7 +78,7 @@ const en: Dictionary = {
     emailLabel: "Email",
     linkedinLabel: "LinkedIn",
     githubLabel: "GitHub",
-    cvLabel: "Download CV",
+    cvLabel: "Download Resume",
   },
   footer: {
     copyright: "© 2026 Giovany Domínguez. Built with Astro & GSAP.",

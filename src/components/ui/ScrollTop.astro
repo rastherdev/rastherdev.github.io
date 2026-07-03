@@ -1,0 +1,110 @@
+---
+interface Props {
+  label: string;
+}
+---
+
+<button class="totop" id="totop" aria-label={Astro.props.label} type="button">
+  <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+</button>
+
+<style>
+  .totop {
+    --beam-angle: 0deg;
+    position: fixed;
+    right: var(--space-lg);
+    bottom: var(--space-lg);
+    z-index: var(--z-nav);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(17, 17, 34, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--color-border);
+    color: var(--color-accent);
+    font-size: var(--text-base);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.25s, box-shadow 0.25s;
+  }
+
+  /* orbiting amber beam, same treatment as the About panel border */
+  .totop::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 50%;
+    padding: 2px;
+    background: conic-gradient(
+      from var(--beam-angle),
+      transparent 0%,
+      transparent 60%,
+      var(--color-accent) 88%,
+      transparent 100%
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .totop.is-visible {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .totop i {
+    transition: transform 0.25s ease;
+  }
+
+  .totop:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 16px var(--color-accent-glow);
+  }
+
+  .totop:hover i {
+    transform: translateY(-3px);
+  }
+</style>
+
+<script>
+  import { gsap } from "../../scripts/utils/gsap-setup";
+
+  const btn = document.getElementById("totop")!;
+  const hero = document.querySelector("#top");
+
+  // Always visible except while the hero is on screen
+  if (hero) {
+    const observer = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((entry) =>
+          btn.classList.toggle("is-visible", !entry.isIntersecting)
+        ),
+      { threshold: 0.1 }
+    );
+    observer.observe(hero);
+  } else {
+    // pages without a hero (e.g. /cv) get it permanently
+    btn.classList.add("is-visible");
+  }
+
+  btn.addEventListener("click", () => {
+    const smoother = (window as any).__smoother;
+    if (smoother) smoother.scrollTo(0, true);
+    else window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // Beam rotation
+  const mm = gsap.matchMedia();
+  mm.add("(prefers-reduced-motion: no-preference)", () => {
+    gsap.to(btn, { "--beam-angle": "360deg", duration: 4, repeat: -1, ease: "none" });
+  });
+</script>

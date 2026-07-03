@@ -4,6 +4,9 @@ import Footer from "../components/layout/Footer.astro";
 import Loader from "../components/ui/Loader.astro";
 import CustomCursor from "../components/ui/CustomCursor.astro";
 import SectionNav from "../components/ui/SectionNav.astro";
+import ScrollTop from "../components/ui/ScrollTop.astro";
+import en from "../i18n/en";
+import es from "../i18n/es";
 import "../styles/global.css";
 
 interface Props {
@@ -47,6 +50,7 @@ interface Props {
     <CustomCursor />
     <Nav locale={Astro.props.locale} />
     {Astro.props.sectionNav && <SectionNav />}
+    <ScrollTop label={(Astro.props.locale === "en" ? en : es).footer.backToTop} />
     <div id="smooth-wrapper">
       <div id="smooth-content">
         <main>

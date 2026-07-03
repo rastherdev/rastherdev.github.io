@@ -39,9 +39,17 @@ function duration(start: string, end: string | null): string {
       <div class="section__inner">
         <SectionHeading title={dict.experience.heading} />
 
-        <p class="exp-cli" aria-hidden="true">
-          <span class="exp-cli__prompt">$</span> git log --graph --author="Giovany Domínguez"
-        </p>
+        <div class="exp-cli" aria-hidden="true">
+          <div class="exp-cli__bar">
+            <span class="exp-cli__dot exp-cli__dot--red"></span>
+            <span class="exp-cli__dot exp-cli__dot--yellow"></span>
+            <span class="exp-cli__dot exp-cli__dot--green"></span>
+            <span class="exp-cli__title">giovany@dev: ~/career</span>
+          </div>
+          <p class="exp-cli__line">
+            <span class="exp-cli__prompt">$</span> git log --graph --author="Giovany Domínguez"
+          </p>
+        </div>
 
         <!-- git-log timeline: branch rail on the left, one "commit" per job -->
         <div class="exp-log">
@@ -121,11 +129,49 @@ function duration(start: string, end: string | null): string {
 })()}
 
 <style>
+  /* ── git-log terminal window ─────────────────────────── */
   .exp-cli {
+    width: fit-content;
+    max-width: 100%;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .exp-cli__bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.55rem 1rem;
+    background: rgba(0, 0, 0, 0.35);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .exp-cli__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+
+  .exp-cli__dot--red { background: #ff5f57; }
+  .exp-cli__dot--yellow { background: #febc2e; }
+  .exp-cli__dot--green { background: #28c840; }
+
+  .exp-cli__title {
+    margin-left: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .exp-cli__line {
     font-family: var(--font-mono);
     font-size: var(--text-sm);
     color: var(--color-text-muted);
-    margin-bottom: var(--space-xl);
+    padding: var(--space-md) var(--space-lg);
   }
 
   .exp-cli__prompt {
