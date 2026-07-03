@@ -1,6 +1,5 @@
 ---
 import SectionHeading from "../ui/SectionHeading.astro";
-import Button from "../ui/Button.astro";
 import en from "../../i18n/en";
 import es from "../../i18n/es";
 import { socialLinks, resumeUrl } from "../../data/social";
@@ -14,9 +13,14 @@ interface Props {
   const dict = Astro.props.locale === "en" ? en : es;
 
   return (
-    <section class="contact section" id="contact">
+    <section class="contact section section--band" id="contact">
       <div class="section__inner">
         <SectionHeading title={dict.contact.heading} subtitle={dict.contact.subtitle} />
+
+        <p class="contact__status">
+          <span class="contact__status-dot" aria-hidden="true"></span>
+          {dict.contact.status}
+        </p>
 
         <div class="contact__grid">
           <a href={`mailto:${socialLinks[0].url.replace("mailto:", "")}`} class="contact__card">
@@ -57,6 +61,45 @@ interface Props {
 })()}
 
 <style>
+  .contact__status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    width: fit-content;
+    margin: 0 auto var(--space-2xl);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    background: rgba(77, 212, 192, 0.05);
+    border: 1px solid rgba(77, 212, 192, 0.2);
+    border-radius: var(--border-radius-full);
+    padding: 0.45em 1.2em;
+  }
+
+  .contact__status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #3ddc84;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .contact__status-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: #3ddc84;
+    animation: statusPing 2s ease-out infinite;
+  }
+
+  @keyframes statusPing {
+    0% { transform: scale(1); opacity: 0.7; }
+    70%, 100% { transform: scale(3); opacity: 0; }
+  }
+
   .contact__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -70,7 +113,8 @@ interface Props {
     padding: var(--space-2xl) var(--space-xl);
     text-align: center;
     text-decoration: none;
-    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base),
+      transform var(--transition-base);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -92,10 +136,28 @@ interface Props {
   .contact__card:hover {
     border-color: var(--color-accent);
     box-shadow: var(--shadow-glow);
+    transform: translateY(-4px);
   }
 
   .contact__card:hover::before {
     opacity: 1;
+  }
+
+  /* accent line unfolds along the base — restrained highlight */
+  .contact__card::after {
+    content: "";
+    position: absolute;
+    left: 18%;
+    right: 18%;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+    transform: scaleX(0);
+    transition: transform var(--transition-slow);
+  }
+
+  .contact__card:hover::after {
+    transform: scaleX(1);
   }
 
   .contact__card-icon {
@@ -135,7 +197,7 @@ interface Props {
 </style>
 
 <script>
-  import { gsap, ScrollTrigger } from "../../scripts/utils/gsap-setup";
+  import { gsap } from "../../scripts/utils/gsap-setup";
 
   const mm = gsap.matchMedia();
 
@@ -164,6 +226,11 @@ interface Props {
         "-=0.2"
       )
       .from(
+        ".contact__status",
+        { opacity: 0, scale: 0.85, duration: 0.5, ease: "back.out(2)" },
+        "-=0.2"
+      )
+      .from(
         ".contact__card",
         {
           opacity: 0,
@@ -175,25 +242,6 @@ interface Props {
         },
         "-=0.1"
       );
-  });
 
-  // Hover microinteraction
-  document.querySelectorAll<HTMLElement>(".contact__card").forEach((card) => {
-    card.addEventListener("mouseenter", () => {
-      gsap.to(card, {
-        y: -6,
-        scale: 1.03,
-        duration: 0.3,
-        ease: "power2.out",
-      });
-    });
-    card.addEventListener("mouseleave", () => {
-      gsap.to(card, {
-        y: 0,
-        scale: 1,
-        duration: 0.3,
-        ease: "power2.out",
-      });
-    });
   });
 </script>

@@ -48,6 +48,7 @@ const es: Dictionary = {
       { key: "frameworks", label: "Frameworks" },
       { key: "databases", label: "Bases de Datos" },
       { key: "devops", label: "DevOps & Cloud" },
+      { key: "patterns", label: "Design Patterns" },
       { key: "tools", label: "Herramientas" },
     ],
   },
@@ -67,9 +68,11 @@ const es: Dictionary = {
     problem: "Problema",
     solution: "Solución",
     gallery: "Galería",
+    featuredBadge: "Principal",
   },
   contact: {
     heading: "Conectemos",
+    status: "Abierto a nuevas oportunidades",
     subtitle:
       "Siempre estoy abierto a nuevas oportunidades y conversaciones interesantes. Ya sea que estés contratando, colaborando o simplemente quieras charlar sobre arquitectura backend — ¡escríbeme!",
     emailLabel: "Correo",

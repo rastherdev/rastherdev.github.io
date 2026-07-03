@@ -51,11 +51,13 @@ export interface ProjectsDict {
   problem: string;
   solution: string;
   gallery: string;
+  featuredBadge: string;
 }
 
 export interface ContactDict {
   heading: string;
   subtitle: string;
+  status: string;
   emailLabel: string;
   linkedinLabel: string;
   githubLabel: string;

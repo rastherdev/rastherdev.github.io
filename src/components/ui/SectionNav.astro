@@ -1,0 +1,143 @@
+---
+// Desktop-only scrollspy menu. Labels are terminal paths → language-neutral.
+const items = [
+  { id: "top", path: "~/" },
+  { id: "about", path: "~/about" },
+  { id: "skills", path: "~/skills" },
+  { id: "experience", path: "~/experience" },
+  { id: "projects", path: "~/projects" },
+  { id: "contact", path: "~/contact" },
+];
+---
+
+<nav class="snav" aria-label="Sections">
+  <ul class="snav__list">
+    {items.map((it, i) => (
+      <li>
+        <a class={`snav__link${i === 0 ? " is-active" : ""}`} href={`#${it.id}`}>
+          <span class="snav__marker" aria-hidden="true"></span>
+          <span class="snav__label">{it.path}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  /* Desktop-only: needs free space beside the 1200px content column */
+  .snav {
+    display: none;
+    position: fixed;
+    right: var(--space-lg);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: var(--z-nav);
+  }
+
+  @media (min-width: 1400px) and (pointer: fine) {
+    .snav {
+      display: block;
+    }
+  }
+
+  .snav__list {
+    list-style: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-md);
+    background: rgba(17, 17, 34, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+
+  .snav__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    padding: 0.45em 0.8em;
+    border-radius: var(--border-radius);
+    transition: color 0.25s, background 0.25s;
+  }
+
+  .snav__marker {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-border-hover);
+    flex-shrink: 0;
+    transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
+  }
+
+  .snav__link:hover {
+    color: var(--color-text);
+    background: rgba(226, 226, 240, 0.04);
+  }
+
+  /* Focus state: the user always knows where they are */
+  .snav__link.is-active {
+    color: var(--color-accent);
+    background: rgba(240, 160, 48, 0.08);
+  }
+
+  .snav__link.is-active .snav__marker {
+    background: var(--color-accent);
+    box-shadow: 0 0 8px var(--color-accent-glow);
+    transform: scale(1.25);
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger } from "../../scripts/utils/gsap-setup";
+
+  const links = document.querySelectorAll<HTMLAnchorElement>(".snav__link");
+
+  function setActive(link: HTMLAnchorElement) {
+    links.forEach((l) => l.classList.remove("is-active"));
+    link.classList.add("is-active");
+  }
+
+  links.forEach((link) => {
+    const section = document.querySelector<HTMLElement>(link.getAttribute("href")!);
+    if (!section) return;
+
+    // Scrollspy: the section crossing the viewport center owns the focus
+    ScrollTrigger.create({
+      trigger: section,
+      start: "top center",
+      end: "bottom center",
+      onToggle: (self) => {
+        if (self.isActive) setActive(link);
+      },
+    });
+
+    // Click → smooth travel via ScrollSmoother, focus updates immediately
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      setActive(link);
+      const smoother = (window as any).__smoother;
+      if (smoother) {
+        smoother.scrollTo(section, true, "top 72px");
+      } else {
+        section.scrollIntoView({ behavior: "smooth" });
+      }
+    });
+  });
+
+  // Entrance after the loader settles
+  const mm = gsap.matchMedia();
+  mm.add("(prefers-reduced-motion: no-preference) and (min-width: 1400px)", () => {
+    gsap.from(".snav", { opacity: 0, x: 24, duration: 0.7, ease: "power3.out", delay: 1 });
+    gsap.from(".snav__link", {
+      opacity: 0, x: 14, stagger: 0.06, duration: 0.4, ease: "power2.out", delay: 1.15,
+    });
+  });
+</script>

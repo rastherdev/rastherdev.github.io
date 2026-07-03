@@ -51,6 +51,16 @@ export const skillCategories: SkillCategory[] = [
     ],
   },
   {
+    key: "patterns",
+    items: [
+      // ponytail: placeholder levels — user will adjust to their profile
+      { name: "Repository", level: 85 },
+      { name: "Factory", level: 78 },
+      { name: "Observer", level: 72 },
+      { name: "Singleton", level: 80 },
+    ],
+  },
+  {
     key: "tools",
     items: [
       { name: "Git", level: 90 },

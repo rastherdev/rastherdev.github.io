@@ -116,6 +116,47 @@ img {
   padding-inline: var(--space-xl);
 }
 
+/* ── Section bands (alternating color blocking) ────────────────
+   Full-width tinted bands with glowing hairlines top/bottom.
+   Each banded section gets an identity hue via the vars below. */
+.section--band {
+  --band-tint: rgba(226, 226, 240, 0.03);
+  --band-line: rgba(226, 226, 240, 0.22);
+  --band-glow: rgba(226, 226, 240, 0.05);
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 0%, var(--band-glow), transparent 70%),
+    var(--band-tint);
+}
+
+.section--band::before,
+.section--band::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 3%, var(--band-line) 50%, transparent 97%);
+  box-shadow: 0 0 14px 0 var(--band-line);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.section--band::before { top: 0; }
+.section--band::after { bottom: 0; }
+
+/* Identity hue per banded section (About keeps the neutral defaults) */
+.experience.section--band {
+  --band-tint: rgba(240, 160, 48, 0.028);
+  --band-line: rgba(240, 160, 48, 0.28);
+  --band-glow: rgba(240, 160, 48, 0.055);
+}
+
+.contact.section--band {
+  --band-tint: rgba(77, 212, 192, 0.028);
+  --band-line: rgba(77, 212, 192, 0.26);
+  --band-glow: rgba(77, 212, 192, 0.055);
+}
+
 /* ── Grid helpers ──────────────────────────────────────────── */
 .grid-2 {
   display: grid;

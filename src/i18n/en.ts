@@ -48,6 +48,7 @@ const en: Dictionary = {
       { key: "frameworks", label: "Frameworks" },
       { key: "databases", label: "Databases" },
       { key: "devops", label: "DevOps & Cloud" },
+      { key: "patterns", label: "Design Patterns" },
       { key: "tools", label: "Tools" },
     ],
   },
@@ -67,9 +68,11 @@ const en: Dictionary = {
     problem: "Problem",
     solution: "Solution",
     gallery: "Gallery",
+    featuredBadge: "Flagship",
   },
   contact: {
     heading: "Let's Connect",
+    status: "Open to new opportunities",
     subtitle:
       "I'm always open to new opportunities and interesting conversations. Whether you're hiring, collaborating, or just want to chat about backend architecture — reach out!",
     emailLabel: "Email",

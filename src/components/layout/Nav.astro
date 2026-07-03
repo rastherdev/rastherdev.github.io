@@ -26,13 +26,15 @@ interface Props {
           <span class="nav__logo-bracket"> /&gt;</span>
         </a>
 
+        <span class="nav__path" id="nav-path" aria-hidden="true">~/</span>
+
         <nav class="nav__links" id="nav-links" aria-label="Main navigation">
-          <a href="#about" class="nav__link" data-section="about">{dict.nav.about}</a>
-          <a href="#skills" class="nav__link" data-section="skills">{dict.nav.skills}</a>
-          <a href="#experience" class="nav__link" data-section="experience">{dict.nav.experience}</a>
-          <a href="#projects" class="nav__link" data-section="projects">{dict.nav.projects}</a>
-          <a href="#contact" class="nav__link" data-section="contact">{dict.nav.contact}</a>
-          <a href={resumeUrl} class="nav__link nav__link--cv" download>{dict.nav.downloadCv}</a>
+          <a href="#about" class="nav__link" data-section="about" data-num="01" style="--i:0">{dict.nav.about}</a>
+          <a href="#skills" class="nav__link" data-section="skills" data-num="02" style="--i:1">{dict.nav.skills}</a>
+          <a href="#experience" class="nav__link" data-section="experience" data-num="03" style="--i:2">{dict.nav.experience}</a>
+          <a href="#projects" class="nav__link" data-section="projects" data-num="04" style="--i:3">{dict.nav.projects}</a>
+          <a href="#contact" class="nav__link" data-section="contact" data-num="05" style="--i:4">{dict.nav.contact}</a>
+          <a href={resumeUrl} class="nav__link nav__link--cv" style="--i:5" download>{dict.nav.downloadCv}</a>
         </nav>
 
         <div class="nav__actions">
@@ -46,6 +48,7 @@ interface Props {
           </button>
         </div>
       </div>
+      <span class="nav__progress" id="nav-progress" aria-hidden="true"></span>
     </header>
   );
 })()}
@@ -60,13 +63,29 @@ interface Props {
     height: var(--nav-height);
     display: flex;
     align-items: center;
-    transition: background var(--transition-base), box-shadow var(--transition-base);
+    transition: box-shadow var(--transition-base);
   }
 
-  .nav.is-scrolled {
+  /* Blur lives on a pseudo-element: backdrop-filter on .nav itself would turn
+     the header into the containing block for the fixed mobile overlay,
+     squashing it into the 64px bar. */
+  .nav::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
     background: rgba(8, 8, 15, 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+  }
+
+  .nav.is-scrolled::before {
+    opacity: 1;
+  }
+
+  .nav.is-scrolled {
     box-shadow: 0 1px 0 var(--color-border);
   }
 
@@ -79,6 +98,49 @@ interface Props {
     align-items: center;
     justify-content: space-between;
     height: 100%;
+    position: relative;
+  }
+
+  /* Current-section breadcrumb chip — mobile only */
+  .nav__path {
+    display: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    background: rgba(240, 160, 48, 0.07);
+    border: 1px solid rgba(240, 160, 48, 0.25);
+    border-radius: var(--border-radius-full);
+    padding: 0.2em 0.8em;
+    white-space: nowrap;
+    transition: opacity var(--transition-base);
+  }
+
+  @media (max-width: 768px) {
+    .nav__path {
+      display: block;
+    }
+  }
+
+  /* Scroll progress hairline — shown wherever the desktop rail isn't */
+  .nav__progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-code));
+    transform: scaleX(0);
+    transform-origin: left;
+    pointer-events: none;
+  }
+
+  @media (min-width: 1400px) {
+    .nav__progress {
+      display: none;
+    }
   }
 
   .nav__logo {
@@ -195,15 +257,19 @@ interface Props {
     .nav__links {
       position: fixed;
       inset: 0;
-      background: rgba(8, 8, 15, 0.97);
+      background:
+        radial-gradient(circle at 85% 12%, rgba(240, 160, 48, 0.09), transparent 45%),
+        radial-gradient(circle at 12% 88%, rgba(77, 212, 192, 0.08), transparent 45%),
+        rgba(8, 8, 15, 0.96);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       flex-direction: column;
       justify-content: center;
-      gap: var(--space-2xl);
+      align-items: center;
+      gap: var(--space-xl);
       opacity: 0;
       pointer-events: none;
-      transition: opacity var(--transition-base);
+      transition: opacity 0.35s ease;
     }
 
     .nav__links.is-open {
@@ -212,11 +278,48 @@ interface Props {
     }
 
     .nav__link {
-      font-size: var(--text-xl);
+      font-family: var(--font-display);
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      color: var(--color-text);
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-md);
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+
+    /* editorial index numbers */
+    .nav__link[data-num]::before {
+      content: attr(data-num);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      font-weight: 400;
+      color: var(--color-accent);
+    }
+
+    /* staggered entrance when the menu opens */
+    .nav__links.is-open .nav__link {
+      opacity: 1;
+      transform: none;
+      transition-delay: calc(100ms + var(--i, 0) * 70ms);
+    }
+
+    .nav__link--cv {
+      font-family: var(--font-mono);
+      font-size: var(--text-base);
+      font-weight: 400;
+      margin-top: var(--space-md);
+      color: var(--color-accent);
     }
 
     .nav__burger {
       display: flex;
+    }
+
+    .nav__burger.is-open .nav__burger-line {
+      background: var(--color-accent);
     }
   }
 </style>
@@ -226,11 +329,20 @@ interface Props {
   const burger = document.getElementById("nav-burger")!;
   const navLinks = document.getElementById("nav-links")!;
 
-  // Scroll-aware background blur (uses ScrollSmoother exposed by BaseLayout)
+  // Scroll-aware background blur + progress hairline
+  // (uses ScrollSmoother exposed by BaseLayout)
+  const progressEl = document.getElementById("nav-progress");
+
   function updateNavBg() {
     const smoother = (window as any).__smoother;
     const scrollY = smoother?.scrollTop() ?? window.scrollY;
     nav.classList.toggle("is-scrolled", scrollY > 20);
+
+    if (progressEl) {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progressEl.style.transform = `scaleX(${max > 0 ? Math.min(scrollY / max, 1) : 0})`;
+    }
+
     requestAnimationFrame(updateNavBg);
   }
   requestAnimationFrame(updateNavBg);
@@ -239,6 +351,8 @@ interface Props {
   const sections = document.querySelectorAll<HTMLElement>("section[id]");
   const links = document.querySelectorAll<HTMLAnchorElement>(".nav__link[data-section]");
 
+  const pathEl = document.getElementById("nav-path");
+
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -246,6 +360,9 @@ interface Props {
           links.forEach((link) => {
             link.classList.toggle("is-active", link.dataset.section === entry.target.id);
           });
+          if (pathEl) {
+            pathEl.textContent = entry.target.id === "top" ? "~/" : `~/${entry.target.id}`;
+          }
         }
       });
     },

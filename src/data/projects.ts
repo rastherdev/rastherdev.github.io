@@ -11,11 +11,14 @@ export interface Project {
   codeFilename?: string;
   /** Modal gallery. Drop real screenshots in public/assets/projects/ and list them here. */
   images?: string[];
+  /** Flagship project — gets the animated highlight treatment in the grid. */
+  featured?: boolean;
 }
 
 export const projects: Project[] = [
   {
     name: "Bloomingtec",
+    featured: true,
     description:
       "SaaS platform functioning as an ERP and CRM for the agro-industrial sector, with a special focus on administrative, logistical, and customer management processes for agricultural raw material producers. Offers modules for crop management, payroll calculation, inventory, sales, invoicing, and customer service — all integrated into an intuitive interface.",
     problem:

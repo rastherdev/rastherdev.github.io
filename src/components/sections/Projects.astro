@@ -71,6 +71,14 @@ interface Props {
       .from(".project-card", {
         opacity: 0, y: 50, scale: 0.96, stagger: 0.15, duration: 0.7, ease: "power3.out",
       }, "-=0.1");
+
+    // Flagship card: light beam orbits the border
+    gsap.to(".project-card--featured", {
+      "--beam-angle": "360deg",
+      duration: 5,
+      repeat: -1,
+      ease: "none",
+    });
   });
 
   // Hover microinteraction
