@@ -45,13 +45,12 @@ function duration(start: string, end: string | null): string {
 
         <!-- git-log timeline: branch rail on the left, one "commit" per job -->
         <div class="exp-log">
-          <svg class="exp-log__rail" viewBox="0 0 4 100" preserveAspectRatio="none" aria-hidden="true">
-            <line class="exp-log__track" x1="2" y1="0" x2="2" y2="100" stroke-width="2" vector-effect="non-scaling-stroke" />
-            <line class="exp-log__progress" x1="2" y1="0" x2="2" y2="100" stroke-width="2" vector-effect="non-scaling-stroke" stroke-dasharray="1" stroke-dashoffset="1" pathLength="1" />
-          </svg>
-
-          <!-- comet: plain HTML div (SVG dash tricks misrender with preserveAspectRatio=none) -->
-          <div class="exp-log__comet" aria-hidden="true"></div>
+          <!-- rail in plain HTML: SVG dash/pathLength tricks misrender when the
+               svg is stretched with preserveAspectRatio="none" -->
+          <div class="exp-log__rail" aria-hidden="true">
+            <span class="exp-log__track"></span>
+            <span class="exp-log__progress"></span>
+          </div>
 
           {experience.map((entry) => (
             <div class="exp-commit">
@@ -148,34 +147,45 @@ function duration(start: string, end: string | null): string {
     left: 20px;
     top: 8px;
     bottom: 8px;
-    width: 4px;
-    height: calc(100% - 16px);
+    width: 2px;
     transform: translateX(-50%);
   }
 
+  /* dashed track — git-graph vibe */
   .exp-log__track {
-    stroke: var(--color-border);
-  }
-
-  .exp-log__progress {
-    stroke: var(--color-accent);
-    filter: drop-shadow(0 0 4px var(--color-accent-glow));
-  }
-
-  .exp-log__comet {
     position: absolute;
-    left: 20px;
+    inset: 0;
+    background: repeating-linear-gradient(
+      180deg,
+      var(--color-border) 0 5px,
+      transparent 5px 11px
+    );
+  }
+
+  /* fills top→bottom via height (scrubbed by GSAP) */
+  .exp-log__progress {
+    position: absolute;
+    left: 0;
     top: 0;
-    width: 4px;
-    height: 90px;
-    transform: translateX(-50%);
+    width: 100%;
+    height: 0%;
+    background: linear-gradient(180deg, var(--color-accent), var(--color-code));
     border-radius: var(--border-radius-full);
-    /* trail fades in, bright teal head at the bottom (travel direction) */
-    background: linear-gradient(180deg, transparent, var(--color-code) 65%, #d9fff8);
-    filter: drop-shadow(0 0 6px rgba(77, 212, 192, 0.8));
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1;
+    box-shadow: 0 0 8px var(--color-accent-glow);
+  }
+
+  /* glowing pen tip at the drawing edge */
+  .exp-log__progress::after {
+    content: "";
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-code);
+    box-shadow: 0 0 10px rgba(77, 212, 192, 0.9);
   }
 
   .exp-commit {
@@ -427,10 +437,6 @@ function duration(start: string, end: string | null): string {
       left: 10px;
     }
 
-    .exp-log__comet {
-      left: 10px;
-    }
-
     .exp-commit__dot {
       left: -26px;
       width: 18px;
@@ -470,8 +476,8 @@ function duration(start: string, end: string | null): string {
       }, "-=0.2");
 
     // ── Rail draws as you scroll (scrub) ───────────────
-    gsap.fromTo(".exp-log__progress", { strokeDashoffset: 1 }, {
-      strokeDashoffset: 0,
+    gsap.fromTo(".exp-log__progress", { height: "0%" }, {
+      height: "100%",
       ease: "none",
       scrollTrigger: {
         trigger: ".exp-log",
@@ -479,21 +485,6 @@ function duration(start: string, end: string | null): string {
         end: "bottom 45%",
         scrub: 1,
       },
-    });
-
-    // ── Comet pulses down the rail while the section is on screen ──
-    // top in % of .exp-log so it adapts to any timeline height
-    const comet = gsap.timeline({ repeat: -1, repeatDelay: 0.9, paused: true });
-    comet
-      .fromTo(".exp-log__comet", { top: "-12%" }, { top: "104%", duration: 2.6, ease: "power1.inOut" }, 0)
-      .to(".exp-log__comet", { opacity: 1, duration: 0.35, ease: "none" }, 0)
-      .to(".exp-log__comet", { opacity: 0, duration: 0.4, ease: "none" }, 2.2);
-
-    ScrollTrigger.create({
-      trigger: ".exp-log",
-      start: "top 80%",
-      end: "bottom 10%",
-      onToggle: (self) => (self.isActive ? comet.play() : comet.pause()),
     });
 
     // ── Each commit reveals on its own trigger ─────────
