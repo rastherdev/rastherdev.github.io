@@ -184,8 +184,8 @@ const isKeyword = (part: string) =>
     overflow: hidden;
   }
 
-  /* 150% covers the panel diagonal while rotating — 250% allocated a
-     needlessly huge GPU texture */
+  /* sized to the panel DIAGONAL by JS (sizeBeam) so the rotating square
+     always reaches every corner; 150% is only the no-JS fallback */
   .about__panel-beam span {
     position: absolute;
     left: 50%;
@@ -486,4 +486,20 @@ const isKeyword = (part: string) =>
   new IntersectionObserver((entries) =>
     entries.forEach((entry) => aboutEl.classList.toggle("is-inview", entry.isIntersecting))
   ).observe(aboutEl);
+
+  // Beam square must cover the panel DIAGONAL to reach every corner while
+  // rotating — a %-of-width guess breaks as soon as the panel grows taller
+  const beamSpan = document.querySelector<HTMLElement>(".about__panel-beam span");
+  const panelEl = document.getElementById("about-panel");
+
+  function sizeBeam() {
+    if (!beamSpan || !panelEl) return;
+    const d = Math.ceil(Math.hypot(panelEl.offsetWidth, panelEl.offsetHeight)) + 20;
+    beamSpan.style.width = `${d}px`;
+    beamSpan.style.height = `${d}px`;
+  }
+
+  sizeBeam();
+  window.addEventListener("resize", sizeBeam);
+  window.addEventListener("load", sizeBeam);
 </script>

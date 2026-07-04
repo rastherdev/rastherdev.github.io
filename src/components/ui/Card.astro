@@ -259,10 +259,27 @@ export interface Props {
     });
   });
 
-  // Pause the featured card's beam while it's off-screen
-  document.querySelectorAll<HTMLElement>(".project-card--featured").forEach((card) => {
+  // Pause the featured card's beam while it's off-screen, and size the beam
+  // square to the card diagonal so it reaches every corner while rotating
+  const featuredCards = document.querySelectorAll<HTMLElement>(".project-card--featured");
+
+  featuredCards.forEach((card) => {
     new IntersectionObserver((entries) =>
       entries.forEach((entry) => card.classList.toggle("is-inview", entry.isIntersecting))
     ).observe(card);
   });
+
+  function sizeCardBeams() {
+    featuredCards.forEach((card) => {
+      const span = card.querySelector<HTMLElement>(".project-card__beam span");
+      if (!span) return;
+      const d = Math.ceil(Math.hypot(card.offsetWidth, card.offsetHeight)) + 20;
+      span.style.width = `${d}px`;
+      span.style.height = `${d}px`;
+    });
+  }
+
+  sizeCardBeams();
+  window.addEventListener("resize", sizeCardBeams);
+  window.addEventListener("load", sizeCardBeams);
 </script>
