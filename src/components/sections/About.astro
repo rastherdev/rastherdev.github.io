@@ -103,6 +103,13 @@ const isKeyword = (part: string) =>
     pointer-events: none;
     z-index: 0;
     opacity: 0.25;
+    /* whole-container breath: HTML opacity is composited, zero repaints */
+    animation: nodesBreath 7s ease-in-out infinite;
+  }
+
+  @keyframes nodesBreath {
+    0%, 100% { opacity: 0.18; }
+    50% { opacity: 0.32; }
   }
 
   .about__nodes-svg {
@@ -110,45 +117,24 @@ const isKeyword = (part: string) =>
     height: 100%;
   }
 
+  /* SVG children stay STATIC: animating them (opacity/transform) is not
+     GPU-composited — the browser re-rasterized the near-viewport-sized SVG
+     on every frame, which is what caused the flicker while idling here.
+     The "breathing" lives on the HTML container instead (composited). */
   .about__edge {
     stroke: var(--color-border);
     stroke-width: 1;
     opacity: 0.5;
     stroke-dasharray: 6 4;
-    animation: edgePulse 4s ease-in-out infinite;
-  }
-  .about__edge:nth-child(2) { animation-delay: 0.5s; }
-  .about__edge:nth-child(3) { animation-delay: 1s; }
-  .about__edge:nth-child(4) { animation-delay: 1.5s; }
-  .about__edge:nth-child(5) { animation-delay: 2s; }
-  .about__edge:nth-child(6) { animation-delay: 2.5s; }
-
-  @keyframes edgePulse {
-    0%, 100% { opacity: 0.25; }
-    50% { opacity: 0.7; }
   }
 
   .about__node {
     fill: var(--color-border);
-    animation: nodeFloat 5s ease-in-out infinite;
   }
-  .about__node:nth-child(7) { animation-delay: 0.3s; }
-  .about__node:nth-child(8) { animation-delay: 0.8s; }
-  .about__node:nth-child(9) { animation-delay: 1.3s; }
-  .about__node:nth-child(10) { animation-delay: 1.8s; }
-  .about__node:nth-child(11) { animation-delay: 2.3s; }
-  .about__node:nth-child(12) { animation-delay: 2.8s; }
-  .about__node:nth-child(13) { animation-delay: 3.3s; }
-  .about__node:nth-child(14) { animation-delay: 3.8s; }
 
   .about__node--lg { fill: rgba(240, 160, 48, 0.25); }
   .about__node--accent { fill: var(--color-code); }
   .about__node--sm { fill: var(--color-border); opacity: 0.6; }
-
-  @keyframes nodeFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-  }
 
   /* ── Mouse-follow glow ───────────────────────────────── */
   /* positioned by GSAP transforms (left/top tweens would force layout) */
@@ -198,11 +184,13 @@ const isKeyword = (part: string) =>
     overflow: hidden;
   }
 
+  /* 150% covers the panel diagonal while rotating — 250% allocated a
+     needlessly huge GPU texture */
   .about__panel-beam span {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 250%;
+    width: 150%;
     aspect-ratio: 1;
     transform: translate(-50%, -50%);
     background: conic-gradient(
@@ -402,10 +390,9 @@ const isKeyword = (part: string) =>
     50%, 100% { opacity: 0; }
   }
 
-  /* SVG animations are not GPU-composited — pause them while off-screen
+  /* Idle animations pause while off-screen
      (the .is-inview class is toggled by an IntersectionObserver) */
-  .about:not(.is-inview) .about__edge,
-  .about:not(.is-inview) .about__node,
+  .about:not(.is-inview) .about__nodes,
   .about:not(.is-inview) .about__panel-beam span {
     animation-play-state: paused;
   }
