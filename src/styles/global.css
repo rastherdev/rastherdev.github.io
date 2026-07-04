@@ -16,7 +16,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* no scroll-behavior: smooth — ScrollSmoother owns scrolling */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;

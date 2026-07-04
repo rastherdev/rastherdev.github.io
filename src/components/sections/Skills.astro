@@ -278,7 +278,7 @@ const marqueeRows = [
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
     const tl = gsap.timeline({
-      scrollTrigger: { trigger: ".skills", start: "top 68%" },
+      scrollTrigger: { trigger: ".skills", start: "top 68%", once: true },
     });
 
     tl.from(".skills .section-heading__title", {
@@ -297,6 +297,7 @@ const marqueeRows = [
       }, "-=0.3");
 
     // ── Marquee: two rows, opposite directions, slow on hover ──
+    const marqueeTweens: gsap.core.Tween[] = [];
     document.querySelectorAll<HTMLElement>(".skills__marquee-row").forEach((row, i) => {
       const reverse = i % 2 === 1;
       const tween = gsap.fromTo(
@@ -304,9 +305,20 @@ const marqueeRows = [
         { xPercent: reverse ? -50 : 0 },
         { xPercent: reverse ? 0 : -50, duration: 28 + i * 6, repeat: -1, ease: "none" }
       );
+      marqueeTweens.push(tween);
       row.addEventListener("mouseenter", () => gsap.to(tween, { timeScale: 0.15, duration: 0.5 }));
       row.addEventListener("mouseleave", () => gsap.to(tween, { timeScale: 1, duration: 0.5 }));
     });
+
+    // No point ticking the marquee while Skills is off-screen
+    const marquee = document.querySelector(".skills__marquee");
+    if (marquee) {
+      new IntersectionObserver((entries) =>
+        entries.forEach((entry) =>
+          marqueeTweens.forEach((t) => (entry.isIntersecting ? t.play() : t.pause()))
+        )
+      ).observe(marquee);
+    }
 
     // ── Bars fill + percentages count up, per card ─────────
     document.querySelectorAll<HTMLElement>(".skills__card").forEach((card) => {

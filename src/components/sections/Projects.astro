@@ -59,7 +59,7 @@ interface Props {
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
     const tl = gsap.timeline({
-      scrollTrigger: { trigger: ".projects", start: "top 70%" },
+      scrollTrigger: { trigger: ".projects", start: "top 70%", once: true },
     });
 
     tl.from(".projects .section-heading__title", {

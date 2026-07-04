@@ -17,24 +17,29 @@
     mix-blend-mode: difference;
   }
 
+  /* centering handled by GSAP (xPercent/yPercent) — GSAP owns transform */
   .cursor__dot {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 6px;
     height: 6px;
     background: var(--color-text);
     border-radius: 50%;
-    transform: translate(-50%, -50%);
     transition: width 0.2s, height 0.2s, background 0.2s;
+    will-change: transform;
   }
 
   .cursor__ring {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 32px;
     height: 32px;
     border: 1.5px solid var(--color-text);
     border-radius: 50%;
-    transform: translate(-50%, -50%);
     transition: width 0.3s, height 0.3s, border-color 0.3s;
+    will-change: transform;
   }
 
   /* Hover states */
@@ -63,84 +68,78 @@
 </style>
 
 <script>
-  const dot = document.getElementById("cursor-dot")!;
-  const ring = document.getElementById("cursor-ring")!;
-  const cursor = document.getElementById("cursor")!;
+  import { gsap } from "../../scripts/utils/gsap-setup";
 
-  let mouseX = 0;
-  let mouseY = 0;
-  let ringX = 0;
-  let ringY = 0;
-  let isVisible = false;
+  // Touch devices: cursor is hidden by CSS — skip ALL JS work too
+  // (listeners, tweens and the MutationObserver would otherwise run for nothing)
+  if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    const dot = document.getElementById("cursor-dot")!;
+    const ring = document.getElementById("cursor-ring")!;
+    const cursor = document.getElementById("cursor")!;
 
-  // Throttle mousemove
-  document.addEventListener("mousemove", (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    if (!isVisible) {
-      isVisible = true;
+    // Center via percent transforms; quickTo drives x/y (compositor-only —
+    // the old left/top writes forced layout on every frame)
+    gsap.set([dot, ring], { xPercent: -50, yPercent: -50 });
+
+    const dotX = gsap.quickTo(dot, "x", { duration: 0.08, ease: "power2.out" });
+    const dotY = gsap.quickTo(dot, "y", { duration: 0.08, ease: "power2.out" });
+    const ringX = gsap.quickTo(ring, "x", { duration: 0.4, ease: "power3.out" });
+    const ringY = gsap.quickTo(ring, "y", { duration: 0.4, ease: "power3.out" });
+
+    let isVisible = false;
+
+    document.addEventListener("mousemove", (e) => {
+      dotX(e.clientX);
+      dotY(e.clientY);
+      ringX(e.clientX);
+      ringY(e.clientY);
+      if (!isVisible) {
+        isVisible = true;
+        cursor.style.opacity = "1";
+      }
+    });
+
+    // Hide when leaving window
+    document.addEventListener("mouseleave", () => {
+      cursor.style.opacity = "0";
+      isVisible = false;
+    });
+
+    document.addEventListener("mouseenter", () => {
       cursor.style.opacity = "1";
-    }
-    // Dot follows immediately
-    dot.style.left = `${mouseX}px`;
-    dot.style.top = `${mouseY}px`;
-  });
+      isVisible = true;
+    });
 
-  // Ring follows with spring
-  function animate() {
-    ringX += (mouseX - ringX) * 0.15;
-    ringY += (mouseY - ringY) * 0.15;
-    ring.style.left = `${ringX}px`;
-    ring.style.top = `${ringY}px`;
-    requestAnimationFrame(animate);
-  }
-  animate();
+    // Hover states for interactive elements
+    const interactiveSelectors = [
+      "a",
+      "button",
+      "input",
+      "textarea",
+      "[role='button']",
+      ".btn",
+      ".nav__link",
+      ".project-card",
+      ".contact__card",
+      ".skills__category",
+      "[data-cursor-hover]",
+    ].join(",");
 
-  // Hide when leaving window
-  document.addEventListener("mouseleave", () => {
-    cursor.style.opacity = "0";
-    isVisible = false;
-  });
-
-  document.addEventListener("mouseenter", () => {
-    cursor.style.opacity = "1";
-    isVisible = true;
-  });
-
-  // Hover states for interactive elements
-  const interactiveSelectors = [
-    "a",
-    "button",
-    "input",
-    "textarea",
-    "[role='button']",
-    ".btn",
-    ".nav__link",
-    ".project-card",
-    ".contact__card",
-    ".skills__category",
-    "[data-cursor-hover]",
-  ];
-
-  document.querySelectorAll(interactiveSelectors.join(",")).forEach((el) => {
-    el.addEventListener("mouseenter", () => cursor.classList.add("is-hover"));
-    el.addEventListener("mouseleave", () => cursor.classList.remove("is-hover"));
-    el.addEventListener("mousedown", () => cursor.classList.add("is-clicking"));
-    el.addEventListener("mouseup", () => cursor.classList.remove("is-clicking"));
-  });
-
-  // Also observe dynamically added elements
-  const observer = new MutationObserver(() => {
-    document.querySelectorAll(interactiveSelectors.join(",")).forEach((el) => {
-      if (!(el as any).__cursorBound) {
+    function bindHoverStates() {
+      document.querySelectorAll(interactiveSelectors).forEach((el) => {
+        if ((el as any).__cursorBound) return;
         (el as any).__cursorBound = true;
         el.addEventListener("mouseenter", () => cursor.classList.add("is-hover"));
         el.addEventListener("mouseleave", () => cursor.classList.remove("is-hover"));
         el.addEventListener("mousedown", () => cursor.classList.add("is-clicking"));
         el.addEventListener("mouseup", () => cursor.classList.remove("is-clicking"));
-      }
-    });
-  });
+      });
+    }
 
-  observer.observe(document.body, { childList: true, subtree: true });
+    bindHoverStates();
+
+    // Also observe dynamically added elements
+    const observer = new MutationObserver(bindHoverStates);
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
 </script>

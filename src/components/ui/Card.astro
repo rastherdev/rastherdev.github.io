@@ -124,6 +124,11 @@ export interface Props {
     }
   }
 
+  /* beam idles while the card is off-screen (.is-inview via observer) */
+  .project-card--featured:not(.is-inview) .project-card__beam span {
+    animation-play-state: paused;
+  }
+
   .project-card__flag {
     position: absolute;
     top: var(--space-lg);
@@ -139,16 +144,28 @@ export interface Props {
     border: 1px solid rgba(240, 160, 48, 0.3);
     border-radius: var(--border-radius-full);
     padding: 0.25em 0.8em;
-    animation: flagPulse 2.4s ease-in-out infinite;
   }
 
   .project-card__flag i {
     font-size: 0.75em;
   }
 
+  /* glow pulse: static box-shadow on a pseudo, only opacity animates
+     (animating box-shadow itself repaints every frame) */
+  .project-card__flag::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    box-shadow: 0 0 16px rgba(240, 160, 48, 0.35);
+    opacity: 0;
+    animation: flagPulse 2.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
   @keyframes flagPulse {
-    0%, 100% { box-shadow: 0 0 0 rgba(240, 160, 48, 0); }
-    50% { box-shadow: 0 0 16px rgba(240, 160, 48, 0.35); }
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
   }
 
   .project-card__content {
@@ -240,5 +257,12 @@ export interface Props {
       if ((e.target as HTMLElement).closest("a")) return;
       openModal(parseInt(card.dataset.index ?? "0"));
     });
+  });
+
+  // Pause the featured card's beam while it's off-screen
+  document.querySelectorAll<HTMLElement>(".project-card--featured").forEach((card) => {
+    new IntersectionObserver((entries) =>
+      entries.forEach((entry) => card.classList.toggle("is-inview", entry.isIntersecting))
+    ).observe(card);
   });
 </script>

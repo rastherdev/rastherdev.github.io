@@ -514,7 +514,7 @@ function duration(start: string, end: string | null): string {
   mm.add("(prefers-reduced-motion: no-preference)", () => {
     // ── Heading + CLI line ─────────────────────────────
     const tl = gsap.timeline({
-      scrollTrigger: { trigger: ".experience", start: "top 65%" },
+      scrollTrigger: { trigger: ".experience", start: "top 65%", once: true },
     });
 
     tl.from(".experience .section-heading__title", {
@@ -551,7 +551,7 @@ function duration(start: string, end: string | null): string {
 
     // ── Each commit reveals on its own trigger ─────────
     document.querySelectorAll<HTMLElement>(".exp-commit").forEach((commit) => {
-      const trigger = { trigger: commit, start: "top 72%" };
+      const trigger = { trigger: commit, start: "top 72%", once: true };
 
       gsap.from(commit.querySelector(".exp-card"), {
         opacity: 0, x: -40, duration: 0.7, ease: "power3.out",
@@ -580,13 +580,13 @@ function duration(start: string, end: string | null): string {
       // List items cascade in
       gsap.from(commit.querySelectorAll(".exp-card__list li"), {
         opacity: 0, x: -14, stagger: 0.05, duration: 0.4, ease: "power2.out",
-        scrollTrigger: { trigger: commit, start: "top 65%" },
+        scrollTrigger: { trigger: commit, start: "top 65%", once: true },
       });
 
       // Stack chips pop
       gsap.from(commit.querySelectorAll(".exp-card__chip"), {
         opacity: 0, scale: 0.7, stagger: 0.05, duration: 0.35, ease: "back.out(1.8)",
-        scrollTrigger: { trigger: commit, start: "top 60%" },
+        scrollTrigger: { trigger: commit, start: "top 60%", once: true },
       });
     });
 

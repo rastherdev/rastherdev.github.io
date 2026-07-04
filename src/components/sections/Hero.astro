@@ -234,17 +234,19 @@ interface Props {
     mask-image: radial-gradient(ellipse 70% 60% at center, black 25%, transparent 70%);
   }
 
+  /* soft glows as radial gradients — visually a blurred disc, but painted
+     once; filter: blur(140px) + data-speed parallax repainted a huge blurred
+     layer on every scroll frame */
   .hero__glow {
     position: absolute;
     border-radius: 50%;
-    filter: blur(140px);
     opacity: 0.08;
   }
 
   .hero__glow--1 {
     width: 600px;
     height: 600px;
-    background: var(--color-accent);
+    background: radial-gradient(closest-side, var(--color-accent) 0%, var(--color-accent) 30%, transparent 100%);
     top: -150px;
     right: -100px;
   }
@@ -252,7 +254,7 @@ interface Props {
   .hero__glow--2 {
     width: 450px;
     height: 450px;
-    background: var(--color-code);
+    background: radial-gradient(closest-side, var(--color-code) 0%, var(--color-code) 30%, transparent 100%);
     bottom: -100px;
     left: 10%;
   }

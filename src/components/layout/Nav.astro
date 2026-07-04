@@ -85,6 +85,16 @@ interface Props {
     opacity: 1;
   }
 
+  /* Mobile: full-width backdrop blur re-filters the page on every scrolled
+     frame — a slightly more opaque solid bar reads the same */
+  @media (max-width: 768px) {
+    .nav::before {
+      background: rgba(8, 8, 15, 0.92);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+
   .nav.is-scrolled {
     box-shadow: 0 1px 0 var(--color-border);
   }
@@ -331,14 +341,36 @@ interface Props {
   // (uses ScrollSmoother exposed by BaseLayout)
   const progressEl = document.getElementById("nav-progress");
 
+  // Cache layout reads: reading scrollHeight every frame forces layout.
+  // Recomputed only on resize and once after the loader settles.
+  let maxScroll = 0;
+  function refreshMaxScroll() {
+    maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  }
+  refreshMaxScroll();
+  window.addEventListener("resize", refreshMaxScroll);
+  window.addEventListener("load", refreshMaxScroll);
+
+  let lastScrolled = false;
+  let lastScaleX = -1;
+
   function updateNavBg() {
     const smoother = (window as any).__smoother;
     const scrollY = smoother?.scrollTop() ?? window.scrollY;
-    nav.classList.toggle("is-scrolled", scrollY > 20);
 
-    if (progressEl) {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      progressEl.style.transform = `scaleX(${max > 0 ? Math.min(scrollY / max, 1) : 0})`;
+    const scrolled = scrollY > 20;
+    if (scrolled !== lastScrolled) {
+      lastScrolled = scrolled;
+      nav.classList.toggle("is-scrolled", scrolled);
+    }
+
+    if (progressEl && maxScroll > 0) {
+      const scaleX = Math.min(scrollY / maxScroll, 1);
+      // skip the DOM write when nothing changed (idle frames)
+      if (Math.abs(scaleX - lastScaleX) > 0.001) {
+        lastScaleX = scaleX;
+        progressEl.style.transform = `scaleX(${scaleX})`;
+      }
     }
 
     requestAnimationFrame(updateNavBg);

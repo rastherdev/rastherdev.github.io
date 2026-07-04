@@ -21,21 +21,23 @@ const isKeyword = (part: string) =>
     <section class="about section section--band" id="about">
       <!-- Decorative service-node graph -->
       <div class="about__nodes" id="about-nodes" aria-hidden="true">
+        <!-- no data-speed on SVG children: per-child parallax forces a full
+             SVG repaint on every scroll frame -->
         <svg class="about__nodes-svg" viewBox="0 0 800 500" preserveAspectRatio="none">
-          <line class="about__edge" x1="120" y1="120" x2="380" y2="80" data-speed="0.7" />
-          <line class="about__edge" x1="380" y1="80" x2="650" y2="180" data-speed="0.8" />
-          <line class="about__edge" x1="120" y1="120" x2="300" y2="350" data-speed="0.9" />
-          <line class="about__edge" x1="650" y1="180" x2="550" y2="380" data-speed="0.75" />
-          <line class="about__edge" x1="300" y1="350" x2="550" y2="380" data-speed="0.85" />
-          <line class="about__edge" x1="380" y1="80" x2="300" y2="350" data-speed="0.65" />
-          <circle class="about__node about__node--lg" cx="120" cy="120" r="12" data-speed="0.6" />
-          <circle class="about__node" cx="380" cy="80" r="7" data-speed="0.7" />
-          <circle class="about__node about__node--accent" cx="650" cy="180" r="9" data-speed="0.8" />
-          <circle class="about__node" cx="300" cy="350" r="6" data-speed="0.85" />
-          <circle class="about__node about__node--accent" cx="550" cy="380" r="10" data-speed="0.9" />
-          <circle class="about__node about__node--sm" cx="250" cy="60" r="4" data-speed="0.55" />
-          <circle class="about__node about__node--sm" cx="720" cy="280" r="3" data-speed="0.95" />
-          <circle class="about__node about__node--sm" cx="80" cy="300" r="4" data-speed="0.5" />
+          <line class="about__edge" x1="120" y1="120" x2="380" y2="80" />
+          <line class="about__edge" x1="380" y1="80" x2="650" y2="180" />
+          <line class="about__edge" x1="120" y1="120" x2="300" y2="350" />
+          <line class="about__edge" x1="650" y1="180" x2="550" y2="380" />
+          <line class="about__edge" x1="300" y1="350" x2="550" y2="380" />
+          <line class="about__edge" x1="380" y1="80" x2="300" y2="350" />
+          <circle class="about__node about__node--lg" cx="120" cy="120" r="12" />
+          <circle class="about__node" cx="380" cy="80" r="7" />
+          <circle class="about__node about__node--accent" cx="650" cy="180" r="9" />
+          <circle class="about__node" cx="300" cy="350" r="6" />
+          <circle class="about__node about__node--accent" cx="550" cy="380" r="10" />
+          <circle class="about__node about__node--sm" cx="250" cy="60" r="4" />
+          <circle class="about__node about__node--sm" cx="720" cy="280" r="3" />
+          <circle class="about__node about__node--sm" cx="80" cy="300" r="4" />
         </svg>
       </div>
 
@@ -149,8 +151,11 @@ const isKeyword = (part: string) =>
   }
 
   /* ── Mouse-follow glow ───────────────────────────────── */
+  /* positioned by GSAP transforms (left/top tweens would force layout) */
   .about__mouse-glow {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 300px;
     height: 300px;
     border-radius: 50%;
@@ -158,8 +163,7 @@ const isKeyword = (part: string) =>
     pointer-events: none;
     z-index: 1;
     opacity: 0;
-    transform: translate(-50%, -50%);
-    transition: opacity 0.3s ease;
+    will-change: transform;
   }
 
   /* ── Panel: light wash + animated beam border to delimit the section ── */
@@ -398,13 +402,22 @@ const isKeyword = (part: string) =>
     50%, 100% { opacity: 0; }
   }
 
+  /* SVG animations are not GPU-composited — pause them while off-screen
+     (the .is-inview class is toggled by an IntersectionObserver) */
+  .about:not(.is-inview) .about__edge,
+  .about:not(.is-inview) .about__node,
+  .about:not(.is-inview) .about__panel-beam span {
+    animation-play-state: paused;
+  }
+
   @media (max-width: 768px) {
     .about__grid {
       grid-template-columns: 1fr;
       gap: var(--space-2xl);
     }
+    /* at 0.12 opacity it was barely visible on mobile — not worth the repaints */
     .about__nodes {
-      opacity: 0.12;
+      display: none;
     }
   }
 </style>
@@ -417,7 +430,7 @@ const isKeyword = (part: string) =>
   mm.add("(prefers-reduced-motion: no-preference)", () => {
     // ── Section entrance: aggressive opposite stagger ──────
     const tl = gsap.timeline({
-      scrollTrigger: { trigger: ".about", start: "top 65%" },
+      scrollTrigger: { trigger: ".about", start: "top 65%", once: true },
     });
 
     // Panel reveals first, then its content
@@ -447,33 +460,43 @@ const isKeyword = (part: string) =>
     // ── Nodes pop in ──────────────────────────────────────
     gsap.from(".about__node", {
       opacity: 0, scale: 0, stagger: 0.08, duration: 0.5, ease: "back.out(1.7)",
-      scrollTrigger: { trigger: ".about__nodes", start: "top 80%" },
+      scrollTrigger: { trigger: ".about__nodes", start: "top 80%", once: true },
     });
 
     // Edges draw in
     gsap.from(".about__edge", {
       strokeDashoffset: 20, opacity: 0, stagger: 0.1, duration: 0.8, ease: "power2.out",
-      scrollTrigger: { trigger: ".about__nodes", start: "top 75%" },
+      scrollTrigger: { trigger: ".about__nodes", start: "top 75%", once: true },
     });
 
-    // ── Mouse-follow glow ──────────────────────────────────
+    // ── Mouse-follow glow (transforms only) ────────────────
     const glow = document.getElementById("about-glow")!;
     const section = document.querySelector<HTMLElement>(".about")!;
 
+    gsap.set(glow, { xPercent: -50, yPercent: -50 });
+    const glowX = gsap.quickTo(glow, "x", { duration: 0.6, ease: "power2.out" });
+    const glowY = gsap.quickTo(glow, "y", { duration: 0.6, ease: "power2.out" });
+    let glowVisible = false;
+
     section.addEventListener("mousemove", (e: MouseEvent) => {
       const rect = section.getBoundingClientRect();
-      gsap.to(glow, {
-        left: e.clientX - rect.left,
-        top: e.clientY - rect.top,
-        opacity: 0.5,
-        duration: 0.6,
-        ease: "power2.out",
-        overwrite: "auto",
-      });
+      glowX(e.clientX - rect.left);
+      glowY(e.clientY - rect.top);
+      if (!glowVisible) {
+        glowVisible = true;
+        gsap.to(glow, { opacity: 0.5, duration: 0.3, overwrite: "auto" });
+      }
     });
 
     section.addEventListener("mouseleave", () => {
-      gsap.to(glow, { opacity: 0, duration: 0.4 });
+      glowVisible = false;
+      gsap.to(glow, { opacity: 0, duration: 0.4, overwrite: "auto" });
     });
   });
+
+  // Pause the constellation + panel-beam animations while off-screen
+  const aboutEl = document.querySelector<HTMLElement>(".about")!;
+  new IntersectionObserver((entries) =>
+    entries.forEach((entry) => aboutEl.classList.toggle("is-inview", entry.isIntersecting))
+  ).observe(aboutEl);
 </script>

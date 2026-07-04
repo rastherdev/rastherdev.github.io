@@ -66,13 +66,18 @@ interface Props {
   import { gsap, ScrollTrigger, ScrollSmoother } from "../scripts/utils/gsap-setup";
 
   // ── ScrollSmoother ──────────────────────────────────────
+  // Touch scroll stays native: smoothTouch/normalizeScroll take mobile
+  // scrolling off the compositor and drive it through JS — the main source
+  // of mobile jank. Desktop keeps the smoothed feel.
+  const isFinePointer = window.matchMedia("(pointer: fine)").matches;
+
   const smoother = ScrollSmoother.create({
     wrapper: "#smooth-wrapper",
     content: "#smooth-content",
     smooth: 1.2,
     effects: true,
-    smoothTouch: 0.1,
-    normalizeScroll: true,
+    smoothTouch: false,
+    normalizeScroll: isFinePointer,
     ignoreMobileResize: true,
   });
 
