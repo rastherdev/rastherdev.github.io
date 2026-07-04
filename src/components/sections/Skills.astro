@@ -272,7 +272,7 @@ const marqueeRows = [
 </style>
 
 <script>
-  import { gsap } from "../../scripts/utils/gsap-setup";
+  import { gsap, ScrollTrigger } from "../../scripts/utils/gsap-setup";
 
   const mm = gsap.matchMedia();
 
@@ -320,27 +320,33 @@ const marqueeRows = [
       ).observe(marquee);
     }
 
-    // ── Bars fill + percentages count up, per card ─────────
+    // ── Bars fill + percentages count up ───────────────────
+    // ONE ScrollTrigger per card (not two per skill — that was ~54 triggers
+    // evaluated on every scroll frame); inner tweens fire plain on enter.
     document.querySelectorAll<HTMLElement>(".skills__card").forEach((card) => {
-      card.querySelectorAll<HTMLElement>(".skills__item").forEach((item, i) => {
-        const level = parseInt(item.dataset.level ?? "0");
-        const bar = item.querySelector(".skills__bar-fill");
-        const pct = item.querySelector(".skills__item-pct");
-        const trigger = { trigger: card, start: "top 78%", once: true };
+      ScrollTrigger.create({
+        trigger: card,
+        start: "top 78%",
+        once: true,
+        onEnter: () => {
+          card.querySelectorAll<HTMLElement>(".skills__item").forEach((item, i) => {
+            const level = parseInt(item.dataset.level ?? "0");
+            const bar = item.querySelector(".skills__bar-fill");
+            const pct = item.querySelector(".skills__item-pct");
 
-        gsap.fromTo(bar, { width: "0%" }, {
-          width: `${level}%`, duration: 1.2, ease: "power3.out", delay: i * 0.08,
-          scrollTrigger: trigger,
-        });
+            gsap.fromTo(bar, { width: "0%" }, {
+              width: `${level}%`, duration: 1.2, ease: "power3.out", delay: i * 0.08,
+            });
 
-        const state = { v: 0 };
-        gsap.to(state, {
-          v: level, duration: 1.2, ease: "power3.out", delay: i * 0.08,
-          scrollTrigger: trigger,
-          onUpdate: () => {
-            if (pct) pct.textContent = `${Math.round(state.v)}%`;
-          },
-        });
+            const state = { v: 0 };
+            gsap.to(state, {
+              v: level, duration: 1.2, ease: "power3.out", delay: i * 0.08,
+              onUpdate: () => {
+                if (pct) pct.textContent = `${Math.round(state.v)}%`;
+              },
+            });
+          });
+        },
       });
     });
   });
