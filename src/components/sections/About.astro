@@ -46,7 +46,6 @@ const isKeyword = (part: string) =>
 
       <div class="section__inner">
         <div class="about__panel" id="about-panel">
-          <div class="about__panel-beam" aria-hidden="true"><span></span></div>
           <SectionHeading title={dict.about.heading} />
           <!-- no data-speed here: parallax drift would push content outside the bordered panel -->
           <div class="about__grid">
@@ -166,49 +165,6 @@ const isKeyword = (part: string) =>
       rgba(17, 17, 34, 0.4)
     );
     box-shadow: 0 0 60px rgba(226, 226, 240, 0.03) inset, var(--shadow-lg);
-  }
-
-  /* Beam traveling around the panel perimeter. The gradient sits on an
-     oversized inner square rotated with transform (compositor-only, painted
-     once) — animating the gradient angle itself repaints every frame. */
-  .about__panel-beam {
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1px;
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
-    overflow: hidden;
-  }
-
-  /* sized to the panel DIAGONAL by JS (sizeBeam) so the rotating square
-     always reaches every corner; 150% is only the no-JS fallback */
-  .about__panel-beam span {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 150%;
-    aspect-ratio: 1;
-    transform: translate(-50%, -50%);
-    background: conic-gradient(
-      from 0deg,
-      transparent 0%,
-      transparent 72%,
-      var(--color-accent) 86%,
-      rgba(226, 226, 240, 0.9) 93%,
-      transparent 100%
-    );
-    animation: beamSpin 7s linear infinite;
-    will-change: transform;
-  }
-
-  @keyframes beamSpin {
-    to {
-      transform: translate(-50%, -50%) rotate(1turn);
-    }
   }
 
   /* Soft light spill above the panel edge */
@@ -392,8 +348,7 @@ const isKeyword = (part: string) =>
 
   /* Idle animations pause while off-screen
      (the .is-inview class is toggled by an IntersectionObserver) */
-  .about:not(.is-inview) .about__nodes,
-  .about:not(.is-inview) .about__panel-beam span {
+  .about:not(.is-inview) .about__nodes {
     animation-play-state: paused;
   }
 
@@ -481,25 +436,9 @@ const isKeyword = (part: string) =>
     });
   });
 
-  // Pause the constellation + panel-beam animations while off-screen
+  // Pause the constellation animation while off-screen
   const aboutEl = document.querySelector<HTMLElement>(".about")!;
   new IntersectionObserver((entries) =>
     entries.forEach((entry) => aboutEl.classList.toggle("is-inview", entry.isIntersecting))
   ).observe(aboutEl);
-
-  // Beam square must cover the panel DIAGONAL to reach every corner while
-  // rotating — a %-of-width guess breaks as soon as the panel grows taller
-  const beamSpan = document.querySelector<HTMLElement>(".about__panel-beam span");
-  const panelEl = document.getElementById("about-panel");
-
-  function sizeBeam() {
-    if (!beamSpan || !panelEl) return;
-    const d = Math.ceil(Math.hypot(panelEl.offsetWidth, panelEl.offsetHeight)) + 20;
-    beamSpan.style.width = `${d}px`;
-    beamSpan.style.height = `${d}px`;
-  }
-
-  sizeBeam();
-  window.addEventListener("resize", sizeBeam);
-  window.addEventListener("load", sizeBeam);
 </script>
