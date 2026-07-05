@@ -16,6 +16,37 @@ interface Props {
   /** Desktop scrollspy rail — only for pages that have the landing sections. */
   sectionNav?: boolean;
 }
+
+// ── SEO / Open Graph ─────────────────────────────────────
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const ogImageUrl = new URL("/assets/og-image.png", Astro.site);
+const currentPath = Astro.url.pathname;
+const alternatePath =
+  Astro.props.locale === "en"
+    ? `/es${currentPath}`
+    : currentPath.replace(/^\/es/, "") || "/";
+
+// Structured data: helps Google understand the site (name, owner, pages) —
+// the groundwork it uses when deciding to show sitelinks
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: "Rastherdev",
+      alternateName: "Giovany's Portfolio",
+      url: Astro.site?.toString(),
+    },
+    {
+      "@type": "Person",
+      name: "Giovany Domínguez",
+      alternateName: "rastherdev",
+      url: Astro.site?.toString(),
+      jobTitle: "Laravel Backend Developer",
+      sameAs: ["https://github.com/rastherdev", "https://www.linkedin.com/in/rastherdev"],
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -26,6 +57,30 @@ interface Props {
     <meta name="description" content={Astro.props.description ?? "Giovany Domínguez — Laravel Backend Developer. Portfolio & CV."} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{Astro.props.title ?? "Giovany Domínguez — Laravel Backend Developer"}</title>
+
+    <!-- Canonical + language alternates -->
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang={Astro.props.locale === "en" ? "es" : "en"} href={new URL(alternatePath, Astro.site)} />
+    <link rel="alternate" hreflang="x-default" href={new URL(Astro.props.locale === "es" ? alternatePath : currentPath, Astro.site)} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Rastherdev" />
+    <meta property="og:title" content="Giovany's Portfolio" />
+    <meta property="og:description" content="Laravel Backend Developer" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:locale" content={Astro.props.locale === "es" ? "es_MX" : "en_US"} />
+    <meta property="og:locale:alternate" content={Astro.props.locale === "es" ? "en_US" : "es_MX"} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Giovany's Portfolio" />
+    <meta name="twitter:description" content="Laravel Backend Developer" />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- Structured data (WebSite + Person) -->
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
     <!-- Preload fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

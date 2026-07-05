@@ -26,6 +26,7 @@ const en: Dictionary = {
       "I build scalable and robust applications using Laravel, asynchronous queues, microservices, and design patterns. Focused on performance, security, and long-term maintainability.",
     viewProjects: "View Projects",
     downloadCv: "Download Resume",
+    statTech: "Technologies",
   },
   about: {
     heading: "About Me",

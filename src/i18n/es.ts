@@ -26,6 +26,7 @@ const es: Dictionary = {
       "Construyo aplicaciones escalables y robustas utilizando Laravel, colas asíncronas, microservicios y patrones de diseño. Enfocado en rendimiento, seguridad y mantenibilidad a largo plazo.",
     viewProjects: "Ver Proyectos",
     downloadCv: "Descargar CV",
+    statTech: "Tecnologías",
   },
   about: {
     heading: "Sobre Mí",

@@ -15,6 +15,7 @@ export interface HeroDict {
   tagline: string;
   viewProjects: string;
   downloadCv: string;
+  statTech: string;
 }
 
 export interface AboutDict {
