@@ -56,6 +56,10 @@ export interface Props {
     cursor: pointer;
     display: flex;
     flex-direction: column;
+    /* hover lives here on translate/scale (compositor-friendly); the GSAP
+       entrance owns transform and clears it when done */
+    transition: translate 0.35s, scale 0.35s, border-color 0.35s, box-shadow 0.35s;
+    transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
   .project-card::before {
@@ -70,8 +74,10 @@ export interface Props {
   }
 
   .project-card:hover {
-    border-color: var(--color-border-hover);
-    box-shadow: var(--shadow-md);
+    translate: 0 -6px;
+    scale: 1.02;
+    border-color: var(--color-accent);
+    box-shadow: 0 12px 40px rgba(240, 160, 48, 0.12);
   }
 
   .project-card:hover::before {

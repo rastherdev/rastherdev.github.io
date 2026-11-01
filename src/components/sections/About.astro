@@ -293,11 +293,12 @@ const isKeyword = (part: string) =>
     gap: var(--space-md);
     padding-bottom: var(--space-md);
     border-bottom: 1px solid var(--color-border);
-    transition: transform 0.3s ease;
+    /* `translate`, not `transform`: GSAP owns transform during the entrance */
+    transition: translate 0.3s ease;
   }
 
   .about__fact:hover {
-    transform: translateX(4px);
+    translate: 4px 0;
   }
 
   .about__fact:last-of-type {
@@ -397,6 +398,7 @@ const isKeyword = (part: string) =>
       // Facts from RIGHT (overlaps with bio)
       .from(".about__fact", {
         opacity: 0, x: 60, stagger: 0.12, duration: 0.55, ease: "power4.out",
+        clearProps: "transform", // hand transform back to the CSS hover
       }, "-=0.9");
 
     // ── Nodes pop in ──────────────────────────────────────

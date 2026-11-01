@@ -30,6 +30,12 @@ mm.add(
   }
 );
 
+// Resolves when BaseLayout reveals the page (loader gone or skipped).
+// Entrance timelines wait on it so they don't play behind the overlay.
+export const pageReady = new Promise<void>((resolve) =>
+  document.addEventListener("loader:done", () => resolve(), { once: true })
+);
+
 // Reveal animation helper — from() ensures element's natural CSS state is visible
 export function revealFrom(
   target: string | Element,

@@ -46,8 +46,8 @@ const loc = Astro.props.locale ?? "en";
     box-shadow: var(--shadow-lg), 0 0 40px rgba(240, 160, 48, 0.05);
     width: 100%;
     max-width: 540px;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    /* no backdrop-filter: over this near-uniform dark bg the blur was
+       invisible, but re-filtered every frame while the hero parallax moved */
   }
 
   .terminal__header {
@@ -122,7 +122,7 @@ const loc = Astro.props.locale ?? "en";
 </style>
 
 <script>
-  import { gsap } from "../../scripts/utils/gsap-setup";
+  import { gsap, pageReady } from "../../scripts/utils/gsap-setup";
 
   // Typewriter commands — cycles through these, typing and erasing
   const commands = [
@@ -167,7 +167,8 @@ const loc = Astro.props.locale ?? "en";
   }
 
   async function runTypewriter() {
-    // Small delay so the hero entrance animation starts first
+    // Start once the page is revealed, a beat after the hero entrance begins
+    await pageReady;
     await new Promise((r) => setTimeout(r, 400));
 
     while (true) {

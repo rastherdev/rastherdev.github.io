@@ -70,27 +70,8 @@ interface Props {
       }, "-=0.2")
       .from(".project-card", {
         opacity: 0, y: 50, scale: 0.96, stagger: 0.15, duration: 0.7, ease: "power3.out",
+        clearProps: "transform", // hand transform back to the CSS hover (Card.astro)
       }, "-=0.1");
-  });
-
-  // Hover microinteraction
-  document.querySelectorAll<HTMLElement>(".project-card").forEach((card) => {
-    card.addEventListener("mouseenter", () => {
-      gsap.to(card, {
-        y: -6, scale: 1.02,
-        boxShadow: "0 12px 40px rgba(240, 160, 48, 0.12)",
-        borderColor: "var(--color-accent)",
-        duration: 0.35, ease: "power2.out",
-      });
-    });
-    card.addEventListener("mouseleave", () => {
-      gsap.to(card, {
-        y: 0, scale: 1,
-        boxShadow: "var(--shadow-md)",
-        borderColor: "var(--color-border)",
-        duration: 0.35, ease: "power2.out",
-      });
-    });
   });
 
   // Modal logic: extract modals from hidden container, show correct one

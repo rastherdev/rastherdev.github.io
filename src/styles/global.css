@@ -3,7 +3,6 @@
    Convention: BEM-like naming with block__element--modifier
    ═══════════════════════════════════════════════════════════════ */
 
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono&display=swap");
 @import "./tokens.css";
 
 /* ── Reset ────────────────────────────────────────────────── */
@@ -190,6 +189,15 @@ img {
   }
   .grid-4 {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── Page transitions ──────────────────────────────────────
+   Native crossfade between pages (EN↔ES, /cv). Browsers without
+   cross-document view transitions just navigate normally. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
   }
 }
 

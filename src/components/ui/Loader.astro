@@ -120,22 +120,18 @@
         onComplete: () => resolve(),
       });
 
-      // Reveal lines one by one (slow, so visitor can read)
+      // Reveal lines one by one — quick, the boot only shows once per session
       tl.to(lines, {
         opacity: 1,
         x: 0,
-        duration: 0.3,
-        stagger: 0.4,
+        duration: 0.25,
+        stagger: 0.15,
         ease: "none",
       })
-        // Fill the bar slowly — total ~5s
-        .to(
-          bar,
-          { width: "100%", duration: 3.5, ease: "power1.inOut" },
-          "-=2.0"
-        )
-        // Hold at 100% so visitor sees "serving on :443 ✓"
-        .to({}, { duration: 1.5 });
+        // Bar fills alongside the lines — total ~1.4s
+        .to(bar, { width: "100%", duration: 1.1, ease: "power1.inOut" }, 0)
+        // Short hold so visitor sees "serving on :443 ✓"
+        .to({}, { duration: 0.3 });
     });
   }
 
@@ -157,9 +153,9 @@
   // Expose loader API globally
   (window as any).__loader = { show: showLoader, hide: hideLoader };
 
-  // Auto-show on first load (handled by BaseLayout)
+  // Auto-show on the session's first load (repeat visits get .no-loader in <head>)
   const loader = document.getElementById("loader");
-  if (loader && loader.style.opacity !== "0") {
+  if (loader && !document.documentElement.classList.contains("no-loader")) {
     showLoader().then(() => {
       // Signal that loader animation is complete; BaseLayout handles hiding
       document.documentElement.classList.add("loader-ready");

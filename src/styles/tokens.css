@@ -18,10 +18,8 @@
   --color-border-hover: #2a2a45;
 
   /* ── Typography ────────────────────────────────────────── */
-  --font-display: "DM Sans", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
-
+  /* --font-display / --font-body / --font-mono come from <Font /> in
+     BaseLayout (configured in astro.config.mjs) */
   --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
   --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);
   --text-base: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);

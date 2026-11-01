@@ -294,7 +294,9 @@ function duration(start: string, end: string | null): string {
     padding: var(--space-xl);
     position: relative;
     overflow: hidden;
-    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    /* hover lifts with `translate`, not `transform`: GSAP owns transform
+       during the entrance and a CSS transform transition smeared it */
+    transition: border-color 0.3s, box-shadow 0.3s, translate 0.3s;
   }
 
   .exp-card::before {
@@ -310,7 +312,7 @@ function duration(start: string, end: string | null): string {
   .exp-card:hover {
     border-color: var(--color-accent);
     box-shadow: 0 12px 40px rgba(240, 160, 48, 0.1);
-    transform: translateY(-3px);
+    translate: 0 -3px;
   }
 
   .exp-card:hover::before {
@@ -555,6 +557,7 @@ function duration(start: string, end: string | null): string {
 
       gsap.from(commit.querySelector(".exp-card"), {
         opacity: 0, x: -40, duration: 0.7, ease: "power3.out",
+        clearProps: "transform", // hand transform back to the CSS hover
         scrollTrigger: trigger,
       });
 

@@ -334,14 +334,16 @@ interface Props {
 </style>
 
 <script>
-  import { gsap } from "../../scripts/utils/gsap-setup";
+  import { gsap, pageReady } from "../../scripts/utils/gsap-setup";
 
   const mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
+    // Paused until the page is revealed; the from() states still render
+    // immediately, so the hero stays hidden until its entrance
     const tl = gsap.timeline({
       defaults: { ease: "power3.out" },
-      delay: 0.1,
+      paused: true,
     });
 
     // Terminal slides in from right
@@ -376,6 +378,8 @@ interface Props {
         },
         "-=0.2"
       );
+
+    pageReady.then(() => tl.play());
 
     // Scroll indicator fade
     gsap.to(".hero__scroll-indicator", {

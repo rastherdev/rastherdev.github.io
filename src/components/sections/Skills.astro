@@ -110,7 +110,7 @@ const marqueeRows = [
                         <span class="skills__item-pct">{skill.level}%</span>
                       </div>
                       <div class="skills__bar">
-                        <div class="skills__bar-fill"></div>
+                        <div class="skills__bar-fill" style={`width:${skill.level}%`}></div>
                       </div>
                     </li>
                   ))}
@@ -185,12 +185,17 @@ const marqueeRows = [
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius-xl);
     padding: var(--space-xl);
-    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+    /* hover lives here on translate/scale (compositor-friendly); the GSAP
+       entrance owns transform and clears it when done */
+    transition: translate 0.35s, scale 0.35s, border-color 0.35s, box-shadow 0.35s;
+    transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
   .skills__card:hover {
-    border-color: var(--color-border-hover);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    translate: 0 -5px;
+    scale: 1.03;
+    border-color: var(--color-accent);
+    box-shadow: 0 12px 35px rgba(240, 160, 48, 0.15);
   }
 
   .skills__card-title {
@@ -251,11 +256,12 @@ const marqueeRows = [
     overflow: hidden;
   }
 
+  /* width = skill level (inline); the fill animates scaleX, not width */
   .skills__bar-fill {
     height: 100%;
-    width: 0%;
     background: linear-gradient(90deg, var(--color-accent), var(--color-code));
     border-radius: 2px;
+    transform-origin: left;
   }
 
   @media (max-width: 768px) {
@@ -294,6 +300,7 @@ const marqueeRows = [
       .from(".skills__card", {
         opacity: 0, y: 40, rotationX: -14, transformOrigin: "center top",
         stagger: 0.1, duration: 0.7, ease: "power3.out",
+        clearProps: "transform", // hand transform back to the CSS hover
       }, "-=0.3");
 
     // ── Marquee: two rows, opposite directions, slow on hover ──
@@ -321,6 +328,10 @@ const marqueeRows = [
     }
 
     // ── Bars fill + percentages count up ───────────────────
+    // Fills grow with scaleX (compositor-only); tweening width re-ran
+    // layout every frame. Without motion they just show their inline width.
+    gsap.set(".skills__bar-fill", { scaleX: 0 });
+
     // ONE ScrollTrigger per card (not two per skill — that was ~54 triggers
     // evaluated on every scroll frame); inner tweens fire plain on enter.
     document.querySelectorAll<HTMLElement>(".skills__card").forEach((card) => {
@@ -334,9 +345,7 @@ const marqueeRows = [
             const bar = item.querySelector(".skills__bar-fill");
             const pct = item.querySelector(".skills__item-pct");
 
-            gsap.fromTo(bar, { width: "0%" }, {
-              width: `${level}%`, duration: 1.2, ease: "power3.out", delay: i * 0.08,
-            });
+            gsap.to(bar, { scaleX: 1, duration: 1.2, ease: "power3.out", delay: i * 0.08 });
 
             const state = { v: 0 };
             gsap.to(state, {
@@ -347,30 +356,6 @@ const marqueeRows = [
             });
           });
         },
-      });
-    });
-  });
-
-  // Hover effect (subtle — the old scale(1.10) jumped too hard)
-  document.querySelectorAll<HTMLElement>(".skills__card").forEach((card) => {
-    card.addEventListener("mouseenter", () => {
-      gsap.to(card, {
-        scale: 1.03,
-        y: -5,
-        boxShadow: "0 12px 35px rgba(240, 160, 48, 0.15)",
-        borderColor: "var(--color-accent)",
-        duration: 0.35,
-        ease: "power2.out",
-      });
-    });
-    card.addEventListener("mouseleave", () => {
-      gsap.to(card, {
-        scale: 1,
-        y: 0,
-        boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
-        borderColor: "var(--color-border)",
-        duration: 0.35,
-        ease: "power2.out",
       });
     });
   });

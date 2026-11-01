@@ -15,6 +15,8 @@
     z-index: 9998;
     pointer-events: none;
     mix-blend-mode: difference;
+    /* shown on the first mousemove — otherwise the ring sat in the corner */
+    opacity: 0;
   }
 
   /* centering handled by GSAP (xPercent/yPercent) — GSAP owns transform */
@@ -110,7 +112,9 @@
       isVisible = true;
     });
 
-    // Hover states for interactive elements
+    // Hover states via delegation: one listener covers current and future
+    // elements (per-element binding needed a body-wide MutationObserver that
+    // re-queried the whole DOM on every typewriter keystroke)
     const interactiveSelectors = [
       "a",
       "button",
@@ -125,21 +129,12 @@
       "[data-cursor-hover]",
     ].join(",");
 
-    function bindHoverStates() {
-      document.querySelectorAll(interactiveSelectors).forEach((el) => {
-        if ((el as any).__cursorBound) return;
-        (el as any).__cursorBound = true;
-        el.addEventListener("mouseenter", () => cursor.classList.add("is-hover"));
-        el.addEventListener("mouseleave", () => cursor.classList.remove("is-hover"));
-        el.addEventListener("mousedown", () => cursor.classList.add("is-clicking"));
-        el.addEventListener("mouseup", () => cursor.classList.remove("is-clicking"));
-      });
-    }
-
-    bindHoverStates();
-
-    // Also observe dynamically added elements
-    const observer = new MutationObserver(bindHoverStates);
-    observer.observe(document.body, { childList: true, subtree: true });
+    document.addEventListener("mouseover", (e) => {
+      cursor.classList.toggle("is-hover", !!(e.target as Element).closest(interactiveSelectors));
+    });
+    document.addEventListener("mousedown", (e) => {
+      if ((e.target as Element).closest(interactiveSelectors)) cursor.classList.add("is-clicking");
+    });
+    document.addEventListener("mouseup", () => cursor.classList.remove("is-clicking"));
   }
 </script>

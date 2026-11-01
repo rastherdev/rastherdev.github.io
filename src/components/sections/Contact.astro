@@ -113,8 +113,9 @@ interface Props {
     padding: var(--space-2xl) var(--space-xl);
     text-align: center;
     text-decoration: none;
+    /* `translate`, not `transform`: GSAP owns transform during the entrance */
     transition: border-color var(--transition-base), box-shadow var(--transition-base),
-      transform var(--transition-base);
+      translate var(--transition-base);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -136,7 +137,7 @@ interface Props {
   .contact__card:hover {
     border-color: var(--color-accent);
     box-shadow: var(--shadow-glow);
-    transform: translateY(-4px);
+    translate: 0 -4px;
   }
 
   .contact__card:hover::before {
@@ -240,6 +241,7 @@ interface Props {
           stagger: 0.1,
           duration: 0.55,
           ease: "back.out(1.7)",
+          clearProps: "transform", // hand transform back to the CSS hover
         },
         "-=0.1"
       );

@@ -96,7 +96,7 @@ const items = [
 </style>
 
 <script>
-  import { gsap, ScrollTrigger } from "../../scripts/utils/gsap-setup";
+  import { gsap, ScrollTrigger, pageReady } from "../../scripts/utils/gsap-setup";
 
   const links = document.querySelectorAll<HTMLAnchorElement>(".snav__link");
 
@@ -132,12 +132,14 @@ const items = [
     });
   });
 
-  // Entrance after the loader settles
+  // Entrance once the page is revealed (after the loader, or right away on repeat visits)
   const mm = gsap.matchMedia();
   mm.add("(prefers-reduced-motion: no-preference) and (min-width: 1400px)", () => {
-    gsap.from(".snav", { opacity: 0, x: 24, duration: 0.7, ease: "power3.out", delay: 1 });
-    gsap.from(".snav__link", {
-      opacity: 0, x: 14, stagger: 0.06, duration: 0.4, ease: "power2.out", delay: 1.15,
-    });
+    const tl = gsap.timeline({ paused: true })
+      .from(".snav", { opacity: 0, x: 24, duration: 0.7, ease: "power3.out" }, 1)
+      .from(".snav__link", {
+        opacity: 0, x: 14, stagger: 0.06, duration: 0.4, ease: "power2.out",
+      }, "<0.15");
+    pageReady.then(() => tl.play());
   });
 </script>

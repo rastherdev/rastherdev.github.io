@@ -5,6 +5,7 @@ import Loader from "../components/ui/Loader.astro";
 import CustomCursor from "../components/ui/CustomCursor.astro";
 import SectionNav from "../components/ui/SectionNav.astro";
 import ScrollTop from "../components/ui/ScrollTop.astro";
+import { Font } from "astro:assets";
 import en from "../i18n/en";
 import es from "../i18n/es";
 import "../styles/global.css";
@@ -82,16 +83,29 @@ const jsonLd = {
     <!-- Structured data (WebSite + Person) -->
     <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-    <!-- Preload fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Self-hosted fonts (Astro Fonts API): preloaded, metric-matched fallbacks -->
+    <Font cssVariable="--font-display" preload />
+    <Font cssVariable="--font-body" preload />
+    <Font cssVariable="--font-mono" preload />
 
-    <!-- FontAwesome Icons -->
-    <script src="https://kit.fontawesome.com/0bacbba471.js" crossorigin="anonymous"></script>
+    <!-- FontAwesome Icons (deferred: a sync third-party script blocked parsing) -->
+    <script is:inline defer src="https://kit.fontawesome.com/0bacbba471.js" crossorigin="anonymous"></script>
 
-    <!-- Prevent FOUC — hide smooth-wrapper until loader finishes. Loader is outside so it stays visible -->
+    <!-- Boot loader once per tab session; never with reduced motion -->
+    <script is:inline>
+      try {
+        if (sessionStorage.getItem("booted") || matchMedia("(prefers-reduced-motion: reduce)").matches)
+          document.documentElement.classList.add("no-loader");
+        sessionStorage.setItem("booted", "1");
+      } catch {}
+    </script>
+
+    <!-- Prevent FOUC — hide the page (and the section rail) until revealed. Loader is outside so it stays visible -->
     <style is:inline>
-      html:not(.loader-done) #smooth-wrapper {
+      html.no-loader #loader {
+        display: none;
+      }
+      html:not(.loader-done) :is(#smooth-wrapper, .snav) {
         opacity: 0;
       }
       html.loader-done #smooth-wrapper {
@@ -118,7 +132,7 @@ const jsonLd = {
 </html>
 
 <script>
-  import { gsap, ScrollTrigger, ScrollSmoother } from "../scripts/utils/gsap-setup";
+  import { ScrollTrigger, ScrollSmoother } from "../scripts/utils/gsap-setup";
 
   // ── ScrollSmoother ──────────────────────────────────────
   // Touch scroll stays native: smoothTouch/normalizeScroll take mobile
@@ -159,86 +173,59 @@ const jsonLd = {
     const loaderEl = document.getElementById("loader");
     if (!loaderEl) return;
 
-    // Wait for loader animation to signal ready
-    await new Promise<void>((resolve) => {
-      if (document.documentElement.classList.contains("loader-ready")) {
-        resolve();
-      } else {
-        const observer = new MutationObserver(() => {
-          if (document.documentElement.classList.contains("loader-ready")) {
-            observer.disconnect();
-            resolve();
-          }
-        });
-        observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-        // Fallback: resolve after 2s
-        setTimeout(() => { observer.disconnect(); resolve(); }, 2500);
-      }
-    });
+    // Repeat visit / reduced motion: the overlay is already hidden by CSS
+    const skip = document.documentElement.classList.contains("no-loader");
 
-    // Hide loader with animation
-    const loaderAnim = (window as any).__loader;
-    if (loaderAnim?.hide) {
-      await loaderAnim.hide();
-    } else {
-      loaderEl.style.opacity = "0";
-      loaderEl.style.pointerEvents = "none";
-      await new Promise((r) => setTimeout(r, 400));
+    if (!skip) {
+      // Wait for loader animation to signal ready
+      await new Promise<void>((resolve) => {
+        if (document.documentElement.classList.contains("loader-ready")) {
+          resolve();
+        } else {
+          const observer = new MutationObserver(() => {
+            if (document.documentElement.classList.contains("loader-ready")) {
+              observer.disconnect();
+              resolve();
+            }
+          });
+          observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+          // Fallback: resolve after 2.5s (the boot sequence takes ~1.4s)
+          setTimeout(() => { observer.disconnect(); resolve(); }, 2500);
+        }
+      });
     }
 
-    // Reveal page
+    // Refresh + deep-link jump while the page is still hidden: no visible hitch
+    await new Promise((r) => requestAnimationFrame(r));
+    ScrollTrigger.refresh();
+
+    // Deep links (/#projects): redo the browser's native hash jump through
+    // the smoother so triggers fire and content actually reveals
+    if (location.hash) {
+      const target = document.querySelector<HTMLElement>(location.hash);
+      if (target) smoother.scrollTo(target, false, "top 72px");
+    }
+
+    // Reveal under the fading loader (crossfade, no fade-to-black) and
+    // release the entrance timelines waiting on pageReady
     document.documentElement.classList.add("loader-done");
+    document.dispatchEvent(new Event("loader:done"));
+
+    if (!skip) {
+      // Hide loader with animation
+      const loaderAnim = (window as any).__loader;
+      if (loaderAnim?.hide) {
+        await loaderAnim.hide();
+      } else {
+        loaderEl.style.opacity = "0";
+        loaderEl.style.pointerEvents = "none";
+        await new Promise((r) => setTimeout(r, 400));
+      }
+    }
 
     // Remove loader from DOM
     loaderEl.remove();
-
-    // Refresh ScrollTrigger after layout settles
-    requestAnimationFrame(() => {
-      ScrollTrigger.refresh();
-
-      // Deep links (/#projects): redo the browser's native hash jump through
-      // the smoother so triggers fire and content actually reveals
-      if (location.hash) {
-        const target = document.querySelector<HTMLElement>(location.hash);
-        if (target) smoother.scrollTo(target, false, "top 72px");
-      }
-    });
   }
 
   initLoader();
-
-  // ── Language switch support ───────────────────────────
-  // Re-show loader on navigation (Astro View Transitions or full page nav)
-  document.addEventListener("astro:before-swap", () => {
-    // Create a fresh loader overlay for the transition
-    const overlay = document.createElement("div");
-    overlay.id = "loader";
-    overlay.className = "loader";
-    overlay.setAttribute("aria-hidden", "true");
-    overlay.innerHTML = `
-      <div class="loader__content">
-        <div class="loader__terminal">
-          <div class="loader__line"><span class="loader__prompt">$</span><span class="loader__cmd">switching language...</span></div>
-        </div>
-        <div class="loader__bar">
-          <div class="loader__bar-fill" id="loader-bar"></div>
-        </div>
-      </div>`;
-    overlay.style.opacity = "0";
-    document.body.appendChild(overlay);
-
-    gsap.to(overlay, {
-      opacity: 1,
-      duration: 0.2,
-      ease: "power2.out",
-      onComplete: () => {
-        gsap.to("#loader-bar", { width: "100%", duration: 0.8, ease: "power2.inOut" });
-      },
-    });
-  });
-
-  // Mark current page for ScrollTrigger cleanup on navigation
-  document.addEventListener("astro:after-swap", () => {
-    ScrollTrigger.refresh();
-  });
 </script>
