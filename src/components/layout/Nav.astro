@@ -1,7 +1,7 @@
 ---
 import en from "../../i18n/en";
 import es from "../../i18n/es";
-import { resumeUrl } from "../../data/social";
+import { getResumeUrl } from "../../data/social";
 
 interface Props {
   locale: "en" | "es";
@@ -34,7 +34,7 @@ interface Props {
           <a href="#experience" class="nav__link" data-section="experience" data-num="03" style="--i:2">{dict.nav.experience}</a>
           <a href="#projects" class="nav__link" data-section="projects" data-num="04" style="--i:3">{dict.nav.projects}</a>
           <a href="#contact" class="nav__link" data-section="contact" data-num="05" style="--i:4">{dict.nav.contact}</a>
-          <a href={resumeUrl} class="nav__link nav__link--cv" style="--i:5" download>{dict.nav.downloadCv}</a>
+          <a href={getResumeUrl(Astro.props.locale)} class="nav__link nav__link--cv" style="--i:5" download>{dict.nav.downloadCv}</a>
         </nav>
 
         <div class="nav__actions">

@@ -3,7 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { experience } from "../../data/experience";
 import { projects } from "../../data/projects";
 import { skillCategories } from "../../data/skills";
-import { resumeUrl } from "../../data/social";
+import { getResumeUrl } from "../../data/social";
 
 const locale = "es";
 
@@ -95,7 +95,7 @@ const skillLabels: Record<string, string> = {
       </section>
 
       <div class="cv__actions no-print">
-        <a href={resumeUrl} class="cv__btn" download>Descargar PDF</a>
+        <a href={getResumeUrl(locale)} class="cv__btn" download>Descargar PDF</a>
         <button class="cv__btn cv__btn--print" onclick="window.print()">Imprimir CV</button>
       </div>
     </div>

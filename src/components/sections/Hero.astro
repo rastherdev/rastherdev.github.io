@@ -3,7 +3,7 @@ import Button from "../ui/Button.astro";
 import Terminal from "../ui/Terminal.astro";
 import en from "../../i18n/en";
 import es from "../../i18n/es";
-import { resumeUrl } from "../../data/social";
+import { getResumeUrl } from "../../data/social";
 
 interface Props {
   locale: "en" | "es";
@@ -32,7 +32,7 @@ interface Props {
             <Button href="#projects" variant="primary" size="lg">
               {dict.hero.viewProjects}
             </Button>
-            <Button href={resumeUrl} variant="secondary" size="lg" download={true}>
+            <Button href={getResumeUrl(Astro.props.locale)} variant="secondary" size="lg" download={true}>
               {dict.hero.downloadCv}
             </Button>
           </div>

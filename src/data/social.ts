@@ -22,7 +22,8 @@ export const socialLinks: SocialLink[] = [
   },
 ];
 
-export const resumeUrl = "/assets/resume.pdf";
+export const getResumeUrl = (locale: "en" | "es") =>
+  `/assets/resume_${locale}.pdf`;
 
 export const siteConfig = {
   name: "Giovany Domínguez",

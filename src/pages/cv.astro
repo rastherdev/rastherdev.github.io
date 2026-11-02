@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { experience } from "../data/experience";
 import { projects } from "../data/projects";
 import { skillCategories } from "../data/skills";
-import { resumeUrl } from "../data/social";
+import { getResumeUrl } from "../data/social";
 
 const locale = "en";
 ---
@@ -94,7 +94,7 @@ const locale = "en";
 
       <!-- Download / Print -->
       <div class="cv__actions no-print">
-        <a href={resumeUrl} class="cv__btn" download>Download PDF</a>
+        <a href={getResumeUrl(locale)} class="cv__btn" download>Download PDF</a>
         <button class="cv__btn cv__btn--print" onclick="window.print()">Print CV</button>
       </div>
     </div>
