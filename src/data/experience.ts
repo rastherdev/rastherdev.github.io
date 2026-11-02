@@ -2,7 +2,10 @@ export interface Achievement {
   text: string;
 }
 
+export type ExperienceId = "bloomingtec" | "presidencia-digital";
+
 export interface ExperienceEntry {
+  id: ExperienceId;
   company: string;
   role: string;
   startDate: string;
@@ -14,6 +17,7 @@ export interface ExperienceEntry {
 
 export const experience: ExperienceEntry[] = [
   {
+    id: "bloomingtec",
     company: "Bloomingtec",
     role: "Backend Developer",
     startDate: "2025-01",
@@ -45,6 +49,7 @@ export const experience: ExperienceEntry[] = [
     stack: ["Laravel", "PostgreSQL", "Redis", "DigitalOcean", "Sanctum / JWT"],
   },
   {
+    id: "presidencia-digital",
     company: "Presidencia Digital",
     role: "Full Stack Developer",
     startDate: "2023-08",

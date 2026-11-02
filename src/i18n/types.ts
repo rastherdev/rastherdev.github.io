@@ -1,3 +1,6 @@
+import type { ExperienceId } from "../data/experience";
+import type { ProjectId } from "../data/projects";
+
 export interface NavDict {
   about: string;
   skills: string;
@@ -41,6 +44,16 @@ export interface ExperienceDict {
   achievementsLabel: string;
   responsibilitiesLabel: string;
   currentBadge: string;
+  translations: Partial<
+    Record<
+      ExperienceId,
+      {
+        role: string;
+        responsibilities: string[];
+        achievements: { text: string }[];
+      }
+    >
+  >;
 }
 
 export interface ProjectsDict {
@@ -53,6 +66,18 @@ export interface ProjectsDict {
   solution: string;
   gallery: string;
   featuredBadge: string;
+  screenshot: string;
+  translations: Partial<
+    Record<
+      ProjectId,
+      {
+        description: string;
+        problem: string;
+        solution: string;
+        snippet?: string;
+      }
+    >
+  >;
 }
 
 export interface ContactDict {

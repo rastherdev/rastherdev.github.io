@@ -1,4 +1,7 @@
+export type ProjectId = "bloomingtec" | "presidencia-digital";
+
 export interface Project {
+  id: ProjectId;
   name: string;
   description: string;
   problem: string;
@@ -17,6 +20,7 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: "bloomingtec",
     name: "Bloomingtec",
     featured: true,
     description:
@@ -52,6 +56,7 @@ class TenantManager
 }`,
   },
   {
+    id: "presidencia-digital",
     name: "Presidencia Digital",
     description:
       "SaaS designed to help local governments digitize their services and improve citizen communication. Includes modules for document management, citizen services, transparency, participation, as well as managing procedures, requests, and direct communication with citizens.",

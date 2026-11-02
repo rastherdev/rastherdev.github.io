@@ -33,7 +33,6 @@ const es: Dictionary = {
     bio: [
       "Soy un desarrollador backend apasionado por crear código limpio y mantenible que resista el paso del tiempo. Con más de tres años de experiencia construyendo plataformas SaaS, he aprendido que el mejor software no solo es funcional — es un placer trabajar con él, tanto para los usuarios como para los desarrolladores que le dan mantenimiento.",
       "Me especializo en el ecosistema Laravel, pero siempre estoy explorando nuevos patrones y tecnologías. Ya sea diseñando una arquitectura multi-tenant, optimizando workers de colas para cargas pesadas o migrando sistemas legacy — disfruto resolviendo desafíos complejos de backend.",
-      "Cuando no estoy programando, me encontrarás explorando los hermosos paisajes de Michoacán, contribuyendo a proyectos open-source o sumergido en un buen libro de arquitectura de software.",
     ],
     quickFacts: [
       { label: "Ubicación", value: "Michoacán, México" },
@@ -59,6 +58,58 @@ const es: Dictionary = {
     achievementsLabel: "Logros Clave",
     responsibilitiesLabel: "Responsabilidades",
     currentBadge: "Actual",
+    translations: {
+      bloomingtec: {
+        role: "Desarrollador Backend",
+        responsibilities: [
+          "Desarrollé y mantuve el backend de la plataforma SaaS con Laravel, garantizando su escalabilidad y solidez.",
+          "Implementé nuevas funcionalidades según las necesidades de los clientes, en estrecha colaboración con el equipo de DevOps.",
+          "Configuré y administré la infraestructura de DigitalOcean, incluidos servidores, bases de datos y servicios de almacenamiento.",
+          "Migré la plataforma SaaS heredada de Express.js a Laravel, mejorando el rendimiento y la mantenibilidad.",
+          "Desempeñé el rol de Product Owner y colaboré en la definición de requisitos y la priorización del backlog.",
+        ],
+        achievements: [
+          {
+            text: "Migré el backend heredado de Express.js a Laravel con una arquitectura de monolito modular, con servicios independientes por módulo (usuarios, facturación y gestión de cultivos) y API RESTful bien definidas.",
+          },
+          {
+            text: "Implementé un sistema de colas asíncronas para tareas críticas (cálculo de nómina y procesamiento masivo de datos) con Redis y Laravel Queues, reduciendo los tiempos de respuesta en un 95%.",
+          },
+          {
+            text: "Implementé una arquitectura multi-tenant con instancias PostgreSQL por cliente y una única base de código, mejorando el aislamiento de datos y permitiendo escalar horizontalmente mediante una abstracción dinámica de conexiones.",
+          },
+          {
+            text: "Desarrollé un sistema robusto de autenticación y autorización con JWT y Laravel Sanctum, con roles y permisos granulares para distintos tipos de usuario.",
+          },
+          {
+            text: "Configuré desde cero la infraestructura en DigitalOcean, incluidos servidores, bases de datos y almacenamiento, para garantizar alta disponibilidad y escalabilidad.",
+          },
+        ],
+      },
+      "presidencia-digital": {
+        role: "Desarrollador Full Stack",
+        responsibilities: [
+          "Desarrollé nuevas funcionalidades para la plataforma SaaS con Laravel y Bootstrap, con foco en mejorar la experiencia de usuario y la eficiencia administrativa de los gobiernos locales.",
+          "Colaboré con el equipo de diseño para implementar una interfaz intuitiva y accesible para la ciudadanía.",
+          "Administré la base de datos MySQL, optimicé consultas y protegí la integridad de los datos.",
+          "Configuré y administré la infraestructura de WPS Hosting, garantizando la disponibilidad y seguridad de la plataforma.",
+        ],
+        achievements: [
+          {
+            text: "Implementé un sistema de gestión documental con búsqueda avanzada y categorización, mejorando significativamente la eficiencia administrativa de gobiernos locales que antes no contaban con esta herramienta.",
+          },
+          {
+            text: "Desarrollé un módulo de atención ciudadana para solicitudes, reportes de incidencias y respuestas eficientes, mejorando la comunicación entre gobiernos locales y la ciudadanía.",
+          },
+          {
+            text: "Implementé un sistema de gestión de licencias y permisos que garantiza el cumplimiento normativo y mejora la seguridad.",
+          },
+          {
+            text: "Configuré una plataforma de seguimiento de programas sociales para gobiernos locales, con datos en tiempo real para respaldar la toma de decisiones.",
+          },
+        ],
+      },
+    },
   },
   projects: {
     heading: "Proyectos Destacados",
@@ -70,6 +121,57 @@ const es: Dictionary = {
     solution: "Solución",
     gallery: "Galería",
     featuredBadge: "Principal",
+    screenshot: "captura de pantalla",
+    translations: {
+      bloomingtec: {
+        description:
+          "Plataforma SaaS que funciona como ERP y CRM para el sector agroindustrial, con especial enfoque en los procesos administrativos, logísticos y de gestión de clientes de productores de materias primas agrícolas. Incluye módulos de gestión de cultivos, cálculo de nómina, inventario, ventas, facturación y atención al cliente, integrados en una interfaz intuitiva.",
+        problem:
+          "Los productores agrícolas suelen enfrentar dificultades para gestionar sus operaciones de forma eficiente, desde el seguimiento de cultivos hasta la administración de clientes y la facturación. Bloomingtec ofrece una solución integral que simplifica estos procesos y les permite centrarse en su actividad principal sin perder el control.",
+        solution:
+          "Desarrollé una arquitectura de monolito modular en Laravel, con servicios independientes por dominio (usuarios, facturación y cultivos). Implementé bases de datos PostgreSQL multi-tenant por cliente para aislar los datos y permitir el escalado horizontal. Usé colas con Redis para procesar de forma asíncrona tareas críticas, como el cálculo de nómina y el procesamiento masivo de datos.",
+        snippet: `// Resolución de bases de datos multi-tenant
+class TenantManager
+{
+    public function connect(Tenant $tenant): void
+    {
+        Config::set('database.connections.tenant', [
+            'driver' => 'pgsql',
+            'host' => $tenant->db_host,
+            'database' => $tenant->db_name,
+            'username' => $tenant->db_user,
+            'password' => $tenant->db_pass,
+        ]);
+        
+        DB::purge('tenant');
+        DB::reconnect('tenant');
+    }
+}`,
+      },
+      "presidencia-digital": {
+        description:
+          "Plataforma SaaS diseñada para ayudar a los gobiernos locales a digitalizar sus servicios y mejorar la comunicación con la ciudadanía. Incluye módulos de gestión documental, atención ciudadana, transparencia, participación, trámites, solicitudes y comunicación directa con sus habitantes.",
+        problem:
+          "Muchos gobiernos locales carecen de los recursos o conocimientos técnicos para desarrollar sus propias soluciones digitales, lo que limita su capacidad para ofrecer servicios eficientes y transparentes a la ciudadanía. Presidencia Digital ofrece una plataforma lista para usar y adaptada a las necesidades de cada municipio.",
+        solution:
+          "Desarrollé una plataforma SaaS integral con Laravel y Bootstrap, con gestión documental con búsqueda avanzada, módulos de atención ciudadana para solicitudes y seguimiento de incidencias, y paneles para supervisar programas sociales y tomar decisiones basadas en datos en tiempo real.",
+        snippet: `// Gestión documental con búsqueda avanzada
+class DocumentController extends Controller
+{
+    public function search(Request $request): JsonResponse
+    {
+        $documents = Document::query()
+            ->when($request->category, fn($q, $v) =>
+                $q->where('category', $v))
+            ->when($request->query, fn($q, $v) =>
+                $q->whereFullText(['title', 'content'], $v))
+            ->paginate(20);
+            
+        return response()->json($documents);
+    }
+}`,
+      },
+    },
   },
   contact: {
     heading: "Conectemos",

@@ -13,6 +13,10 @@ interface Props {
 
 {(() => {
   const dict = Astro.props.locale === "en" ? en : es;
+  const localizedProjects = projects.map((project) => {
+    const translation = dict.projects.translations[project.id];
+    return translation ? { ...project, ...translation } : project;
+  });
 
   return (
     <section class="projects section" id="projects">
@@ -20,7 +24,7 @@ interface Props {
         <SectionHeading title={dict.projects.heading} />
 
         <div class="projects__grid">
-          {projects.map((project, i) => (
+          {localizedProjects.map((project, i) => (
             <Card project={project} dict={dict.projects} index={i} />
           ))}
         </div>
@@ -28,7 +32,7 @@ interface Props {
 
       <!-- Shared modal — content updated dynamically via JS -->
       <div id="project-modals" style="display:none" aria-hidden="true">
-        {projects.map((project, i) => (
+        {localizedProjects.map((project, i) => (
           <div data-project-index={i}>
             <ProjectModal project={project} dict={dict.projects} />
           </div>

@@ -15,15 +15,22 @@ function pseudoHash(s: string): string {
   return h.toString(16).padStart(7, "0").slice(0, 7);
 }
 
-// "1y 6m" — language-neutral, terminal style. Computed at build time;
-// "Present" durations refresh on each deploy, which is fine for a static CV.
-function duration(start: string, end: string | null): string {
+// Durations refresh on each deploy, which is fine for a static CV.
+function duration(start: string, end: string | null, locale: "en" | "es"): string {
   const s = new Date(start + "-01");
   const e = end ? new Date(end + "-01") : new Date();
   const months =
     (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth());
   const y = Math.floor(months / 12);
   const m = months % 12;
+  if (locale === "es") {
+    return [
+      y ? `${y} ${y === 1 ? "año" : "años"}` : "",
+      m ? `${m} ${m === 1 ? "mes" : "meses"}` : "",
+    ]
+      .filter(Boolean)
+      .join(" ") || "1 mes";
+  }
   return [y ? `${y}y` : "", m ? `${m}m` : ""].filter(Boolean).join(" ") || "1m";
 }
 ---
@@ -61,68 +68,75 @@ function duration(start: string, end: string | null): string {
             <span class="exp-log__tip"></span>
           </div>
 
-          {experience.map((entry) => (
-            <div class="exp-commit">
-              <div class={`exp-commit__dot${!entry.endDate ? " exp-commit__dot--head" : ""}`} aria-hidden="true">
-                <span class="exp-commit__dot-core"></span>
-              </div>
+          {experience.map((entry) => {
+            const translation = dict.experience.translations[entry.id];
+            const role = translation?.role ?? entry.role;
+            const responsibilities = translation?.responsibilities ?? entry.responsibilities;
+            const achievements = translation?.achievements ?? entry.achievements;
 
-              <article class="exp-card">
-                <header class="exp-card__head">
-                  <p class="exp-card__meta">
-                    <span class="exp-card__label">commit</span>
-                    <span class="exp-card__hash" data-hash={pseudoHash(entry.company)}>{pseudoHash(entry.company)}</span>
-                    {!entry.endDate && (
-                      <span class="exp-card__head-badge">(HEAD → main) · {dict.experience.currentBadge}</span>
-                    )}
-                  </p>
-                  <div class="exp-card__title-row">
-                    <h3 class="exp-card__role">{entry.role}</h3>
-                    <span class="exp-card__company">@ {entry.company}</span>
-                  </div>
-                  <p class="exp-card__dates">
-                    <i class="fa-regular fa-calendar" aria-hidden="true"></i>
-                    {fmt(entry.startDate)} — {entry.endDate ? fmt(entry.endDate) : dict.experience.present}
-                    <span class="exp-card__duration">{duration(entry.startDate, entry.endDate)}</span>
-                  </p>
-                </header>
-
-                <div class="exp-card__grid">
-                  <div class="exp-card__col">
-                    <h4 class="exp-card__col-title">
-                      <i class="fa-solid fa-list-check" aria-hidden="true"></i>
-                      {dict.experience.responsibilitiesLabel}
-                    </h4>
-                    <ul class="exp-card__list">
-                      {entry.responsibilities.map((r) => <li>{r}</li>)}
-                    </ul>
-                  </div>
-
-                  <div class="exp-card__col">
-                    <h4 class="exp-card__col-title">
-                      <i class="fa-solid fa-trophy" aria-hidden="true"></i>
-                      {dict.experience.achievementsLabel}
-                    </h4>
-                    <ul class="exp-card__list exp-card__list--achievements">
-                      {entry.achievements.map((a) => (
-                        <li>
-                          {a.text.split(/(\d+%)/).map((part) =>
-                            /^\d+%$/.test(part)
-                              ? <strong class="exp-counter" data-target={parseInt(part)}>{part}</strong>
-                              : part
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+            return (
+              <div class="exp-commit">
+                <div class={`exp-commit__dot${!entry.endDate ? " exp-commit__dot--head" : ""}`} aria-hidden="true">
+                  <span class="exp-commit__dot-core"></span>
                 </div>
 
-                <footer class="exp-card__stack">
-                  {entry.stack.map((tech) => <span class="exp-card__chip">{tech}</span>)}
-                </footer>
-              </article>
-            </div>
-          ))}
+                <article class="exp-card">
+                  <header class="exp-card__head">
+                    <p class="exp-card__meta">
+                      <span class="exp-card__label">commit</span>
+                      <span class="exp-card__hash" data-hash={pseudoHash(entry.company)}>{pseudoHash(entry.company)}</span>
+                      {!entry.endDate && (
+                        <span class="exp-card__head-badge">(HEAD → main) · {dict.experience.currentBadge}</span>
+                      )}
+                    </p>
+                    <div class="exp-card__title-row">
+                      <h3 class="exp-card__role">{role}</h3>
+                      <span class="exp-card__company">@ {entry.company}</span>
+                    </div>
+                    <p class="exp-card__dates">
+                      <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+                      {fmt(entry.startDate)} — {entry.endDate ? fmt(entry.endDate) : dict.experience.present}
+                      <span class="exp-card__duration">{duration(entry.startDate, entry.endDate, Astro.props.locale)}</span>
+                    </p>
+                  </header>
+
+                  <div class="exp-card__grid">
+                    <div class="exp-card__col">
+                      <h4 class="exp-card__col-title">
+                        <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+                        {dict.experience.responsibilitiesLabel}
+                      </h4>
+                      <ul class="exp-card__list">
+                        {responsibilities.map((r) => <li>{r}</li>)}
+                      </ul>
+                    </div>
+
+                    <div class="exp-card__col">
+                      <h4 class="exp-card__col-title">
+                        <i class="fa-solid fa-trophy" aria-hidden="true"></i>
+                        {dict.experience.achievementsLabel}
+                      </h4>
+                      <ul class="exp-card__list exp-card__list--achievements">
+                        {achievements.map((a) => (
+                          <li>
+                            {a.text.split(/(\d+%)/).map((part) =>
+                              /^\d+%$/.test(part)
+                                ? <strong class="exp-counter" data-target={parseInt(part)}>{part}</strong>
+                                : part
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <footer class="exp-card__stack">
+                    {entry.stack.map((tech) => <span class="exp-card__chip">{tech}</span>)}
+                  </footer>
+                </article>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

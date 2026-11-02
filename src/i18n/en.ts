@@ -33,7 +33,6 @@ const en: Dictionary = {
     bio: [
       "I'm a backend developer passionate about crafting clean, maintainable code that stands the test of time. With over three years of experience building SaaS platforms, I've learned that the best software isn't just functional — it's a joy to work with, both for users and for the developers who maintain it.",
       "I specialize in the Laravel ecosystem, but I'm always exploring new patterns and technologies. Whether it's designing a multi-tenant database architecture, optimizing queue workers for heavy workloads, or migrating legacy systems — I thrive on solving complex backend challenges.",
-      "When I'm not coding, you'll find me exploring the beautiful landscapes of Michoacán, contributing to open-source projects, or diving into a good book on software architecture.",
     ],
     quickFacts: [
       { label: "Location", value: "Michoacán, México" },
@@ -59,6 +58,7 @@ const en: Dictionary = {
     achievementsLabel: "Key Achievements",
     responsibilitiesLabel: "Responsibilities",
     currentBadge: "Current",
+    translations: {},
   },
   projects: {
     heading: "Featured Projects",
@@ -70,6 +70,8 @@ const en: Dictionary = {
     solution: "Solution",
     gallery: "Gallery",
     featuredBadge: "Flagship",
+    screenshot: "screenshot",
+    translations: {},
   },
   contact: {
     heading: "Let's Connect",
