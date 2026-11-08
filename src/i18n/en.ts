@@ -29,7 +29,7 @@ const en: Dictionary = {
     downloadCv: "Download Resume",
   },
   about: {
-    heading: "About Me",
+    heading: "How I Build Systems",
     bio: [
       "I build Laravel backend services for a production agribusiness ERP. The system uses a separate PostgreSQL database per client and Redis-backed queues for payroll calculations and bulk processing.",
       "My work includes REST APIs, data modeling, query optimization, legacy feature migrations, and Linux VPS administration. I also developed institutional ERP modules for the Government of Lagunillas with CodeIgniter 4 and MySQL.",
@@ -67,6 +67,9 @@ const en: Dictionary = {
     visitSite: "Visit live product",
     close: "Close",
     techStack: "Tech Stack",
+    galleryLabel: "Project gallery",
+    galleryEmptyTitle: "No product images yet",
+    galleryEmptyDescription: "Real product screenshots can be added here when they are available.",
     roleLabel: "Role",
     organizationLabel: "Organization",
     periodLabel: "Period",

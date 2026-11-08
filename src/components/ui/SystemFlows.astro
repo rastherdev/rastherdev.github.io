@@ -1,0 +1,123 @@
+---
+import type { ProjectCaseStudy } from "../../i18n/types";
+
+interface Props {
+  flows: ProjectCaseStudy["flows"];
+}
+---
+
+<div class="system-flows">
+  {Astro.props.flows.map((flow) => (
+    <div class="system-flows__flow">
+      <h4 class="system-flows__label">{flow.label}</h4>
+      <div class="system-flows__track" role="list">
+        {flow.nodes.map((node, i) => (
+          <>
+            <div class="system-flows__node" role="listitem">
+              <span class="system-flows__node-title">{node.title}</span>
+              <span class="system-flows__node-detail">{node.detail}</span>
+            </div>
+            {i < flow.nodes.length - 1 && (
+              <span class="system-flows__connector" aria-hidden="true"></span>
+            )}
+          </>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .system-flows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .system-flows__flow + .system-flows__flow {
+    padding-top: var(--space-md);
+    border-top: 1px dashed var(--color-border);
+  }
+
+  .system-flows__label {
+    margin-bottom: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-code);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .system-flows__track {
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+
+  .system-flows__node {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 82px;
+    padding: var(--space-md);
+    background: rgba(8, 8, 15, 0.58);
+    border: 1px solid var(--color-border-hover);
+    border-radius: var(--border-radius);
+  }
+
+  .system-flows__node-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    line-height: 1.4;
+  }
+
+  .system-flows__node-detail {
+    margin-top: var(--space-xs);
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+    line-height: 1.45;
+  }
+
+  .system-flows__connector {
+    position: relative;
+    flex: 0 0 18px;
+    align-self: center;
+    height: 1px;
+    background: linear-gradient(90deg, var(--color-code), var(--color-accent));
+  }
+
+  .system-flows__connector::after {
+    content: "";
+    position: absolute;
+    top: -3px;
+    right: 0;
+    width: 6px;
+    height: 6px;
+    border-top: 1px solid var(--color-accent);
+    border-right: 1px solid var(--color-accent);
+    transform: rotate(45deg);
+  }
+
+  @media (max-width: 768px) {
+    .system-flows__track {
+      flex-direction: column;
+    }
+
+    .system-flows__connector {
+      width: 1px;
+      height: 14px;
+      flex-basis: 14px;
+      align-self: center;
+    }
+
+    .system-flows__connector::after {
+      top: auto;
+      right: -3px;
+      bottom: 0;
+      transform: rotate(135deg);
+    }
+  }
+</style>

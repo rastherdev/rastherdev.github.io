@@ -29,7 +29,7 @@ const es: Dictionary = {
     downloadCv: "Descargar CV",
   },
   about: {
-    heading: "Sobre Mí",
+    heading: "Cómo construyo sistemas",
     bio: [
       "Desarrollo servicios backend con Laravel para un ERP agroindustrial en producción. El sistema usa una base PostgreSQL por cliente y colas con Redis para calcular nóminas y procesar datos en lote.",
       "Mi trabajo incluye APIs REST, modelado de datos, optimización de consultas, migración de funciones heredadas y administración de VPS Linux. También desarrollé módulos del ERP institucional del Gobierno de Lagunillas con CodeIgniter 4 y MySQL.",
@@ -100,6 +100,9 @@ const es: Dictionary = {
     visitSite: "Visitar el sitio del producto",
     close: "Cerrar",
     techStack: "Tecnologías",
+    galleryLabel: "Galería del proyecto",
+    galleryEmptyTitle: "Aún no hay imágenes del producto",
+    galleryEmptyDescription: "Aquí se podrán añadir capturas reales cuando estén disponibles.",
     roleLabel: "Rol",
     organizationLabel: "Organización",
     periodLabel: "Periodo",

@@ -106,12 +106,22 @@ interface Props {
   modals.forEach((modal) => document.body.appendChild(modal));
   modalsContainer.remove();
 
+  type SmootherController = {
+    paused(value: boolean): void;
+  };
+
+  function setPageScrollPaused(paused: boolean) {
+    const smoother = (window as Window & { __smoother?: SmootherController }).__smoother;
+    smoother?.paused(paused);
+  }
+
   document.querySelectorAll<HTMLButtonElement>(".project-card__detail-hint").forEach((button) => {
     button.addEventListener("click", () => {
       const modal = modals[Number(button.dataset.projectIndex)];
       if (!modal || modal.open) return;
 
       modal.showModal();
+      setPageScrollPaused(true);
       if (window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
         gsap.fromTo(
           modal.querySelectorAll(".modal__body > *"),
@@ -123,6 +133,9 @@ interface Props {
   });
 
   modals.forEach((modal) => {
+    modal.addEventListener("close", () => {
+      setPageScrollPaused(false);
+    });
     modal.querySelector<HTMLButtonElement>(".modal__close")?.addEventListener("click", () => {
       modal.close();
     });

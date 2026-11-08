@@ -92,6 +92,9 @@ export interface ProjectsDict {
   visitSite: string;
   close: string;
   techStack: string;
+  galleryLabel: string;
+  galleryEmptyTitle: string;
+  galleryEmptyDescription: string;
   roleLabel: string;
   organizationLabel: string;
   periodLabel: string;
