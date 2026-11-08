@@ -2,7 +2,7 @@ export interface Achievement {
   text: string;
 }
 
-export type ExperienceId = "bloomingtec" | "presidencia-digital";
+export type ExperienceId = "bloomingtec" | "lagunillas";
 
 export interface ExperienceEntry {
   id: ExperienceId;
@@ -15,65 +15,55 @@ export interface ExperienceEntry {
   stack: string[];
 }
 
+export function formatMonthYear(date: string, locale: string): string {
+  const [year, month] = date.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString(locale, {
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
 export const experience: ExperienceEntry[] = [
   {
     id: "bloomingtec",
     company: "Bloomingtec",
     role: "Backend Developer",
-    startDate: "2025-01",
+    startDate: "2025-10",
     endDate: null,
     responsibilities: [
-      "Developed and maintained the backend of the SaaS platform using Laravel, ensuring scalability and robustness.",
-      "Implemented new features based on client needs, working closely with the DevOps team.",
-      "Configured and managed DigitalOcean infrastructure including servers, databases, and storage services.",
-      "Migrated legacy SaaS from Express.js to Laravel, improving performance and maintainability.",
-      "Acted as Product Owner, collaborating on requirements definition and backlog prioritization.",
+      "Build and maintain Laravel backend services for a production agribusiness ERP.",
+      "Develop REST APIs with validation, error handling, and access control.",
+      "Model data, optimize PostgreSQL queries, migrate legacy features into modern architectures, and administer Linux VPS environments.",
     ],
     achievements: [
       {
-        text: "Migrated legacy Express.js backend to Laravel with a modular monolith architecture, featuring independent services per module (users, billing, crop management) with well-defined RESTful APIs.",
+        text: "Implemented database-per-client PostgreSQL tenancy on a single codebase.",
       },
       {
-        text: "Implemented an async queue system for critical tasks (payroll calculation, bulk data processing) using Redis and Laravel Queues, reducing response times by 95%.",
-      },
-      {
-        text: "Achieved multi-tenancy with per-client PostgreSQL instances using a single codebase, improving data isolation and enabling horizontal scalability through dynamic database connection abstraction.",
-      },
-      {
-        text: "Built a robust authentication and authorization system with JWT and Laravel Sanctum, featuring granular roles and permissions for different user types.",
-      },
-      {
-        text: "Set up DigitalOcean infrastructure from scratch, including servers, databases, and storage, ensuring high availability and scalability.",
+        text: "Implemented Redis-backed Laravel queues for payroll calculation and bulk data processing.",
       },
     ],
-    stack: ["Laravel", "PostgreSQL", "Redis", "DigitalOcean", "Sanctum / JWT"],
+    stack: ["Laravel", "PostgreSQL", "Redis", "REST APIs", "Linux"],
   },
   {
-    id: "presidencia-digital",
-    company: "Presidencia Digital",
-    role: "Full Stack Developer",
+    id: "lagunillas",
+    company: "Lagunillas City Government",
+    role: "Backend Developer",
     startDate: "2023-08",
-    endDate: "2026-01",
+    endDate: "2026-02",
     responsibilities: [
-      "Developed new features for the SaaS platform using Laravel and Bootstrap, focusing on UX improvements and administrative efficiency for local governments.",
-      "Collaborated with the design team to implement an intuitive and accessible citizen-facing interface.",
-      "Managed MySQL database including query optimization and data integrity.",
-      "Configured and managed WPS Hosting infrastructure ensuring platform availability and security.",
+      "Developed backend modules for the institutional ERP using CodeIgniter 4 and MySQL.",
+      "Analyzed requirements with municipal departments and administered VPS hosting.",
     ],
     achievements: [
       {
-        text: "Implemented a document management system with advanced search and categorization, significantly improving administrative efficiency for local governments that previously had no such system.",
+        text: "Designed module architecture and data models, and optimized MySQL queries.",
       },
       {
-        text: "Developed a citizen service module enabling requests, issue reporting, and efficient responses, improving communication between local governments and citizens.",
-      },
-      {
-        text: "Implemented a license and permit management system ensuring regulatory compliance and improved security.",
-      },
-      {
-        text: "Configured a social program tracking platform for local governments, enabling real-time data-driven decision making.",
+        text: "Developed backend modules for Presidencia Digital, the institutional ERP platform.",
       },
     ],
-    stack: ["Laravel", "Bootstrap", "MySQL", "WPS Hosting"],
+    stack: ["CodeIgniter 4", "MySQL"],
   },
 ];

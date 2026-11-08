@@ -31,11 +31,9 @@ interface Props {
       </div>
 
       <!-- Shared modal — content updated dynamically via JS -->
-      <div id="project-modals" style="display:none" aria-hidden="true">
+      <div id="project-modals" hidden>
         {localizedProjects.map((project, i) => (
-          <div data-project-index={i}>
-            <ProjectModal project={project} dict={dict.projects} />
-          </div>
+          <ProjectModal project={project} dict={dict.projects} index={i} />
         ))}
       </div>
     </section>
@@ -78,75 +76,47 @@ interface Props {
       }, "-=0.1");
   });
 
-  // Modal logic: extract modals from hidden container, show correct one
-  const modalsContainer = document.getElementById("project-modals")!;
-  const modals = modalsContainer.querySelectorAll<HTMLElement>("[data-project-index]");
+  const modalsContainer = document.getElementById("project-modals");
+  if (!modalsContainer) {
+    throw new Error("The project dialog container is missing.");
+  }
 
-  // Move modals to body for proper stacking
-  modals.forEach((m) => document.body.appendChild(m));
+  const modals = Array.from(
+    modalsContainer.querySelectorAll<HTMLDialogElement>(".modal-overlay[data-project-index]")
+  );
+  modals.forEach((modal) => document.body.appendChild(modal));
+  modalsContainer.remove();
 
-  // Override global opener
-  (window as any).__openProjectModal = () => {
-    const idx = (window as any).__activeProjectIndex ?? 0;
-    modals.forEach((m) => {
-      const overlay = m.querySelector<HTMLElement>(".modal-overlay")!;
-      const isTarget = parseInt(m.dataset.projectIndex ?? "0") === idx;
-      if (isTarget) {
-        overlay.classList.add("is-open");
-        overlay.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden";
-        // Pause ScrollSmoother so the page doesn't scroll behind the modal
-        (window as any).__smoother?.paused(true);
+  document.querySelectorAll<HTMLButtonElement>(".project-card__detail-hint").forEach((button) => {
+    button.addEventListener("click", () => {
+      const modal = modals[Number(button.dataset.projectIndex)];
+      if (!modal || modal.open) return;
 
-        // Staggered content entrance
+      modal.showModal();
+      if (window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
         gsap.fromTo(
-          overlay.querySelectorAll(".modal__body > *"),
+          modal.querySelectorAll(".modal__body > *"),
           { opacity: 0, y: 18 },
           { opacity: 1, y: 0, stagger: 0.07, duration: 0.45, ease: "power2.out", delay: 0.1 }
         );
       }
     });
-  };
+  });
 
-  // Close all modals
-  function closeAllModals() {
-    modals.forEach((m) => {
-      const overlay = m.querySelector<HTMLElement>(".modal-overlay")!;
-      overlay.classList.remove("is-open");
-      overlay.setAttribute("aria-hidden", "true");
+  modals.forEach((modal) => {
+    modal.querySelector<HTMLButtonElement>(".modal__close")?.addEventListener("click", () => {
+      modal.close();
     });
-    document.body.style.overflow = "";
-    (window as any).__smoother?.paused(false);
-  }
-
-  // Wire close buttons, overlay clicks & gallery thumbnails
-  modals.forEach((m) => {
-    const overlay = m.querySelector<HTMLElement>(".modal-overlay")!;
-    const closeBtn = m.querySelector<HTMLElement>(".modal__close");
-    closeBtn?.addEventListener("click", closeAllModals);
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) closeAllModals();
-    });
-
-    // Gallery: thumbnail click crossfades the main image
-    const mainImg = m.querySelector<HTMLImageElement>(".modal__gallery-img");
-    m.querySelectorAll<HTMLElement>(".modal__thumb").forEach((thumb) => {
-      thumb.addEventListener("click", () => {
-        const src = thumb.dataset.src;
-        if (!mainImg || !src || mainImg.getAttribute("src") === src) return;
-        m.querySelector(".modal__thumb.is-active")?.classList.remove("is-active");
-        thumb.classList.add("is-active");
-        mainImg.setAttribute("src", src);
-        gsap.fromTo(
-          mainImg,
-          { opacity: 0.15, scale: 1.04 },
-          { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }
-        );
-      });
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) modal.close();
     });
   });
 
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeAllModals();
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    const openModal = modals.find((modal) => modal.open);
+    if (!openModal) return;
+    event.preventDefault();
+    openModal.close();
   });
 </script>

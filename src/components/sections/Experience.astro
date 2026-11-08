@@ -2,25 +2,20 @@
 import SectionHeading from "../ui/SectionHeading.astro";
 import en from "../../i18n/en";
 import es from "../../i18n/es";
-import { experience } from "../../data/experience";
+import { experience, formatMonthYear } from "../../data/experience";
 
 interface Props {
   locale: "en" | "es";
 }
 
-// Deterministic pseudo commit hash from company name (pure flavor)
-function pseudoHash(s: string): string {
-  let h = 0;
-  for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-  return h.toString(16).padStart(7, "0").slice(0, 7);
-}
-
-// Durations refresh on each deploy, which is fine for a static CV.
 function duration(start: string, end: string | null, locale: "en" | "es"): string {
-  const s = new Date(start + "-01");
-  const e = end ? new Date(end + "-01") : new Date();
-  const months =
-    (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth());
+  const monthIndex = (date: string) => {
+    const [year, month] = date.split("-").map(Number);
+    return year * 12 + month - 1;
+  };
+  const now = new Date();
+  const currentMonth = now.getFullYear() * 12 + now.getMonth();
+  const months = Math.max(0, (end ? monthIndex(end) : currentMonth) - monthIndex(start));
   const y = Math.floor(months / 12);
   const m = months % 12;
   if (locale === "es") {
@@ -38,8 +33,6 @@ function duration(start: string, end: string | null, locale: "en" | "es"): strin
 {(() => {
   const dict = Astro.props.locale === "en" ? en : es;
   const dateLocale = Astro.props.locale === "es" ? "es-MX" : "en-US";
-  const fmt = (d: string) =>
-    new Date(d + "-01").toLocaleDateString(dateLocale, { month: "short", year: "numeric" });
 
   return (
     <section class="experience section section--band" id="experience">
@@ -51,10 +44,10 @@ function duration(start: string, end: string | null, locale: "en" | "es"): strin
             <span class="exp-cli__dot exp-cli__dot--red"></span>
             <span class="exp-cli__dot exp-cli__dot--yellow"></span>
             <span class="exp-cli__dot exp-cli__dot--green"></span>
-            <span class="exp-cli__title">giovany@dev: ~/career</span>
+            <span class="exp-cli__title">giovany@portfolio: ~/career</span>
           </div>
           <p class="exp-cli__line">
-            <span class="exp-cli__prompt">$</span> git log --graph --author="Giovany Domínguez"
+            <span class="exp-cli__prompt">$</span> career --timeline
           </p>
         </div>
 
@@ -70,6 +63,7 @@ function duration(start: string, end: string | null, locale: "en" | "es"): strin
 
           {experience.map((entry) => {
             const translation = dict.experience.translations[entry.id];
+            const company = translation?.company ?? entry.company;
             const role = translation?.role ?? entry.role;
             const responsibilities = translation?.responsibilities ?? entry.responsibilities;
             const achievements = translation?.achievements ?? entry.achievements;
@@ -83,19 +77,18 @@ function duration(start: string, end: string | null, locale: "en" | "es"): strin
                 <article class="exp-card">
                   <header class="exp-card__head">
                     <p class="exp-card__meta">
-                      <span class="exp-card__label">commit</span>
-                      <span class="exp-card__hash" data-hash={pseudoHash(entry.company)}>{pseudoHash(entry.company)}</span>
+                      <span class="exp-card__label">{dict.experience.entryLabel}</span>
                       {!entry.endDate && (
-                        <span class="exp-card__head-badge">(HEAD → main) · {dict.experience.currentBadge}</span>
+                        <span class="exp-card__head-badge">{dict.experience.currentBadge}</span>
                       )}
                     </p>
                     <div class="exp-card__title-row">
                       <h3 class="exp-card__role">{role}</h3>
-                      <span class="exp-card__company">@ {entry.company}</span>
+                      <span class="exp-card__company">@ {company}</span>
                     </div>
                     <p class="exp-card__dates">
                       <i class="fa-regular fa-calendar" aria-hidden="true"></i>
-                      {fmt(entry.startDate)} — {entry.endDate ? fmt(entry.endDate) : dict.experience.present}
+                      {formatMonthYear(entry.startDate, dateLocale)} — {entry.endDate ? formatMonthYear(entry.endDate, dateLocale) : dict.experience.present}
                       <span class="exp-card__duration">{duration(entry.startDate, entry.endDate, Astro.props.locale)}</span>
                     </p>
                   </header>
@@ -114,18 +107,10 @@ function duration(start: string, end: string | null, locale: "en" | "es"): strin
                     <div class="exp-card__col">
                       <h4 class="exp-card__col-title">
                         <i class="fa-solid fa-trophy" aria-hidden="true"></i>
-                        {dict.experience.achievementsLabel}
+                        {dict.experience.contributionsLabel}
                       </h4>
-                      <ul class="exp-card__list exp-card__list--achievements">
-                        {achievements.map((a) => (
-                          <li>
-                            {a.text.split(/(\d+%)/).map((part) =>
-                              /^\d+%$/.test(part)
-                                ? <strong class="exp-counter" data-target={parseInt(part)}>{part}</strong>
-                                : part
-                            )}
-                          </li>
-                        ))}
+                      <ul class="exp-card__list exp-card__list--contributions">
+                        {achievements.map((a) => <li>{a.text}</li>)}
                       </ul>
                     </div>
                   </div>
@@ -354,10 +339,6 @@ function duration(start: string, end: string | null, locale: "en" | "es"): strin
     color: var(--color-text-muted);
   }
 
-  .exp-card__hash {
-    color: var(--color-code);
-  }
-
   .exp-card__head-badge {
     color: var(--color-accent);
   }
@@ -460,14 +441,9 @@ function duration(start: string, end: string | null, locale: "en" | "es"): strin
     color: var(--color-accent);
   }
 
-  .exp-card__list--achievements li::before {
+  .exp-card__list--contributions li::before {
     content: "★";
     color: rgba(240, 160, 48, 0.4);
-  }
-
-  .exp-counter {
-    color: var(--color-accent);
-    font-family: var(--font-mono);
   }
 
   /* ── Stack chips ────────────────────────────────────── */
@@ -580,20 +556,6 @@ function duration(start: string, end: string | null, locale: "en" | "es"): strin
         scrollTrigger: trigger,
       });
 
-      // Commit hash "types in" (TextPlugin)
-      const hashEl = commit.querySelector<HTMLElement>(".exp-card__hash");
-      if (hashEl) {
-        const hash = hashEl.dataset.hash ?? "";
-        ScrollTrigger.create({
-          ...trigger,
-          once: true,
-          onEnter: () => {
-            hashEl.textContent = "";
-            gsap.to(hashEl, { text: hash, duration: 0.6, ease: "none", delay: 0.2 });
-          },
-        });
-      }
-
       // List items cascade in
       gsap.from(commit.querySelectorAll(".exp-card__list li"), {
         opacity: 0, x: -14, stagger: 0.05, duration: 0.4, ease: "power2.out",
@@ -604,21 +566,6 @@ function duration(start: string, end: string | null, locale: "en" | "es"): strin
       gsap.from(commit.querySelectorAll(".exp-card__chip"), {
         opacity: 0, scale: 0.7, stagger: 0.05, duration: 0.35, ease: "back.out(1.8)",
         scrollTrigger: { trigger: commit, start: "top 60%", once: true },
-      });
-    });
-
-    // ── Percentages count up ───────────────────────────
-    document.querySelectorAll<HTMLElement>(".exp-counter").forEach((el) => {
-      const target = parseInt(el.dataset.target ?? "0");
-      const state = { v: 0 };
-      gsap.to(state, {
-        v: target,
-        duration: 1.4,
-        ease: "power2.out",
-        scrollTrigger: { trigger: el, start: "top 85%", once: true },
-        onUpdate: () => {
-          el.textContent = `${Math.round(state.v)}%`;
-        },
       });
     });
   });

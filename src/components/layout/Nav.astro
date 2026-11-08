@@ -16,11 +16,14 @@ interface Props {
   const alternatePath = Astro.props.locale === "en"
     ? `/es${currentPath}`
     : currentPath.replace(/^\/es/, "") || "/";
+  const homeHref = Astro.props.locale === "en" ? "/" : "/es/";
+  const isCvPage = /\/cv\/?$/.test(currentPath);
+  const sectionHref = (id: string) => isCvPage ? `${homeHref}#${id}` : `#${id}`;
 
   return (
     <header class="nav" id="nav">
       <div class="nav__inner">
-        <a href="/" class="nav__logo" aria-label="Home">
+        <a href={homeHref} class="nav__logo" aria-label={dict.nav.home}>
           <span class="nav__logo-bracket">&lt;</span>
           <span class="nav__logo-text">GD</span>
           <span class="nav__logo-bracket"> /&gt;</span>
@@ -28,12 +31,12 @@ interface Props {
 
         <span class="nav__path" id="nav-path" aria-hidden="true">~/</span>
 
-        <nav class="nav__links" id="nav-links" aria-label="Main navigation">
-          <a href="#about" class="nav__link" data-section="about" data-num="01" style="--i:0">{dict.nav.about}</a>
-          <a href="#skills" class="nav__link" data-section="skills" data-num="02" style="--i:1">{dict.nav.skills}</a>
-          <a href="#experience" class="nav__link" data-section="experience" data-num="03" style="--i:2">{dict.nav.experience}</a>
-          <a href="#projects" class="nav__link" data-section="projects" data-num="04" style="--i:3">{dict.nav.projects}</a>
-          <a href="#contact" class="nav__link" data-section="contact" data-num="05" style="--i:4">{dict.nav.contact}</a>
+        <nav class="nav__links" id="nav-links" aria-label={dict.nav.mainNavigation}>
+          <a href={sectionHref("about")} class="nav__link" data-section="about" data-num="01" style="--i:0">{dict.nav.about}</a>
+          <a href={sectionHref("skills")} class="nav__link" data-section="skills" data-num="02" style="--i:1">{dict.nav.skills}</a>
+          <a href={sectionHref("experience")} class="nav__link" data-section="experience" data-num="03" style="--i:2">{dict.nav.experience}</a>
+          <a href={sectionHref("projects")} class="nav__link" data-section="projects" data-num="04" style="--i:3">{dict.nav.projects}</a>
+          <a href={sectionHref("contact")} class="nav__link" data-section="contact" data-num="05" style="--i:4">{dict.nav.contact}</a>
           <a href={getResumeUrl(Astro.props.locale)} class="nav__link nav__link--cv" style="--i:5" download>{dict.nav.downloadCv}</a>
         </nav>
 
@@ -41,7 +44,16 @@ interface Props {
           <a href={alternatePath} class="nav__locale" aria-label={`Switch to ${otherLocale === "en" ? "English" : "Español"}`}>
             {otherLocale === "en" ? "EN" : "ES"}
           </a>
-          <button class="nav__burger" id="nav-burger" aria-label="Toggle menu" aria-expanded="false" type="button">
+          <button
+            class="nav__burger"
+            id="nav-burger"
+            aria-label={dict.nav.openMenu}
+            aria-controls="nav-links"
+            aria-expanded="false"
+            data-open-label={dict.nav.openMenu}
+            data-close-label={dict.nav.closeMenu}
+            type="button"
+          >
             <span class="nav__burger-line"></span>
             <span class="nav__burger-line"></span>
             <span class="nav__burger-line"></span>
@@ -221,12 +233,17 @@ interface Props {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     font-weight: 600;
+    min-width: 44px;
+    min-height: 44px;
     color: var(--color-text-muted);
     text-decoration: none;
     padding: 0.3em 0.7em;
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius-full);
     transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .nav__locale:hover {
@@ -237,7 +254,11 @@ interface Props {
   .nav__burger {
     display: none;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 5px;
+    width: 44px;
+    height: 44px;
     background: none;
     border: none;
     cursor: pointer;
@@ -280,12 +301,15 @@ interface Props {
       gap: var(--space-xl);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.35s ease;
+      visibility: hidden;
+      transition: opacity 0.35s ease, visibility 0s linear 0.35s;
     }
 
     .nav__links.is-open {
       opacity: 1;
       pointer-events: auto;
+      visibility: visible;
+      transition: opacity 0.35s ease, visibility 0s;
     }
 
     .nav__link {
@@ -336,6 +360,33 @@ interface Props {
   const nav = document.getElementById("nav")!;
   const burger = document.getElementById("nav-burger")!;
   const navLinks = document.getElementById("nav-links")!;
+  const mobileMenuQuery = window.matchMedia("(max-width: 768px)");
+  const openMenuLabel = burger.dataset.openLabel ?? "Open menu";
+  const closeMenuLabel = burger.dataset.closeLabel ?? "Close menu";
+
+  function setMenuOpen(isOpen: boolean, restoreFocus = false) {
+    navLinks.classList.toggle("is-open", isOpen);
+    burger.classList.toggle("is-open", isOpen);
+    burger.setAttribute("aria-expanded", String(isOpen));
+    burger.setAttribute("aria-label", isOpen ? closeMenuLabel : openMenuLabel);
+    navLinks.inert = mobileMenuQuery.matches && !isOpen;
+
+    if (restoreFocus && mobileMenuQuery.matches) {
+      burger.focus();
+    }
+  }
+
+  function syncMenuForViewport() {
+    if (!mobileMenuQuery.matches) {
+      setMenuOpen(false);
+      navLinks.inert = false;
+      return;
+    }
+    navLinks.inert = !navLinks.classList.contains("is-open");
+  }
+
+  syncMenuForViewport();
+  mobileMenuQuery.addEventListener("change", syncMenuForViewport);
 
   // Scroll-aware background blur + progress hairline
   // (uses ScrollSmoother exposed by BaseLayout)
@@ -404,10 +455,17 @@ interface Props {
   // Anchor links: use ScrollSmoother for smooth scroll
   links.forEach((link) => {
     link.addEventListener("click", (e) => {
-      e.preventDefault();
-      const targetId = link.getAttribute("href")!;
-      const target = document.querySelector(targetId) as HTMLElement;
+      const targetId = link.getAttribute("href");
+      if (!targetId?.startsWith("#")) {
+        if (mobileMenuQuery.matches && navLinks.classList.contains("is-open")) {
+          setMenuOpen(false, true);
+        }
+        return;
+      }
+
+      const target = document.querySelector<HTMLElement>(targetId);
       if (!target) return;
+      e.preventDefault();
 
       const smoother = (window as any).__smoother;
       if (smoother) {
@@ -416,16 +474,20 @@ interface Props {
         target.scrollIntoView({ behavior: "smooth" });
       }
 
-      navLinks.classList.remove("is-open");
-      burger.classList.remove("is-open");
-      burger.setAttribute("aria-expanded", "false");
+      if (navLinks.classList.contains("is-open")) {
+        setMenuOpen(false, true);
+      }
     });
   });
 
   // Mobile menu toggle
   burger.addEventListener("click", () => {
-    const isOpen = navLinks.classList.toggle("is-open");
-    burger.classList.toggle("is-open", isOpen);
-    burger.setAttribute("aria-expanded", String(isOpen));
+    setMenuOpen(!navLinks.classList.contains("is-open"));
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && navLinks.classList.contains("is-open")) {
+      setMenuOpen(false, true);
+    }
   });
 </script>

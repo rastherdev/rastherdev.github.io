@@ -10,9 +10,8 @@ export interface Props {
 }
 ---
 
-<div
+<article
   class={`project-card${Astro.props.project.featured ? " project-card--featured" : ""}`}
-  data-index={Astro.props.index}
 >
   {Astro.props.project.featured && (
     <>
@@ -38,12 +37,17 @@ export interface Props {
       <a href={Astro.props.project.url} target="_blank" rel="noopener noreferrer" class="project-card__link">
         {Astro.props.dict.viewProject} ↗
       </a>
-      <span class="project-card__link project-card__detail-hint" aria-hidden="true">
-        {Astro.props.dict.gallery} +
-      </span>
+      <button
+        type="button"
+        class="project-card__link project-card__detail-hint"
+        data-project-index={Astro.props.index}
+        aria-label={`${Astro.props.dict.viewDetails}: ${Astro.props.project.name}`}
+      >
+        {Astro.props.dict.viewDetails}
+      </button>
     </div>
   </div>
-</div>
+</article>
 
 <style>
   .project-card {
@@ -53,7 +57,6 @@ export interface Props {
     padding: var(--space-2xl) var(--space-xl);
     position: relative;
     overflow: hidden;
-    cursor: pointer;
     display: flex;
     flex-direction: column;
     /* hover lives here on translate/scale (compositor-friendly); the GSAP
@@ -232,16 +235,21 @@ export interface Props {
   }
 
   .project-card__detail-hint {
+    appearance: none;
+    background: transparent;
     border: 1px solid var(--color-border);
     padding: 0.35em 0.9em;
     border-radius: var(--border-radius-full);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-text-muted);
+    cursor: pointer;
     transition: all var(--transition-fast);
   }
 
-  .project-card:hover .project-card__detail-hint {
+  .project-card:hover .project-card__detail-hint,
+  .project-card__detail-hint:hover,
+  .project-card__detail-hint:focus-visible {
     border-color: var(--color-accent);
     color: var(--color-accent);
     background: rgba(240, 160, 48, 0.06);
@@ -249,22 +257,6 @@ export interface Props {
 </style>
 
 <script>
-  function openModal(index: number) {
-    const fn = (window as any).__openProjectModal;
-    if (fn) {
-      (window as any).__activeProjectIndex = index;
-      fn();
-    }
-  }
-
-  // Whole card opens the modal; the external link keeps its own behavior
-  document.querySelectorAll<HTMLElement>(".project-card").forEach((card) => {
-    card.addEventListener("click", (e) => {
-      if ((e.target as HTMLElement).closest("a")) return;
-      openModal(parseInt(card.dataset.index ?? "0"));
-    });
-  });
-
   // Pause the featured card's beam while it's off-screen, and size the beam
   // square to the card diagonal so it reaches every corner while rotating
   const featuredCards = document.querySelectorAll<HTMLElement>(".project-card--featured");

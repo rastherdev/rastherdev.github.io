@@ -1,102 +1,104 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { experience } from "../../data/experience";
+import { experience, formatMonthYear } from "../../data/experience";
 import { projects } from "../../data/projects";
 import { skillCategories } from "../../data/skills";
-import { getResumeUrl } from "../../data/social";
+import { getResumeUrl, socialLinks } from "../../data/social";
+import es from "../../i18n/es";
 
 const locale = "es";
-
-const skillLabels: Record<string, string> = {
-  languages: "Lenguajes",
-  frameworks: "Frameworks",
-  databases: "Bases de Datos",
-  devops: "DevOps & Cloud",
-  tools: "Herramientas",
-};
+const dict = es;
+const dateLocale = "es-MX";
+const localizedProjects = projects.map((project) => {
+  const translation = dict.projects.translations[project.id];
+  return translation ? { ...project, ...translation } : project;
+});
 ---
 
-<BaseLayout locale={locale} title="CV — Giovany Domínguez">
-  <div class="cv">
+<BaseLayout locale={locale} title="CV — Giovany Domínguez" description={dict.cv.summaryText}>
+  <div class="cv" id="top">
     <div class="cv__inner">
       <header class="cv__header">
         <h1 class="cv__name">Giovany Domínguez</h1>
         <p class="cv__title">Laravel Backend Developer</p>
         <div class="cv__contact-row">
-          <span>rastherdev@gmail.com</span>
-          <span>github.com/rastherdev</span>
-          <span>linkedin.com/in/rastherdev</span>
+          <a href={socialLinks[0].url}>rastherdev@gmail.com</a>
+          <a href={socialLinks[2].url} target="_blank" rel="noopener noreferrer">github.com/rastherdev</a>
+          <a href={socialLinks[1].url} target="_blank" rel="noopener noreferrer">linkedin.com/in/rastherdev</a>
           <span>Michoacán, México</span>
         </div>
       </header>
 
       <section class="cv__section">
-        <h2 class="cv__section-title">Resumen Profesional</h2>
-        <p class="cv__summary">
-          Desarrollador backend con más de 3 años de experiencia construyendo aplicaciones SaaS escalables con Laravel y PHP.
-          Especializado en arquitecturas multi-tenant, sistemas de colas asíncronas y optimización de rendimiento.
-          Con experiencia en migración de sistemas legacy y diseño de APIs robustas. Resido en Michoacán, México.
-        </p>
+        <h2 class="cv__section-title">{dict.cv.professionalSummary}</h2>
+        <p class="cv__summary">{dict.cv.summaryText}</p>
       </section>
 
       <section class="cv__section">
-        <h2 class="cv__section-title">Habilidades Técnicas</h2>
+        <h2 class="cv__section-title">{dict.cv.technicalSkills}</h2>
         <div class="cv__skills-grid">
-          {skillCategories.map((cat) => (
-            <div class="cv__skill-group">
-              <strong>{skillLabels[cat.key] ?? cat.key}</strong>: {cat.items.map((s: {name: string}) => s.name).join(", ")}
-            </div>
-          ))}
+          {skillCategories.map((cat) => {
+            const label = dict.skills.categories.find((category) => category.key === cat.key)?.label ?? cat.key;
+            return (
+              <div class="cv__skill-group">
+                <strong>{label}</strong>: {cat.items.map((skill) => skill.name).join(", ")}
+              </div>
+            );
+          })}
         </div>
       </section>
 
       <section class="cv__section">
-        <h2 class="cv__section-title">Experiencia Profesional</h2>
-        {experience.map((entry) => (
-          <div class="cv__exp">
-            <div class="cv__exp-header">
-              <div>
-                <h3 class="cv__exp-role">{entry.role}</h3>
-                <p class="cv__exp-company">{entry.company}</p>
+        <h2 class="cv__section-title">{dict.cv.professionalExperience}</h2>
+        {experience.map((entry) => {
+          const translation = dict.experience.translations[entry.id];
+          const role = translation?.role ?? entry.role;
+          const company = translation?.company ?? entry.company;
+          const achievements = translation?.achievements ?? entry.achievements;
+          return (
+            <div class="cv__exp">
+              <div class="cv__exp-header">
+                <div>
+                  <h3 class="cv__exp-role">{role}</h3>
+                  <p class="cv__exp-company">{company}</p>
+                </div>
+                <span class="cv__exp-dates">
+                  {formatMonthYear(entry.startDate, dateLocale)} —{" "}
+                  {entry.endDate ? formatMonthYear(entry.endDate, dateLocale) : dict.experience.present}
+                </span>
               </div>
-              <span class="cv__exp-dates">
-                {new Date(entry.startDate).toLocaleDateString("es-MX", { month: "short", year: "numeric" })} —{" "}
-                {entry.endDate
-                  ? new Date(entry.endDate).toLocaleDateString("es-MX", { month: "short", year: "numeric" })
-                  : "Actualidad"}
-              </span>
+              <ul class="cv__exp-achievements">
+                {achievements.map((achievement) => <li>{achievement.text}</li>)}
+              </ul>
             </div>
-            <ul class="cv__exp-achievements">
-              {entry.achievements.map((a) => (
-                <li>{a.text}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
+          );
+        })}
       </section>
 
       <section class="cv__section">
-        <h2 class="cv__section-title">Proyectos Destacados</h2>
-        {projects.map((p) => (
+        <h2 class="cv__section-title">{dict.cv.projects}</h2>
+        {localizedProjects.map((project) => (
           <div class="cv__project">
             <h3 class="cv__project-name">
-              {p.name}
-              <span class="cv__project-link"> — {p.url}</span>
+              {project.name} —{" "}
+              <a class="cv__project-link" href={project.url} target="_blank" rel="noopener noreferrer">
+                {project.url}
+              </a>
             </h3>
-            <p class="cv__project-desc">{p.description}</p>
-            <p class="cv__project-stack"><strong>Stack:</strong> {p.stack.join(", ")}</p>
+            <p class="cv__project-desc">{project.description}</p>
+            <p class="cv__project-stack"><strong>{dict.projects.techStack}:</strong> {project.stack.join(", ")}</p>
           </div>
         ))}
       </section>
 
       <section class="cv__section">
-        <h2 class="cv__section-title">Idiomas</h2>
-        <p>Español (Nativo), Inglés (Competencia profesional)</p>
+        <h2 class="cv__section-title">{dict.cv.languages}</h2>
+        <p>{dict.cv.languagesSummary}</p>
       </section>
 
       <div class="cv__actions no-print">
-        <a href={getResumeUrl(locale)} class="cv__btn" download>Descargar PDF</a>
-        <button class="cv__btn cv__btn--print" onclick="window.print()">Imprimir CV</button>
+        <a href={getResumeUrl(locale)} class="cv__btn" download>{dict.cv.downloadPdf}</a>
+        <button class="cv__btn cv__btn--print" onclick="window.print()">{dict.cv.print}</button>
       </div>
     </div>
   </div>
@@ -104,7 +106,7 @@ const skillLabels: Record<string, string> = {
 
 <style>
   .cv {
-    padding: calc(var(--nav-height) + var(--space-4xl)) 0 var(--space-4xl);
+    padding: calc(var(--nav-height) + var(--space-3xl)) 0 var(--space-4xl);
     color: var(--color-text);
   }
 
@@ -141,6 +143,17 @@ const skillLabels: Record<string, string> = {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-text-muted);
+  }
+
+  .cv__contact-row a {
+    color: inherit;
+    text-decoration: none;
+    text-underline-offset: 0.2em;
+  }
+
+  .cv__contact-row a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
   }
 
   .cv__section {
@@ -228,6 +241,8 @@ const skillLabels: Record<string, string> = {
     font-size: var(--text-xs);
     color: var(--color-code);
     font-weight: 400;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 
   .cv__project-desc {
@@ -320,6 +335,11 @@ const skillLabels: Record<string, string> = {
     .cv__exp-achievements,
     .cv__skill-group,
     .cv__summary {
+      color: #333;
+    }
+
+    .cv__contact-row a,
+    .cv__project-link {
       color: #333;
     }
   }

@@ -8,7 +8,7 @@ interface Props {
 }
 
 // Tech terms auto-highlighted in the bio (same spelling in EN and ES)
-const KEYWORDS = ["Laravel", "SaaS", "multi-tenant", "backend", "open-source", "legacy"];
+const KEYWORDS = ["Laravel", "PostgreSQL", "Redis", "REST APIs", "APIs REST", "CodeIgniter 4", "MySQL"];
 const kwRegex = new RegExp(`(${KEYWORDS.join("|")})`, "gi");
 const isKeyword = (part: string) =>
   KEYWORDS.some((k) => k.toLowerCase() === part.toLowerCase());

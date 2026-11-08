@@ -36,27 +36,11 @@ interface Props {
               {dict.hero.downloadCv}
             </Button>
           </div>
-          <div class="hero__stats">
-            <div class="hero__stat">
-              <span class="hero__stat-number">3+</span>
-              <span class="hero__stat-label">{dict.about.quickFacts[1].label}</span>
-            </div>
-            <div class="hero__stat-divider"></div>
-            <div class="hero__stat">
-              <span class="hero__stat-number">2</span>
-              <span class="hero__stat-label">SaaS Platforms</span>
-            </div>
-            <div class="hero__stat-divider"></div>
-            <div class="hero__stat">
-              <span class="hero__stat-number">25+</span>
-              <span class="hero__stat-label">{dict.hero.statTech}</span>
-            </div>
-          </div>
         </div>
 
         <!-- Right: interactive terminal -->
         <div class="hero__terminal-wrapper" id="hero-terminal">
-          <Terminal lines={dict.hero.terminalLines} locale={Astro.props.locale} />
+          <Terminal commands={dict.hero.terminalCommands} />
         </div>
       </div>
 
@@ -175,40 +159,6 @@ interface Props {
     margin-bottom: var(--space-2xl);
   }
 
-  .hero__stats {
-    display: flex;
-    align-items: center;
-    gap: var(--space-lg);
-  }
-
-  .hero__stat {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .hero__stat-number {
-    font-family: var(--font-display);
-    font-size: var(--text-xl);
-    font-weight: 700;
-    color: var(--color-accent);
-    line-height: 1.2;
-  }
-
-  .hero__stat-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-
-  .hero__stat-divider {
-    width: 1px;
-    height: 32px;
-    background: var(--color-border);
-    flex-shrink: 0;
-  }
-
   .hero__terminal-wrapper {
     display: flex;
     justify-content: center;
@@ -323,10 +273,6 @@ interface Props {
       justify-content: center;
     }
 
-    .hero__stats {
-      justify-content: center;
-    }
-
     .hero__name {
       align-items: center;
     }
@@ -365,20 +311,6 @@ interface Props {
         { opacity: 0, y: 20, stagger: 0.08, duration: 0.5 },
         "-=0.4"
       )
-      // Stats pop
-      .from(
-        ".hero__stat",
-        {
-          opacity: 0,
-          y: 15,
-          scale: 0.9,
-          stagger: 0.1,
-          duration: 0.4,
-          ease: "back.out(2)",
-        },
-        "-=0.2"
-      );
-
     pageReady.then(() => tl.play());
 
     // Scroll indicator fade

@@ -1,7 +1,16 @@
 import type { ExperienceId } from "../data/experience";
 import type { ProjectId } from "../data/projects";
 
+export interface TerminalCommand {
+  command: string;
+  output: string;
+}
+
 export interface NavDict {
+  home: string;
+  mainNavigation: string;
+  openMenu: string;
+  closeMenu: string;
   about: string;
   skills: string;
   experience: string;
@@ -11,14 +20,13 @@ export interface NavDict {
 }
 
 export interface HeroDict {
-  terminalLines: string[];
+  terminalCommands: TerminalCommand[];
   greeting: string;
   name: string;
   title: string;
   tagline: string;
   viewProjects: string;
   downloadCv: string;
-  statTech: string;
 }
 
 export interface AboutDict {
@@ -40,18 +48,20 @@ export interface SkillsDict {
 
 export interface ExperienceDict {
   heading: string;
+  entryLabel: string;
   present: string;
-  achievementsLabel: string;
+  contributionsLabel: string;
   responsibilitiesLabel: string;
   currentBadge: string;
   translations: Partial<
     Record<
       ExperienceId,
-      {
+      Partial<{
+        company: string;
         role: string;
         responsibilities: string[];
         achievements: { text: string }[];
-      }
+      }>
     >
   >;
 }
@@ -59,23 +69,20 @@ export interface ExperienceDict {
 export interface ProjectsDict {
   heading: string;
   viewProject: string;
-  viewCode: string;
+  viewDetails: string;
   close: string;
   techStack: string;
-  problem: string;
-  solution: string;
-  gallery: string;
+  context: string;
+  contribution: string;
   featuredBadge: string;
-  screenshot: string;
   translations: Partial<
     Record<
       ProjectId,
-      {
+      Partial<{
         description: string;
-        problem: string;
-        solution: string;
-        snippet?: string;
-      }
+        context: string;
+        contribution: string;
+      }>
     >
   >;
 }
@@ -105,6 +112,7 @@ export interface CvDict {
   projects: string;
   education: string;
   languages: string;
+  languagesSummary: string;
   contactInfo: string;
   downloadPdf: string;
   print: string;
