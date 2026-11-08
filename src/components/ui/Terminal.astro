@@ -1,15 +1,16 @@
 ---
 export interface Props {
-  commands: import("../../i18n/types").TerminalCommand[];
+  transcript: import("../../i18n/types").TerminalTranscript;
+}
+
+const { transcript } = Astro.props;
+
+if (transcript.output.length === 0) {
+  throw new Error("The hero terminal requires at least one profile field.");
 }
 ---
 
-<div
-  class="terminal"
-  aria-hidden="true"
-  id="hero-terminal-el"
-  data-commands={JSON.stringify(Astro.props.commands)}
->
+<div class="terminal" aria-hidden="true" id="hero-terminal-el">
   <div class="terminal__header">
     <span class="terminal__dot terminal__dot--red"></span>
     <span class="terminal__dot terminal__dot--yellow"></span>
@@ -17,15 +18,21 @@ export interface Props {
     <span class="terminal__title">guest@portfolio — bash</span>
   </div>
   <div class="terminal__body">
-    <!-- Dynamic typewriter line -->
-    <div class="terminal__line terminal__line--active" id="typewriter-line">
+    <div class="terminal__line">
       <span class="terminal__prompt">$&nbsp;</span>
-      <span class="terminal__typing" id="typewriter-text"></span>
-      <span class="terminal__cursor">▌</span>
+      <span class="terminal__command">{transcript.command}</span>
     </div>
-    <!-- Output area -->
-    <div class="terminal__line" id="typewriter-output" style="display:none">
-      <span class="terminal__output"></span>
+    <div class="terminal__output">
+      {transcript.output.map(({ label, value }) => (
+        <div class="terminal__output-row">
+          <span class="terminal__key">{label}</span>
+          <span class="terminal__value">{value}</span>
+        </div>
+      ))}
+    </div>
+    <div class="terminal__line">
+      <span class="terminal__prompt">$&nbsp;</span>
+      <span class="terminal__cursor" aria-hidden="true">▌</span>
     </div>
   </div>
 </div>
@@ -86,16 +93,12 @@ export interface Props {
     min-height: 1.7em;
   }
 
-  .terminal__dim {
-    color: var(--color-text-muted);
-  }
-
   .terminal__prompt {
     color: var(--color-accent);
     flex-shrink: 0;
   }
 
-  .terminal__typing {
+  .terminal__command {
     color: var(--color-text);
   }
 
@@ -105,85 +108,39 @@ export interface Props {
   }
 
   .terminal__output {
-    color: var(--color-code);
-    white-space: pre-wrap;
+    display: grid;
+    gap: 0.2rem;
     padding-left: 1.2em;
+  }
+
+  .terminal__output-row {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--space-sm);
+    line-height: 1.55;
+  }
+
+  .terminal__key {
+    color: var(--color-text-muted);
+  }
+
+  .terminal__key::after {
+    content: ":";
+  }
+
+  .terminal__value {
+    color: var(--color-code);
+    overflow-wrap: anywhere;
   }
 
   @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .terminal__cursor {
+      animation: none;
+    }
+  }
 </style>
-
-<script>
-  import { gsap, pageReady } from "../../scripts/utils/gsap-setup";
-  import type { TerminalCommand } from "../../i18n/types";
-
-  const terminal = document.getElementById("hero-terminal-el");
-  if (!(terminal instanceof HTMLElement)) {
-    throw new Error("The hero terminal element is missing.");
-  }
-
-  const commands = JSON.parse(terminal.dataset.commands ?? "[]") as TerminalCommand[];
-  if (commands.length === 0) {
-    throw new Error("The hero terminal requires at least one command.");
-  }
-
-  let cmdIndex = 0;
-  const textEl = document.getElementById("typewriter-text")!;
-  const outputLine = document.getElementById("typewriter-output")!;
-  const outputText = outputLine.querySelector(".terminal__output")!;
-
-  async function typeCommand(text: string): Promise<void> {
-    textEl.textContent = "";
-    // Type each character
-    for (let i = 0; i < text.length; i++) {
-      textEl.textContent += text[i];
-      await new Promise((r) => setTimeout(r, 35 + Math.random() * 25));
-    }
-    await new Promise((r) => setTimeout(r, 500));
-  }
-
-  async function showOutput(text: string): Promise<void> {
-    outputText.textContent = text;
-    outputLine.style.display = "flex";
-    // Reveal output with fade
-    gsap.fromTo(outputLine, { opacity: 0, y: -6 }, { opacity: 1, y: 0, duration: 0.3 });
-    await new Promise((r) => setTimeout(r, 1800));
-  }
-
-  async function eraseLine(): Promise<void> {
-    const text = textEl.textContent || "";
-    for (let i = text.length; i >= 0; i--) {
-      textEl.textContent = text.substring(0, i);
-      await new Promise((r) => setTimeout(r, 15 + Math.random() * 15));
-    }
-    outputLine.style.display = "none";
-  }
-
-  async function runTypewriter() {
-    // Start once the page is revealed, a beat after the hero entrance begins
-    await pageReady;
-    await new Promise((r) => setTimeout(r, 400));
-
-    while (true) {
-      const { command, output } = commands[cmdIndex % commands.length];
-      await typeCommand(command);
-      await showOutput(output);
-      await eraseLine();
-      cmdIndex++;
-      // Brief pause between commands
-      await new Promise((r) => setTimeout(r, 400));
-    }
-  }
-
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    const [firstCommand] = commands;
-    textEl.textContent = firstCommand.command;
-    outputText.textContent = firstCommand.output;
-    outputLine.style.display = "flex";
-  } else {
-    runTypewriter();
-  }
-</script>

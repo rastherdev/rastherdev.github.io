@@ -14,12 +14,16 @@ const en: Dictionary = {
     downloadCv: "Download Resume",
   },
   hero: {
-    terminalCommands: [
-      { command: 'echo "Laravel · PostgreSQL · Redis"', output: "Laravel · PostgreSQL · Redis" },
-      { command: 'echo "PostgreSQL database per client"', output: "PostgreSQL database per client" },
-      { command: 'echo "Redis queues: payroll + bulk processing"', output: "Redis queues: payroll + bulk processing" },
-      { command: 'echo "Open to new opportunities"', output: "Open to new opportunities" },
-    ],
+    terminalTranscript: {
+      command: "cat profile.yml",
+      output: [
+        { label: "system", value: "Bloomingtec · production agribusiness ERP" },
+        { label: "stack", value: "Laravel · PostgreSQL · Redis" },
+        { label: "architecture", value: "One PostgreSQL database per client" },
+        { label: "queues", value: "Laravel + Redis · payroll + bulk processing" },
+        { label: "modernization", value: "Legacy features → modern architectures" },
+      ],
+    },
     greeting: "Hi, I'm",
     name: "Giovany Domínguez",
     title: "Laravel Backend Developer",

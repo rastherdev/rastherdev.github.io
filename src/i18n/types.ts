@@ -1,9 +1,14 @@
 import type { ExperienceId } from "../data/experience";
 import type { ProjectId } from "../data/projects";
 
-export interface TerminalCommand {
+export interface TerminalField {
+  label: string;
+  value: string;
+}
+
+export interface TerminalTranscript {
   command: string;
-  output: string;
+  output: TerminalField[];
 }
 
 export interface NavDict {
@@ -20,7 +25,7 @@ export interface NavDict {
 }
 
 export interface HeroDict {
-  terminalCommands: TerminalCommand[];
+  terminalTranscript: TerminalTranscript;
   greeting: string;
   name: string;
   title: string;
