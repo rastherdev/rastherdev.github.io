@@ -1,10 +1,17 @@
 ---
 import Badge from "./Badge.astro";
 import type { Project } from "../../data/projects";
-import type { ProjectsDict } from "../../i18n/types";
+import type { ProjectTranslation, ProjectsDict } from "../../i18n/types";
+
+type ProjectDetails = Project &
+  ProjectTranslation & {
+    role: string;
+    company: string;
+    period: string;
+  };
 
 export interface Props {
-  project: Project;
+  project: ProjectDetails;
   dict: ProjectsDict;
   index: number;
 }
@@ -31,27 +38,88 @@ export interface Props {
         </p>
       </header>
 
+      <dl class="modal__meta">
+        <div class="modal__meta-item">
+          <dt>{Astro.props.dict.roleLabel}</dt>
+          <dd>{Astro.props.project.role}</dd>
+        </div>
+        <div class="modal__meta-item">
+          <dt>{Astro.props.dict.organizationLabel}</dt>
+          <dd>{Astro.props.project.company}</dd>
+        </div>
+        <div class="modal__meta-item">
+          <dt>{Astro.props.dict.periodLabel}</dt>
+          <dd>{Astro.props.project.period}</dd>
+        </div>
+      </dl>
+
       <div class="modal__stack">
         <span class="modal__stack-label">{Astro.props.dict.techStack}:</span>
         {Astro.props.project.stack.map((t: string) => <Badge text={t} />)}
       </div>
 
-      <div class="modal__grid">
-        <div class="modal__section">
-          <h3 class="modal__section-title">{Astro.props.dict.context}</h3>
-          <p class="modal__section-text">{Astro.props.project.context}</p>
-        </div>
-        <div class="modal__section">
-          <h3 class="modal__section-title">{Astro.props.dict.contribution}</h3>
-          <p class="modal__section-text">{Astro.props.project.contribution}</p>
-        </div>
+      <div class="modal__details">
+        <section
+          class="modal__architecture"
+          aria-labelledby={`project-architecture-${Astro.props.project.id}`}
+        >
+          <h3
+            class="modal__section-title"
+            id={`project-architecture-${Astro.props.project.id}`}
+          >
+            {Astro.props.dict.architectureLabel}
+          </h3>
+          <div class="modal__flows">
+            {Astro.props.project.caseStudy.flows.map((flow) => (
+              <div class="modal__flow">
+                <h4 class="modal__flow-label">{flow.label}</h4>
+                <div class="modal__flow-track" role="list">
+                  {flow.nodes.map((node, i) => (
+                    <>
+                      <div class="modal__node" role="listitem">
+                        <span class="modal__node-title">{node.title}</span>
+                        <span class="modal__node-detail">{node.detail}</span>
+                      </div>
+                      {i < flow.nodes.length - 1 && (
+                        <span class="modal__connector" aria-hidden="true"></span>
+                      )}
+                    </>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section
+          class="modal__contributions"
+          aria-labelledby={`project-contributions-${Astro.props.project.id}`}
+        >
+          <h3
+            class="modal__section-title"
+            id={`project-contributions-${Astro.props.project.id}`}
+          >
+            {Astro.props.dict.contributionsLabel}
+          </h3>
+          <ul class="modal__contribution-list">
+            {Astro.props.project.caseStudy.contributions.map((item) => (
+              <li class="modal__contribution-item">
+                <span class="modal__work-marker" aria-hidden="true"></span>
+                <div>
+                  <h4 class="modal__contribution-title">{item.title}</h4>
+                  <p class="modal__contribution-text">{item.detail}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
 
-      <div class="modal__actions">
-        <a href={Astro.props.project.url} target="_blank" rel="noopener noreferrer" class="modal__link modal__link--primary">
-          {Astro.props.dict.viewProject} ↗
-        </a>
-      </div>
+    </div>
+    <div class="modal__actions">
+      <a href={Astro.props.project.url} target="_blank" rel="noopener noreferrer" class="modal__link modal__link--primary">
+        {Astro.props.dict.visitSite} ↗
+      </a>
     </div>
   </div>
 </dialog>
@@ -66,7 +134,7 @@ export interface Props {
     max-width: none;
     max-height: none;
     margin: 0;
-    padding: var(--space-xl);
+    padding: var(--space-lg);
     border: 0;
     color: var(--color-text);
     background: transparent;
@@ -89,12 +157,14 @@ export interface Props {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius-xl);
-    max-width: 720px;
+    max-width: 1000px;
     width: 100%;
-    max-height: 85vh;
-    max-height: 85dvh;
-    overflow-y: auto;
+    max-height: 90vh;
+    max-height: 90dvh;
+    overflow: hidden;
     position: relative;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   }
 
@@ -123,16 +193,21 @@ export interface Props {
   }
 
   .modal__body {
+    flex: 1 1 auto;
+    min-height: 0;
     padding: var(--space-2xl);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .modal__header {
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--space-lg);
     padding-right: var(--space-3xl);
   }
 
   .modal__name {
-    font-size: var(--text-2xl);
+    font-size: var(--text-3xl);
+    letter-spacing: -0.02em;
     margin-bottom: var(--space-sm);
   }
 
@@ -141,12 +216,47 @@ export interface Props {
     line-height: 1.7;
   }
 
+  .modal__meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0 0 var(--space-lg);
+    border-block: 1px solid var(--color-border);
+  }
+
+  .modal__meta-item {
+    min-width: 0;
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .modal__meta-item:first-child {
+    padding-left: 0;
+  }
+
+  .modal__meta-item + .modal__meta-item {
+    border-left: 1px solid var(--color-border);
+  }
+
+  .modal__meta-item dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .modal__meta-item dd {
+    margin: var(--space-xs) 0 0;
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    line-height: 1.45;
+  }
+
   .modal__stack {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-sm);
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--space-lg);
     padding-bottom: var(--space-lg);
     border-bottom: 1px solid var(--color-border);
   }
@@ -160,34 +270,147 @@ export interface Props {
     margin-right: var(--space-xs);
   }
 
-  .modal__grid {
+  .modal__details {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-lg);
-    margin-bottom: var(--space-xl);
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: var(--space-xl);
   }
 
   .modal__section-title {
     font-family: var(--font-display);
-    font-size: var(--text-sm);
-    color: var(--color-accent);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: var(--space-sm);
+    font-size: var(--text-lg);
+    color: var(--color-text);
+    margin: 0 0 var(--space-lg);
   }
 
-  .modal__section-text {
+  .modal__architecture {
+    min-width: 0;
+    padding: var(--space-lg);
+    background:
+      radial-gradient(ellipse at top left, rgba(77, 212, 192, 0.06), transparent 60%),
+      var(--color-surface-raised);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+  }
+
+  .modal__flow + .modal__flow {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px dashed var(--color-border);
+  }
+
+  .modal__flow-label {
+    margin-bottom: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-code);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .modal__flow-track {
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+
+  .modal__node {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 82px;
+    padding: var(--space-md);
+    background: rgba(8, 8, 15, 0.58);
+    border: 1px solid var(--color-border-hover);
+    border-radius: var(--border-radius);
+  }
+
+  .modal__node-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    line-height: 1.4;
+  }
+
+  .modal__node-detail {
+    margin-top: var(--space-xs);
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+    line-height: 1.45;
+  }
+
+  .modal__connector {
+    position: relative;
+    flex: 0 0 18px;
+    align-self: center;
+    height: 1px;
+    background: linear-gradient(90deg, var(--color-code), var(--color-accent));
+  }
+
+  .modal__connector::after {
+    content: "";
+    position: absolute;
+    top: -3px;
+    right: 0;
+    width: 6px;
+    height: 6px;
+    border-top: 1px solid var(--color-accent);
+    border-right: 1px solid var(--color-accent);
+    transform: rotate(45deg);
+  }
+
+  .modal__contribution-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--space-lg);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .modal__contribution-item {
+    display: grid;
+    grid-template-columns: 8px minmax(0, 1fr);
+    gap: var(--space-sm);
+    padding: var(--space-md) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .modal__contribution-item:first-child,
+  .modal__contribution-item:nth-child(2) {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .modal__work-marker {
+    width: 6px;
+    height: 6px;
+    margin-top: 0.55em;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+
+  .modal__contribution-title {
+    margin-bottom: var(--space-xs);
+    color: var(--color-text);
+    font-size: var(--text-base);
+  }
+
+  .modal__contribution-text {
     color: var(--color-text-muted);
     line-height: 1.7;
     font-size: var(--text-sm);
   }
 
-  .modal__actions {
-    display: flex;
-    gap: var(--space-md);
-  }
-
   .modal__link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
     font-family: var(--font-mono);
     font-size: var(--text-sm);
     padding: 0.65rem 1.2rem;
@@ -214,17 +437,75 @@ export interface Props {
     color: var(--color-accent);
   }
 
+  .modal__actions {
+    flex: 0 0 auto;
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-2xl);
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+
   @media (max-width: 768px) {
-    .modal__grid {
-      grid-template-columns: 1fr;
+    .modal-overlay {
+      padding: var(--space-sm);
+    }
+
+    .modal {
+      max-height: 94vh;
+      max-height: 94dvh;
     }
 
     .modal__body {
       padding: var(--space-lg);
     }
 
-    .modal__actions {
+    .modal__meta {
+      grid-template-columns: 1fr;
+    }
+
+    .modal__meta-item {
+      padding: var(--space-sm) 0;
+    }
+
+    .modal__meta-item + .modal__meta-item {
+      border-top: 1px solid var(--color-border);
+      border-left: 0;
+    }
+
+    .modal__flow-track {
       flex-direction: column;
+    }
+
+    .modal__connector {
+      width: 1px;
+      height: 14px;
+      flex-basis: 14px;
+      align-self: center;
+    }
+
+    .modal__connector::after {
+      top: auto;
+      right: -3px;
+      bottom: 0;
+      transform: rotate(135deg);
+    }
+
+    .modal__contribution-list {
+      grid-template-columns: 1fr;
+    }
+
+    .modal__contribution-item:nth-child(2) {
+      border-top: 1px solid var(--color-border);
+      padding-top: var(--space-md);
+    }
+
+    .modal__link {
+      width: 100%;
+    }
+
+    .modal__actions {
+      padding: var(--space-md) var(--space-lg);
     }
   }
 </style>

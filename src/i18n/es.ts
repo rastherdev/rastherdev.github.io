@@ -96,26 +96,107 @@ const es: Dictionary = {
   projects: {
     heading: "Proyectos Destacados",
     viewProject: "Ver Proyecto",
-    viewDetails: "Detalles",
+    viewDetails: "Ver caso de estudio",
+    visitSite: "Visitar el sitio del producto",
     close: "Cerrar",
     techStack: "Tecnologías",
-    context: "Contexto",
-    contribution: "Contribución",
+    roleLabel: "Rol",
+    organizationLabel: "Organización",
+    periodLabel: "Periodo",
+    architectureLabel: "Arquitectura del sistema",
+    contributionsLabel: "Mi trabajo",
     featuredBadge: "Principal",
     translations: {
       bloomingtec: {
         description:
           "ERP agroindustrial en producción. Desarrollo servicios backend con Laravel para el aislamiento de datos y el procesamiento asíncrono.",
-        context: "ERP en producción para el sector agroindustrial.",
-        contribution:
-          "Implementé una base PostgreSQL por cliente sobre una sola base de código y colas de Laravel con Redis para calcular nóminas y procesar datos en lote.",
+        caseStudy: {
+          flows: [
+            {
+              label: "API y datos por cliente",
+              nodes: [
+                {
+                  title: "APIs REST con Laravel",
+                  detail: "Validación, manejo de errores y control de acceso",
+                },
+                {
+                  title: "PostgreSQL",
+                  detail: "Una base de datos por cliente",
+                },
+              ],
+            },
+            {
+              label: "Procesamiento en segundo plano",
+              nodes: [
+                {
+                  title: "Colas de Laravel",
+                  detail: "Cálculo de nóminas y procesamiento masivo",
+                },
+                {
+                  title: "Redis",
+                  detail: "Backend de colas",
+                },
+              ],
+            },
+          ],
+          contributions: [
+            {
+              title: "Aislamiento por cliente",
+              detail: "Implementé una base PostgreSQL por cliente con una sola base de código.",
+            },
+            {
+              title: "Procesamiento asíncrono",
+              detail: "Implementé colas de Laravel con Redis para calcular nóminas y procesar datos en lote.",
+            },
+            {
+              title: "APIs y datos",
+              detail: "Desarrollé APIs REST con validación, manejo de errores y control de acceso; modelé datos y optimicé consultas.",
+            },
+            {
+              title: "Modernización y operación",
+              detail: "Migré funciones heredadas y administré entornos VPS Linux para desarrollo y producción.",
+            },
+          ],
+        },
       },
       "presidencia-digital": {
         description:
           "Plataforma del ERP institucional del Gobierno de Lagunillas. Desarrollé módulos backend con CodeIgniter 4 y MySQL.",
-        context: "Presidencia Digital es la plataforma del ERP institucional del Gobierno de Lagunillas.",
-        contribution:
-          "Desarrollé módulos backend con CodeIgniter 4 y MySQL, incluyendo arquitectura de módulos, modelos de datos, optimización de consultas, análisis de requisitos con áreas municipales y administración de VPS.",
+        caseStudy: {
+          flows: [
+            {
+              label: "ERP institucional",
+              nodes: [
+                {
+                  title: "CodeIgniter 4",
+                  detail: "Módulos backend",
+                },
+                {
+                  title: "MySQL",
+                  detail: "Modelos de datos y consultas optimizadas",
+                },
+              ],
+            },
+          ],
+          contributions: [
+            {
+              title: "Arquitectura de módulos",
+              detail: "Diseñé la arquitectura de los módulos del ERP institucional.",
+            },
+            {
+              title: "Modelado de datos",
+              detail: "Diseñé los modelos de datos de los módulos.",
+            },
+            {
+              title: "Optimización de consultas",
+              detail: "Optimicé consultas de MySQL.",
+            },
+            {
+              title: "Trabajo con áreas municipales",
+              detail: "Analicé requisitos con las áreas municipales y administré el VPS.",
+            },
+          ],
+        },
       },
     },
   },

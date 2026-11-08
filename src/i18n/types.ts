@@ -66,25 +66,39 @@ export interface ExperienceDict {
   >;
 }
 
+export interface ProjectCaseStudy {
+  flows: {
+    label: string;
+    nodes: {
+      title: string;
+      detail: string;
+    }[];
+  }[];
+  contributions: {
+    title: string;
+    detail: string;
+  }[];
+}
+
+export interface ProjectTranslation {
+  description?: string;
+  caseStudy: ProjectCaseStudy;
+}
+
 export interface ProjectsDict {
   heading: string;
   viewProject: string;
   viewDetails: string;
+  visitSite: string;
   close: string;
   techStack: string;
-  context: string;
-  contribution: string;
+  roleLabel: string;
+  organizationLabel: string;
+  periodLabel: string;
+  architectureLabel: string;
+  contributionsLabel: string;
   featuredBadge: string;
-  translations: Partial<
-    Record<
-      ProjectId,
-      Partial<{
-        description: string;
-        context: string;
-        contribution: string;
-      }>
-    >
-  >;
+  translations: Record<ProjectId, ProjectTranslation>;
 }
 
 export interface ContactDict {

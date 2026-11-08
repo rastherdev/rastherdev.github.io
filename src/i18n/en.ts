@@ -63,13 +63,105 @@ const en: Dictionary = {
   projects: {
     heading: "Featured Projects",
     viewProject: "View Project",
-    viewDetails: "Details",
+    viewDetails: "View case study",
+    visitSite: "Visit live product",
     close: "Close",
     techStack: "Tech Stack",
-    context: "Context",
-    contribution: "Contribution",
+    roleLabel: "Role",
+    organizationLabel: "Organization",
+    periodLabel: "Period",
+    architectureLabel: "System architecture",
+    contributionsLabel: "What I worked on",
     featuredBadge: "Flagship",
-    translations: {},
+    translations: {
+      bloomingtec: {
+        caseStudy: {
+          flows: [
+            {
+              label: "API and tenant data",
+              nodes: [
+                {
+                  title: "Laravel REST APIs",
+                  detail: "Validation, error handling, and access control",
+                },
+                {
+                  title: "PostgreSQL",
+                  detail: "One database per client",
+                },
+              ],
+            },
+            {
+              label: "Background processing",
+              nodes: [
+                {
+                  title: "Laravel queues",
+                  detail: "Payroll calculations and bulk data",
+                },
+                {
+                  title: "Redis",
+                  detail: "Queue backend",
+                },
+              ],
+            },
+          ],
+          contributions: [
+            {
+              title: "Tenant isolation",
+              detail: "Implemented database-per-client PostgreSQL tenancy on one codebase.",
+            },
+            {
+              title: "Queued workloads",
+              detail: "Implemented Redis-backed Laravel queues for payroll and bulk data processing.",
+            },
+            {
+              title: "API and data foundations",
+              detail: "Developed REST APIs with validation, error handling, access control, data modeling, and query optimization.",
+            },
+            {
+              title: "Modernization and operations",
+              detail: "Migrated legacy features and administered Linux VPS environments for development and production.",
+            },
+          ],
+        },
+      },
+      "presidencia-digital": {
+        caseStudy: {
+          flows: [
+            {
+              label: "Institutional ERP",
+              nodes: [
+                {
+                  title: "CodeIgniter 4",
+                  detail: "Backend modules",
+                },
+                {
+                  title: "MySQL",
+                  detail: "Data models and optimized queries",
+                },
+              ],
+            },
+          ],
+          contributions: [
+            {
+              title: "Module architecture",
+              detail: "Designed the architecture for modules in the institutional ERP.",
+            },
+            {
+              title: "Data modeling",
+              detail: "Designed the module data models.",
+            },
+            {
+              title: "Query optimization",
+              detail: "Optimized MySQL queries.",
+            },
+            {
+              title: "Municipal delivery",
+              detail: "Analyzed requirements with municipal departments and administered VPS hosting.",
+            },
+          ],
+        },
+      },
+    },
   },
   contact: {
     heading: "Let's Connect",

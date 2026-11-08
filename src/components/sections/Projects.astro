@@ -5,6 +5,7 @@ import ProjectModal from "../ui/ProjectModal.astro";
 import en from "../../i18n/en";
 import es from "../../i18n/es";
 import { projects } from "../../data/projects";
+import { experience, formatMonthYear } from "../../data/experience";
 
 interface Props {
   locale: "en" | "es";
@@ -13,9 +14,27 @@ interface Props {
 
 {(() => {
   const dict = Astro.props.locale === "en" ? en : es;
+  const dateLocale = Astro.props.locale === "es" ? "es-MX" : "en-US";
   const localizedProjects = projects.map((project) => {
-    const translation = dict.projects.translations[project.id];
-    return translation ? { ...project, ...translation } : project;
+    const relatedExperience = experience.find((entry) => entry.id === project.experienceId);
+    if (!relatedExperience) {
+      throw new Error(`Missing experience data for project "${project.id}".`);
+    }
+
+    const experienceTranslation = dict.experience.translations[relatedExperience.id];
+    const period = `${formatMonthYear(relatedExperience.startDate, dateLocale)} — ${
+      relatedExperience.endDate
+        ? formatMonthYear(relatedExperience.endDate, dateLocale)
+        : dict.experience.present
+    }`;
+
+    return {
+      ...project,
+      ...dict.projects.translations[project.id],
+      role: experienceTranslation?.role ?? relatedExperience.role,
+      company: experienceTranslation?.company ?? relatedExperience.company,
+      period,
+    };
   });
 
   return (
@@ -30,7 +49,7 @@ interface Props {
         </div>
       </div>
 
-      <!-- Shared modal — content updated dynamically via JS -->
+      <!-- Dialogs move to body so native modal stacking and focus stay predictable. -->
       <div id="project-modals" hidden>
         {localizedProjects.map((project, i) => (
           <ProjectModal project={project} dict={dict.projects} index={i} />
